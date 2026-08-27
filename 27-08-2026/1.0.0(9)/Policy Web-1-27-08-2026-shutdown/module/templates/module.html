@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Policy Web</title>
+    <style>
+        body {
+            font-family: Arial;
+            background:#e0f7fa;
+            text-align:center;
+            padding-top:40px;
+            padding-bottom:60px;
+        }
+        h1 {
+            text-align:left;
+            width:420px;
+            margin:auto;
+            margin-bottom:20px;
+            font-weight:600;
+            color:#004d40;
+        }
+        .card {
+            position:relative;
+            background:#fff;
+            padding:25px;
+            width:420px;
+            margin:auto;
+            border-radius:10px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.15);
+            text-align:left;
+            margin-bottom:20px;
+        }
+        select, input, button {
+            width:100%;
+            box-sizing:border-box;
+            padding:9px;
+            margin-top:10px;
+            border-radius:6px;
+            border:1px solid #ccc;
+            font-size:14px;
+        }
+        label {
+            font-size:14px;
+            margin-top:12px;
+            display:block;
+        }
+        button {
+            background:#00796b;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+        button:hover { background:#00695c; }
+        button.danger { background:#c62828; }
+        button.danger:hover { background:#b71c1c; }
+        .msg { margin-top:15px; font-weight:bold; font-size:14px; }
+        .ok   { color:green; }
+        .fail { color:red; }
+        .info { color:#555; font-size:13px; margin-top:8px; line-height:1.5; }
+        .hint {
+            background:#e0f2f1;
+            color:#00695c;
+            font-size:12px;
+            padding:6px 10px;
+            border-radius:5px;
+            margin-top:4px;
+            display:none;
+        }
+        .hint.danger-hint {
+            background:#fdecea;
+            color:#c62828;
+        }
+        .badge {
+            display:inline-block;
+            background:#e0f2f1;
+            color:#00796b;
+            font-size:11px;
+            font-weight:700;
+            padding:2px 8px;
+            border-radius:20px;
+            margin-left:6px;
+            vertical-align:middle;
+        }
+        pre.detail {
+            background:#f5f5f5;
+            padding:10px;
+            border-radius:6px;
+            font-size:12px;
+            white-space:pre-wrap;
+            margin-top:10px;
+        }
+
+        /* ── Mode Toggle Buttons ── */
+        .mode-toggle {
+            display:flex;
+            gap:8px;
+            margin-bottom:14px;
+        }
+        .mode-toggle button {
+            flex:1;
+            margin-top:0;
+            padding:9px;
+            font-size:14px;
+            font-weight:600;
+            border-radius:7px;
+            border:2px solid #00796b;
+            background:#fff;
+            color:#00796b;
+            cursor:pointer;
+            transition:all 0.18s;
+        }
+        .mode-toggle button.active {
+            background:#00796b;
+            color:#fff;
+        }
+        .mode-toggle button:hover:not(.active) {
+            background:#e0f2f1;
+        }
+
+        /* Read result box */
+        .read-result-box {
+            background:#e0f2f1;
+            border:1px solid #80cbc4;
+            border-radius:7px;
+            padding:12px 14px;
+            margin-top:12px;
+            font-size:14px;
+            color:#004d40;
+            display:none;
+            word-break:break-all;
+        }
+        .read-result-box .read-label {
+            font-size:11px;
+            color:#00796b;
+            font-weight:700;
+            text-transform:uppercase;
+            margin-bottom:4px;
+        }
+        .read-result-box .read-value {
+            font-size:15px;
+            font-weight:700;
+            color:#004d40;
+        }
+
+        /* Tag chips */
+        .tag-list {
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
+            min-height:34px;
+            margin:6px 0 8px 0;
+            padding:4px 0;
+        }
+        .tag-chip {
+            background:#b2dfdb;
+            color:#004d40;
+            border:1px solid #00796b;
+            border-radius:20px;
+            padding:5px 10px 5px 14px;
+            font-size:12px;
+            font-weight:700;
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+        }
+        .tag-chip .x {
+            cursor:pointer;
+            background:#c62828;
+            color:white;
+            border-radius:50%;
+            width:18px;
+            height:18px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            font-size:11px;
+            font-weight:bold;
+            flex-shrink:0;
+            line-height:1;
+        }
+        .tag-chip .x:hover { background:#b71c1c; }
+        .tag-row {
+            display:flex;
+            gap:8px;
+            margin-top:4px;
+        }
+        .tag-row input  { flex:1; margin:0; text-transform:uppercase; }
+        .tag-row button { width:auto; padding:9px 14px; margin:0; }
+
+        /* RPi info bar */
+        .rpi-info-bar {
+            background:#e0f2f1;
+            color:#00695c;
+            border-radius:6px;
+            padding:7px 12px;
+            font-size:13px;
+            font-weight:bold;
+            margin-bottom:12px;
+            display:none;
+        }
+
+        /* RF Mode badge inline */
+        .rfmode-badge {
+            display:inline-block;
+            background:#b2dfdb;
+            color:#004d40;
+            border:1px solid #00796b;
+            padding:2px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:700;
+        }
+        .rfmode-sub {
+            display:block;
+            font-size:10.5px;
+            color:#00796b;
+            font-weight:normal;
+            margin-top:2px;
+        }
+
+        /* Power badge inline */
+        .power-badge {
+            display:inline-block;
+            background:#ffe0b2;
+            color:#e65100;
+            border:1px solid #ff9800;
+            padding:2px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        /* Dim (brightness) badge inline */
+        .dim-badge {
+            display:inline-block;
+            background:#fff9c4;
+            color:#795500;
+            border:1px solid #fbc02d;
+            padding:2px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        /* Antenna badge inline */
+        .antenna-badge {
+            display:inline-block;
+            background:#b2dfdb;
+            color:#004d40;
+            border:1px solid #00796b;
+            padding:2px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:700;
+            margin:2px;
+        }
+
+        /* Version badge inline */
+        .version-badge {
+            display:inline-block;
+            background:#e1bee7;
+            color:#4a148c;
+            border:1px solid #8e24aa;
+            padding:2px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        /* Antenna checkbox group (Write mode) */
+        .antenna-checkbox-group {
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            padding:8px 2px;
+            margin-top:6px;
+        }
+        .antenna-checkbox-group label {
+            display:flex;
+            align-items:center;
+            gap:6px;
+            font-size:13px;
+            font-weight:600;
+            color:#004d40;
+            width:auto;
+            margin-top:0;
+            background:#e0f2f1;
+            border:1px solid #80cbc4;
+            border-radius:20px;
+            padding:5px 12px;
+            cursor:pointer;
+        }
+        .antenna-checkbox-group input[type="checkbox"] {
+            width:auto;
+            margin:0;
+            padding:0;
+            cursor:pointer;
+        }
+
+        optgroup { font-style:normal; font-weight:700; color:#004d40; }
+
+        /* ── Advanced (broker) settings: tucked away as a small dot
+             icon in the top-right corner of the card, next to the
+             Send button - no visible label, so it doesn't invite
+             tinkering. Tap it to reveal the broker IP panel. ── */
+        .settings-dot {
+            position:absolute;
+            top:14px;
+            right:14px;
+            width:26px;
+            height:26px;
+            padding:0;
+            margin:0;
+            border-radius:50%;
+            border:1px solid #00796b;
+            background:#fff;
+            color:#00796b;
+            font-size:13px;
+            line-height:1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+        }
+        .settings-dot:hover { background:#e0f2f1; }
+
+        #brokerPanel {
+            display:none;
+            border:1px solid #80cbc4;
+            border-radius:6px;
+            padding:12px;
+            margin-top:14px;
+            background:#fafffe;
+        }
+        #brokerPanel label {
+            margin-top:8px;
+        }
+        #brokerPanel input {
+            margin-top:4px;
+        }
+        #brokerPanel input:disabled {
+            background:#f0f0f0;
+            color:#777;
+        }
+        #brokerPanel button {
+            margin-top:10px;
+        }
+    </style>
+</head>
+<body>
+<h2>Policy Web</h2>
+
+<!-- ══════════════════════════════════════════
+     CARD 1: Cabinet Config (MQTT)
+══════════════════════════════════════════ -->
+<div class="card">
+    <!-- Advanced (broker) settings - small dot icon, top-right corner -->
+    <button class="settings-dot" id="settingsDot" onclick="toggleBrokerPanel()" title="Advanced">⚙</button>
+
+    <button onclick="location.reload()">⟳ Refresh</button>
+
+    <input type="hidden" id="manualBroker" value="{{ broker }}">
+
+    <label><b>Select Cabinet:</b></label>
+    <select id="macSelect" onchange="onCabinetChange()">
+        <!-- populated by buildCabinetOptions(): fixed A-P list, tidak bergantung data queue -->
+    </select>
+
+    <!-- ── Mode Toggle ── -->
+    <div class="mode-toggle" style="margin-top:14px;">
+        <button id="btnWrite" class="active" onclick="setMode('write')">✏️ Write</button>
+        <button id="btnRead"  onclick="setMode('read')">📖 Read</button>
+    </div>
+
+    <!-- WRITE MODE -->
+    <div id="writeSection">
+        <label><b>Change Policy:</b></label>
+        <select id="option" onchange="updateInput()">
+            <optgroup label="── General ──">
+                <option value="hostname">Hostname</option>
+                <option value="location">Location</option>
+                <option value="ip_broker">Server IP</option>
+                <option value="reboot">Reboot</option>
+                <!-- NEW: Shutdown -->
+                <option value="shutdown">Shutdown</option>
+            </optgroup>
+            <optgroup label="── RFID & Scan ──">
+                <option value="rfid_filter">Tag Filter</option>
+                <option value="scan_timeout">Scan Cutoff(second)</option>
+                <!-- NEW: RF Mode -->
+                <option value="rf_mode">RF Mode (Read Rate)</option>
+                <!-- NEW: TX Power -->
+                <option value="power">TX Power (dBm)</option>
+                <!-- NEW: Antenna -->
+                <option value="antenna">Antenna Enable</option>
+            </optgroup>
+            <optgroup label="── Lamp ──">
+                <!-- NEW: Brightness -->
+                <option value="dim">Light Brightness (Dim %)</option>
+            </optgroup>
+        </select>
+
+        <div id="inputSection">
+            <label><b>Value:</b></label>
+
+            <!-- Scan Cutoff gets a dedicated dropdown: 12 - 20 seconds -->
+            <div id="cutoffSelectWrapper" style="display:none;">
+                <select id="cutoffValue"></select>
+            </div>
+
+            <!-- RF Mode gets a dedicated dropdown built from RF_MODE_TABLE -->
+            <div id="rfModeSelectWrapper" style="display:none;">
+                <select id="rfModeValue"></select>
+            </div>
+
+            <!-- TX Power gets a dedicated dropdown built from POWER_OPTIONS -->
+            <div id="powerSelectWrapper" style="display:none;">
+                <select id="powerValue"></select>
+            </div>
+
+            <!-- Brightness gets a dedicated dropdown. RAW config.json
+                 "dim" value stays 0=brightest .. 100=dimmest (contract
+                 with apps.py / light_pwm.py, unchanged). Only the LABEL
+                 shown to the user is inverted: 100%=Brightest, Off=dimmest.
+                 Applying this does NOT reboot the reader - the RPi
+                 picks it up live. -->
+            <div id="dimSelectWrapper" style="display:none;">
+                <select id="dimValue"></select>
+            </div>
+
+            <!-- Antenna gets a checkbox group: select ANY combination of
+                 antennas 1-8 (Silion 8-port E710 module). Whatever is
+                 checked is sent exactly as-is (e.g. just "3", or "1,4",
+                 or "2,3,4,5,6,7") - no snapping to a preset. -->
+            <div id="antennaSelectWrapper" style="display:none;">
+                <div id="antennaCheckboxGroup" class="antenna-checkbox-group"></div>
+            </div>
+
+            <!-- NEW: Shutdown target - "This Cabinet Only" sends the
+                 shutdown command scoped to the currently-selected
+                 cabinet (macSelect's value); "All Cabinets" broadcasts
+                 it to every cabinet currently on this broker. Both are
+                 sent over MQTT topic "in", same channel used for
+                 reboot/ip_broker/etc - it's apps.py's own mac-matching
+                 filter on the receiving end that decides who actually
+                 acts on it. -->
+            <div id="shutdownTargetWrapper" style="display:none;">
+                <select id="shutdownTarget">
+                    <option value="unit">This Cabinet Only</option>
+                    <option value="all">All Cabinets</option>
+                </select>
+            </div>
+
+            <div id="freeInputWrapper">
+                <input id="value" placeholder="Enter value">
+            </div>
+            <div id="valueHint" class="hint"></div>
+        </div>
+        <div id="sessionSection" style="display:none;">
+            <label><b>Session ID:</b></label>
+            <input id="sessionId" placeholder="Session ID">
+        </div>
+
+        <button onclick="sendCommand()" style="margin-top:14px;">Send</button>
+        <p id="result" class="msg"></p>
+
+        <!-- ── Advanced (broker) panel: hidden until the dot icon
+             above is tapped. Reads/writes module.json's "ip_broker"
+             via the existing /set_broker endpoint. On success the
+             page reloads so the cabinet list / Read panel
+             automatically re-fetch from the NEW broker. ── -->
+        <div id="brokerPanel">
+            <label><b>Current Broker IP:</b></label>
+            <input type="text" id="currentBrokerDisplay" value="{{ broker }}" disabled>
+
+            <label><b>New Broker IP:</b></label>
+            <input type="text" id="newBrokerInput" placeholder="e.g. 192.168.137.1">
+
+            <button onclick="updateBrokerIp()">Update Broker IP</button>
+            <p id="brokerMsg" class="msg"></p>
+        </div>
+    </div>
+
+    <!-- READ MODE -->
+    <div id="readSection" style="display:none;">
+        <p id="readMsg" class="msg"></p>
+        <div id="readAllResults" style="display:none; margin-top:10px;"></div>
+    </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CABINET SELECT
+// Selalu tampilkan 16 opsi tetap A(101)..P(116) - value sebenarnya
+// yang dikirim ke backend tetap "MASCAB01<letter>" (mis. A -> MASCAB01A),
+// biar cocok dengan cabinet_id yang dipakai module.py/reader (regex
+// CAB(\d+)([A-Za-z]?)$) dan IP mapping-nya (number*100+letter_val).
+//
+// Semua opsi disabled + abu-abu secara default. Begitu cabinet_id
+// tsb muncul di DETECTED_CABINETS (dikirim dari Flask lewat
+// `cabinets` -> get_cabinets(CURRENT_BROKER), sudah dilewatkan ke
+// template ini), opsinya baru di-enable.
+// ══════════════════════════════════════════
+var CABINET_LETTERS = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"];
+var CABINET_PREFIX  = "MASCAB01";
+var DETECTED_CABINETS = {{ cabinets|tojson }};
+
+function buildCabinetOptions() {
+    var sel = document.getElementById("macSelect");
+    sel.innerHTML = "";
+
+    var detectedUpper = DETECTED_CABINETS.map(function(c){ return String(c).toUpperCase(); });
+
+    CABINET_LETTERS.forEach(function(letter, idx) {
+        var value      = CABINET_PREFIX + letter;      // e.g. MASCAB01A
+        var lastOctet  = 101 + idx;                     // A=101 ... P=116
+        var isDetected = detectedUpper.indexOf(value) !== -1;
+
+        var opt = document.createElement("option");
+        opt.value = value;
+        opt.textContent = letter + " (" + lastOctet + ")";
+        opt.disabled = !isDetected;
+        if (!isDetected) {
+            opt.style.color = "#aaa";
+        }
+        sel.appendChild(opt);
+    });
+
+    // Default-select cabinet pertama yang sudah terdeteksi (kalau ada).
+    // Kalau belum ada satupun yang terdeteksi, sisipkan placeholder
+    // kosong+disabled di depan supaya macSelect.value = "" (bukan
+    // nyasar ke opsi disabled pertama), biar guard "select cabinet
+    // first" di sendCommand()/readAllPolicy() tetap jalan.
+    var firstEnabled = sel.querySelector("option:not([disabled])");
+    if (firstEnabled) {
+        sel.value = firstEnabled.value;
+    } else {
+        var placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "(Belum ada cabinet terbaca)";
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        sel.insertBefore(placeholder, sel.firstChild);
+    }
+}
+buildCabinetOptions();
+
+// ══════════════════════════════════════════
+// LIVE POLLING - auto-enable cabinet baru tanpa reload halaman.
+// Setiap CABINET_POLL_MS, tanya /api/cabinets ke backend (yang
+// baca ulang RabbitMQ), lalu enable opsi yang baru muncul (mis.
+// MASCAB01C nyala setelah sebelumnya cuma A & B yang terbaca).
+// Tidak mengubah pilihan cabinet yang sedang aktif dipilih user -
+// kecuali sebelumnya belum ada satupun cabinet terbaca (placeholder
+// masih terpilih), begitu ada yang pertama muncul, langsung
+// auto-select cabinet itu.
+// ══════════════════════════════════════════
+var CABINET_POLL_MS = 5000;
+
+function updateCabinetAvailability(freshList) {
+    var sel = document.getElementById("macSelect");
+    var detectedUpper = (freshList || []).map(function(c){ return String(c).toUpperCase(); });
+    var hadNoSelectionYet = (sel.value === "");
+
+    var options = sel.querySelectorAll("option[value^='" + CABINET_PREFIX + "']");
+    options.forEach(function(opt) {
+        var isDetected = detectedUpper.indexOf(opt.value) !== -1;
+        if (opt.disabled !== !isDetected) {
+            opt.disabled = !isDetected;
+            opt.style.color = isDetected ? "" : "#aaa";
+        }
+    });
+
+    // Kalau placeholder "(Belum ada cabinet terbaca)" masih aktif dan
+    // sekarang sudah ada cabinet yang terdeteksi -> hapus placeholder
+    // & auto-pilih cabinet pertama yang enable.
+    if (hadNoSelectionYet && detectedUpper.length > 0) {
+        var placeholder = sel.querySelector("option[value='']");
+        if (placeholder) placeholder.remove();
+        var firstEnabled = sel.querySelector("option:not([disabled])");
+        if (firstEnabled) {
+            sel.value = firstEnabled.value;
+            onCabinetChange();
+        }
+    }
+}
+
+async function pollCabinets() {
+    try {
+        var res  = await fetch("/api/cabinets");
+        var data = await res.json();
+        updateCabinetAvailability(data.cabinets || []);
+    } catch (e) {
+        // Diam-diam saja - koneksi sempat putus tidak perlu ganggu UI,
+        // percobaan berikutnya otomatis jalan lagi CABINET_POLL_MS ke depan.
+        console.warn("[pollCabinets] gagal:", e);
+    }
+}
+setInterval(pollCabinets, CABINET_POLL_MS);
+
+// ══════════════════════════════════════════
+// RF MODE TABLE (must match reader.py's RF_MODE_TABLE keys)
+// Only the CODE (e.g. "DC") is sent/stored in config.json's
+// "rf_mode" field - modeId/rate here are for display only, so it's
+// always safe to reword these without touching module.py / apps.py
+// / reader.py. modeId is the reader's own internal "New Mode ID"
+// for this command code (per the E710 command reference table).
+//
+// Dropdown order below matches the reader's command-table order
+// (fastest read rate first), NOT alphabetical.
+// ══════════════════════════════════════════
+var RF_MODE_TABLE = [
+    { code: "CB", modeId: "103", rate: "1,000+" },
+    { code: "6F", modeId: "302", rate: "800+" },
+    { code: "DC", modeId: "120", rate: "700+" },
+    { code: "65", modeId: "323", rate: "550+" },
+    { code: "2D", modeId: "345", rate: "400+" },
+    { code: "73", modeId: "344", rate: "400+" },
+    { code: "70", modeId: "223", rate: "300+" },
+    { code: "67", modeId: "222", rate: "250+" },
+    { code: "69", modeId: "241", rate: "200+" },
+    { code: "6B", modeId: "244", rate: "150+" },
+    { code: "71", modeId: "285", rate: "50+" }
+];
+
+// Friendly dropdown text, e.g. "Mode 103 | 1,000+ tags/s"
+function rfModeDropdownText(r) {
+    return "Mode " + r.modeId + " | " + r.rate + " tags/s";
+}
+
+function rfModeLabel(code) {
+    var m = RF_MODE_TABLE.find(function(r){ return r.code === code; });
+    return m ? rfModeDropdownText(m) : code;
+}
+
+// ══════════════════════════════════════════
+// TX POWER (dBm)
+// Must match reader.py's POWER_TABLE keys (25-33 dBm). Only the
+// integer dBm value is sent/stored in config.json's "power" field -
+// POWER_OPTIONS below is just a curated subset of that range offered
+// in the dropdown (with friendly labels); reader.py/apps.py still
+// accept any value 25-33, this is purely a UI convenience list.
+// ══════════════════════════════════════════
+var POWER_MIN = 25;
+var POWER_MAX = 33;
+var POWER_DEFAULT = 30;
+
+var POWER_OPTIONS = [
+    { v: 25, label: "25 dBm (Low)" },
+    { v: 27, label: "27 dBm" },
+    { v: 29, label: "29 dBm" },
+    { v: 30, label: "30 dBm (Recommended)" },
+    { v: 31, label: "31 dBm" },
+    { v: 32, label: "32 dBm" },
+    { v: 33, label: "33 dBm (Maximum)" }
+];
+
+function powerLabel(v) {
+    var v_int = parseInt(v, 10);
+    var m = POWER_OPTIONS.find(function(p){ return p.v === v_int; });
+    return m ? m.label : (v_int + " dBm");
+}
+
+// ══════════════════════════════════════════
+// LIGHT DIM (brightness, %). RAW config.json "dim" value stays
+// 0-100 (step 10), where 0 = brightest and 100 = dimmest - this is
+// the contract with apps.py / light_pwm.py and MUST NOT change
+// (payload sent to /send and stored in config.json is always the
+// raw value).
+//
+// DISPLAY ONLY: users found "0% = brightest" confusing, so the
+// label shown in the UI is inverted (100 - raw) so it reads more
+// intuitively:
+//   raw dim=0   -> "100% (Brightest)"
+//   raw dim=10  -> "90%"
+//   ...
+//   raw dim=90  -> "10%"
+//   raw dim=100 -> "Off"
+// The <option value="..."> still carries the RAW dim value, so
+// nothing downstream (module.py, apps.py, config.json) changes.
+// ══════════════════════════════════════════
+var DIM_MIN     = 0;
+var DIM_MAX     = 100;
+var DIM_STEP    = 10;
+var DIM_DEFAULT = 0; // raw value = brightest
+
+function dimLabel(v) {
+    // v = RAW dim value (0=brightest ... 100=dimmest), as stored/sent.
+    // Displayed label is inverted for the user: 100%=Brightest, Off=dimmest.
+    v = parseInt(v, 10);
+    var displayPct = DIM_MAX - v;
+    if (displayPct === 0)   return "Off";
+    if (displayPct === 100) return "100% (Brightest)";
+    return displayPct + "%";
+}
+
+// ══════════════════════════════════════════
+// ANTENNA SELECTION
+// This reader is a Silion 8-port E710 module, so antenna 1-8 are
+// offered as independent checkboxes - ANY combination can be
+// selected (just "3" alone, "1,4" together, "2,3,4,5,6,7", all
+// eight, etc). The value sent to /send is exactly the
+// comma-separated list of checked antenna numbers, in order,
+// e.g. "1,4" - reader.py's get_antenna_command() /
+// build_enable_ant_command() accept any such combination (up to
+// 32 per the protocol doc; capped at 8 here to match THIS
+// hardware's physical port count).
+// ══════════════════════════════════════════
+var ANTENNA_MIN = 1;
+var ANTENNA_MAX = 8;
+var ANTENNA_DEFAULT_CHECKED = [1, 2, 3, 4]; // hardware-proven default set
+
+function buildAntennaCheckboxes() {
+    var wrap = document.getElementById("antennaCheckboxGroup");
+    wrap.innerHTML = "";
+    for (var i = ANTENNA_MIN; i <= ANTENNA_MAX; i++) {
+        var id = "ant_chk_" + i;
+        var label = document.createElement("label");
+        var checkedAttr = ANTENNA_DEFAULT_CHECKED.indexOf(i) !== -1 ? " checked" : "";
+        label.innerHTML =
+            '<input type="checkbox" id="' + id + '" value="' + i + '"' + checkedAttr + '> Antenna ' + i;
+        wrap.appendChild(label);
+    }
+}
+buildAntennaCheckboxes();
+
+function getSelectedAntennas() {
+    var ids = [];
+    for (var i = ANTENNA_MIN; i <= ANTENNA_MAX; i++) {
+        var cb = document.getElementById("ant_chk_" + i);
+        if (cb && cb.checked) ids.push(i);
+    }
+    return ids;
+}
+
+function antennaLabel(commaStr) {
+    if (!commaStr) return "(none selected)";
+    var ids = commaStr.split(",").filter(function(x){ return x; });
+    if (ids.length === 0) return "(none selected)";
+    return "Antenna " + ids.join(", ");
+}
+
+// ══════════════════════════════════════════
+// Build range <select> options (Scan Cutoff)
+// ══════════════════════════════════════════
+function buildRangeOptions(selectEl, min, max, unit, step) {
+    step = step || 1;
+    selectEl.innerHTML = "";
+    for (var i = min; i <= max; i += step) {
+        var opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = i + " " + unit;
+        selectEl.appendChild(opt);
+    }
+}
+
+buildRangeOptions(document.getElementById("cutoffValue"), 12, 20, "second(s)");
+
+// Build TX Power <select> options from the curated POWER_OPTIONS list
+// (friendly labels: Low / Recommended / Maximum tags on specific values).
+(function buildPowerOptions() {
+    var sel = document.getElementById("powerValue");
+    sel.innerHTML = "";
+    POWER_OPTIONS.forEach(function(p) {
+        var opt = document.createElement("option");
+        opt.value = p.v;
+        opt.textContent = p.label;
+        sel.appendChild(opt);
+    });
+    sel.value = POWER_DEFAULT;
+})();
+
+// Build Brightness <select> options. The <option value> is always the
+// RAW dim value (0, 10, 20 ... 100) sent to the backend unchanged;
+// only dimLabel() inverts what text is shown, so the list naturally
+// renders top-to-bottom as: 100% (Brightest), 90%, 80% ... 10%, Off.
+(function buildDimOptions() {
+    var sel = document.getElementById("dimValue");
+    sel.innerHTML = "";
+    for (var v = DIM_MIN; v <= DIM_MAX; v += DIM_STEP) {
+        var opt = document.createElement("option");
+        opt.value = v;
+        opt.textContent = dimLabel(v);
+        sel.appendChild(opt);
+    }
+    sel.value = DIM_DEFAULT;
+})();
+
+// Build RF Mode <select> options with friendly labels, in the curated
+// order defined in RF_MODE_TABLE (fastest read rate first).
+(function buildRfModeOptions() {
+    var sel = document.getElementById("rfModeValue");
+    sel.innerHTML = "";
+    RF_MODE_TABLE.forEach(function(r) {
+        var opt = document.createElement("option");
+        opt.value = r.code;
+        opt.textContent = rfModeDropdownText(r);
+        sel.appendChild(opt);
+    });
+    // Default to DC (current production default in reader.py)
+    sel.value = "DC";
+})();
+
+// ══════════════════════════════════════════
+// Advanced (broker) settings - small dot icon, toggles the hidden
+// panel below the Send button. Reads/writes module.json's
+// "ip_broker" via the existing /set_broker endpoint (module.py
+// already implements this - saves to module.json and updates the
+// live CURRENT_BROKER). After a successful change we reload the
+// page so the cabinet dropdown / Read panel automatically pull
+// fresh data from the NEW broker.
+// ══════════════════════════════════════════
+function toggleBrokerPanel() {
+    var panel = document.getElementById("brokerPanel");
+    var isOpen = panel.style.display === "block";
+    panel.style.display = isOpen ? "none" : "block";
+}
+
+function isValidIpv4(ip) {
+    var re = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+    var m = ip.match(re);
+    if (!m) return false;
+    for (var i = 1; i <= 4; i++) {
+        var n = parseInt(m[i], 10);
+        if (n < 0 || n > 255) return false;
+    }
+    return true;
+}
+
+async function updateBrokerIp() {
+    var newIp = document.getElementById("newBrokerInput").value.trim();
+
+    if (!newIp) { showBrokerMsg("✗ New broker IP cannot be empty", false); return; }
+    if (!isValidIpv4(newIp)) { showBrokerMsg("✗ Invalid IP format (e.g. 192.168.137.1)", false); return; }
+
+    showBrokerMsg("⏳ Updating broker...", null);
+    try {
+        var res  = await fetch("/set_broker", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ip_broker: newIp })
+        });
+        var data = await res.json();
+
+        if (data.status === "ok") {
+            showBrokerMsg("✓ " + data.message + " — reloading...", true);
+            // Reload so index() re-runs get_cabinets(CURRENT_BROKER) with
+            // the new broker IP - cabinet dropdown + Read panel refresh
+            // automatically with data from the new broker.
+            setTimeout(function () { location.reload(); }, 1200);
+        } else {
+            showBrokerMsg("✗ " + data.message, false);
+        }
+    } catch (e) {
+        showBrokerMsg("✗ Request error: " + e, false);
+    }
+}
+
+function showBrokerMsg(msg, ok) {
+    var el = document.getElementById("brokerMsg");
+    el.innerText = msg;
+    el.className = ok === true ? "msg ok" : ok === false ? "msg fail" : "msg";
+}
+
+// ══════════════════════════════════════════
+// Mode Toggle: Write / Read
+// ══════════════════════════════════════════
+var _currentMode = "write";
+
+function setMode(mode) {
+    _currentMode = mode;
+    document.getElementById("btnWrite").classList.toggle("active", mode === "write");
+    document.getElementById("btnRead").classList.toggle("active",  mode === "read");
+    document.getElementById("writeSection").style.display = mode === "write" ? "block" : "none";
+    document.getElementById("readSection").style.display  = mode === "read"  ? "block" : "none";
+
+    if (mode === "read") {
+        readAllPolicy();
+    } else {
+        document.getElementById("readMsg").innerText = "";
+        document.getElementById("readAllResults").style.display = "none";
+    }
+}
+
+function onCabinetChange() {
+    if (_currentMode === "read") {
+        readAllPolicy();
+    } else {
+        document.getElementById("readMsg").innerText = "";
+        document.getElementById("readAllResults").style.display = "none";
+    }
+}
+
+// ══════════════════════════════════════════
+// READ ALL POLICY
+// ══════════════════════════════════════════
+var READ_FIELDS = [
+    { key: "hostname",     label: "Hostname" },
+    { key: "version",      label: "Version" },
+    { key: "location",     label: "Location" },
+    { key: "ip_broker",    label: "Server IP" },
+    { key: "rfid_filter",  label: "Tag Filter" },
+    { key: "scan_timeout", label: "Scan Cutoff (s)" },
+    { key: "rf_mode",      label: "RF Mode" },
+    { key: "power",        label: "TX Power" },
+    { key: "dim",          label: "Brightness" },
+    { key: "antenna",      label: "Antenna" },
+    // NOTE: "PORT" (serial device path) intentionally NOT shown - it's
+    // a physical wiring setting, hidden from the network UI on purpose.
+];
+
+async function readAllPolicy() {
+    var cab = document.getElementById("macSelect").value;
+    if (!cab) {
+        showReadMsg("Select Cabinet First", false);
+        document.getElementById("readAllResults").style.display = "none";
+        return;
+    }
+
+    showReadMsg("⏳ Reading all config...", null);
+    document.getElementById("readAllResults").style.display = "none";
+
+    try {
+        var res  = await fetch("/rpi/config/" + encodeURIComponent(cab));
+        var data = await res.json();
+
+        if (!res.ok || data.status === "error") {
+            showReadMsg("✗ " + data.message, false);
+            return;
+        }
+
+        var container = document.getElementById("readAllResults");
+        container.innerHTML = "";
+
+        READ_FIELDS.forEach(function(f) {
+            var val = data[f.key];
+            var displayVal;
+
+            // Special rendering for rf_mode field
+            if (f.key === "rf_mode") {
+                if (val === undefined || val === null || val === "") {
+                    displayVal = "<span style='color:#aaa;font-style:italic;'>—</span>";
+                } else {
+                    var rfInfo = RF_MODE_TABLE.find(function(r){ return r.code === String(val).toUpperCase(); });
+                    displayVal = "<span class='rfmode-badge'>" + (rfInfo ? rfModeDropdownText(rfInfo) : String(val).toUpperCase()) + "</span>";
+                }
+
+            // Special rendering for power field
+            } else if (f.key === "power") {
+                if (val === undefined || val === null || val === "") {
+                    displayVal = "<span style='color:#aaa;font-style:italic;'>—</span>";
+                } else {
+                    displayVal = "<span class='power-badge'>" + powerLabel(val) + "</span>";
+                }
+
+            // Special rendering for dim (brightness) field.
+            // "val" is the RAW dim value from config.json (0=brightest,
+            // 100=dimmest) - dimLabel() inverts it for display only.
+            } else if (f.key === "dim") {
+                if (val === undefined || val === null || val === "") {
+                    displayVal = "<span style='color:#aaa;font-style:italic;'>—</span>";
+                } else {
+                    displayVal = "<span class='dim-badge'>" + dimLabel(val) + "</span>";
+                }
+
+            // Special rendering for antenna field (list of antenna IDs)
+            } else if (f.key === "antenna") {
+                var ants = Array.isArray(val) ? val : [];
+                if (ants.length === 0) {
+                    displayVal = "<span style='color:#aaa;font-style:italic;'>—</span>";
+                } else {
+                    displayVal = ants.map(function(a){
+                        return "<span class='antenna-badge'>ANT " + a + "</span>";
+                    }).join("");
+                }
+
+            // Special rendering for version field (read-only)
+            } else if (f.key === "version") {
+                if (val === undefined || val === null || val === "") {
+                    displayVal = "<span style='color:#aaa;font-style:italic;'>—</span>";
+                } else {
+                    displayVal = "<span class='version-badge'>" + val + "</span>";
+                }
+
+            } else if (val === undefined || val === null) {
+                displayVal = "<span style='color:#aaa;font-style:italic;'>—</span>";
+            } else if (Array.isArray(val)) {
+                displayVal = val.length > 0
+                    ? val.map(function(t){ return "<span style='background:#b2dfdb;color:#004d40;border-radius:20px;padding:2px 8px;font-size:12px;font-weight:700;margin-right:4px;'>" + t + "</span>"; }).join("")
+                    : "<span style='color:#aaa;font-style:italic;'>(empty)</span>";
+            } else {
+                displayVal = "<span style='font-weight:700;color:#004d40;font-size:14px;'>" + val + "</span>";
+            }
+
+            var row = document.createElement("div");
+            row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid #e0f2f1;flex-wrap:wrap;gap:4px;";
+            row.innerHTML = "<span style='font-size:12px;font-weight:700;color:#00796b;text-transform:uppercase;min-width:140px;'>" + f.label + "</span>"
+                          + "<span style='text-align:right;flex:1;'>" + displayVal + "</span>";
+            container.appendChild(row);
+        });
+
+        if (data._rpi_ip) {
+            var ipRow = document.createElement("div");
+            ipRow.style.cssText = "margin-top:8px;font-size:11px;color:#aaa;text-align:right;";
+            ipRow.innerText = "RPi IP: " + data._rpi_ip;
+            container.appendChild(ipRow);
+        }
+
+        container.style.cssText = "display:block;margin-top:10px;background:#e0f2f1;border:1px solid #80cbc4;border-radius:7px;padding:8px 6px;";
+        showReadMsg("✓ Config loaded", true);
+
+    } catch(e) {
+        showReadMsg("✗ Request error: " + e, false);
+    }
+}
+
+function showReadMsg(msg, ok) {
+    var r = document.getElementById("readMsg");
+    r.innerText = msg;
+    r.className = ok === true ? "msg ok" : ok === false ? "msg fail" : "msg";
+}
+
+// ══════════════════════════════════════════
+// Option hints & input visibility (Write mode)
+// ══════════════════════════════════════════
+var HINTS = {
+    "rfid_filter":   "Separate with commas, for example: E2,64,30 (uppercase letters automatically)",
+    "scan_timeout":  "Select a value between 12 – 20 seconds",
+    "hostname":      "",
+    "location":      "",
+    "ip_broker":     "",
+    "reboot":        "",
+    "rf_mode":       "Higher tags/s = faster read but less sensitive (shorter range). Lower tags/s = slower read but more sensitive (longer range). Applying this will reboot the reader.",
+    "power":         "TX power in dBm (25 - 33). Higher power = longer read range but more interference risk. Applying this will reboot the reader.",
+    "dim":           "Lamp brightness level (100% Brightest ... Off = lamp minimum, steps of 10).",
+    "antenna":       "Check any combination of antennas (e.g. just 3, or 1 and 4, or 2 through 7). Only the checked antenna(s) will be enabled. Applying this will reboot the reader.",
+    "shutdown":      "This powers OFF the reader completely. Unlike Reboot, it will NOT come back online on its own - someone has to physically reconnect power. Choose 'All Cabinets' with care.",
+};
+
+var PLACEHOLDERS = {
+    "rfid_filter":   "e.g. E2,64",
+    "hostname":      "Enter new hostname",
+    "location":      "Enter location",
+    "ip_broker":     "Enter broker IP",
+    "reboot":        "",
+    "rf_mode":       "",
+    "power":         "",
+    "dim":           "",
+    "antenna":       "",
+    "shutdown":      "",
+};
+
+function updateInput() {
+    var opt = document.getElementById("option").value;
+    var isReboot   = (opt === "reboot");
+    var isCutoff   = (opt === "scan_timeout");
+    var isRfMode   = (opt === "rf_mode");
+    var isPower    = (opt === "power");
+    var isDim      = (opt === "dim");
+    var isAntenna  = (opt === "antenna");
+    var isShutdown = (opt === "shutdown");
+
+    document.getElementById("inputSection").style.display   = isReboot ? "none"  : "block";
+    document.getElementById("sessionSection").style.display = isReboot ? "block" : "none";
+
+    // Show the right widget for the selected option, hide the rest
+    document.getElementById("cutoffSelectWrapper").style.display        = isCutoff   ? "block" : "none";
+    document.getElementById("rfModeSelectWrapper").style.display        = isRfMode   ? "block" : "none";
+    document.getElementById("powerSelectWrapper").style.display         = isPower    ? "block" : "none";
+    document.getElementById("dimSelectWrapper").style.display           = isDim      ? "block" : "none";
+    document.getElementById("antennaSelectWrapper").style.display       = isAntenna  ? "block" : "none";
+    document.getElementById("shutdownTargetWrapper").style.display      = isShutdown ? "block" : "none";
+    document.getElementById("freeInputWrapper").style.display     =
+        (isCutoff || isRfMode || isPower || isDim || isAntenna || isShutdown) ? "none" : "block";
+
+    var hint = document.getElementById("valueHint");
+    var inp  = document.getElementById("value");
+
+    if (HINTS[opt]) {
+        hint.textContent = HINTS[opt];
+        hint.style.display = "block";
+        hint.classList.toggle("danger-hint", isShutdown);
+    } else {
+        hint.style.display = "none";
+        hint.classList.remove("danger-hint");
+    }
+
+    inp.placeholder = PLACEHOLDERS[opt] || "Enter value";
+    inp.value = "";
+}
+
+// ══════════════════════════════════════════
+// Cabinet Config - Send Command (Write)
+// ══════════════════════════════════════════
+async function sendCommand() {
+    var mac       = document.getElementById("macSelect").value;
+    var option    = document.getElementById("option").value;
+    var sessionId = document.getElementById("sessionId").value.trim();
+
+    // Read from the dedicated dropdown/checkbox for options that have one.
+    // NOTE for "dim": the <select> option value is ALWAYS the raw dim
+    // value (0=brightest..100=dimmest) even though the visible label is
+    // inverted (100%=Brightest..Off) - so this still sends the correct
+    // raw value to /send -> config.json, no conversion needed here.
+    var value;
+    if (option === "scan_timeout") {
+        value = document.getElementById("cutoffValue").value;
+    } else if (option === "rf_mode") {
+        value = document.getElementById("rfModeValue").value;
+    } else if (option === "power") {
+        value = document.getElementById("powerValue").value;
+    } else if (option === "dim") {
+        value = document.getElementById("dimValue").value;
+    } else if (option === "antenna") {
+        value = getSelectedAntennas().join(",");
+    } else if (option === "shutdown") {
+        value = document.getElementById("shutdownTarget").value; // "unit" | "all"
+    } else {
+        value = document.getElementById("value").value.trim();
+    }
+
+    if (!mac) { show("Select cabinet first", false); return; }
+    if (option !== "reboot" && !value) { show("Value cannot be empty", false); return; }
+
+    // Safety check (dropdown already guarantees a valid value, kept as a fallback)
+    if (option === "scan_timeout") {
+        var v = parseInt(value, 10);
+        if (isNaN(v) || v < 12 || v > 20) {
+            show("✗ scan_timeout must be between 12 and 20", false); return;
+        }
+    }
+    if (option === "rf_mode") {
+        var validCodes = RF_MODE_TABLE.map(function(r){ return r.code; });
+        if (validCodes.indexOf(value) === -1) {
+            show("✗ rf_mode must be one of: " + validCodes.join(", "), false); return;
+        }
+    }
+    if (option === "power") {
+        var v = parseInt(value, 10);
+        if (isNaN(v) || v < POWER_MIN || v > POWER_MAX) {
+            show("✗ power must be between " + POWER_MIN + " and " + POWER_MAX + " dBm", false); return;
+        }
+    }
+    if (option === "dim") {
+        var v = parseInt(value, 10);
+        if (isNaN(v) || v < DIM_MIN || v > DIM_MAX || (v % DIM_STEP) !== 0) {
+            show("✗ dim must be between " + DIM_MIN + " and " + DIM_MAX + " in steps of " + DIM_STEP, false); return;
+        }
+    }
+    if (option === "antenna") {
+        var selected = getSelectedAntennas();
+        if (selected.length === 0) {
+            show("✗ Check at least 1 antenna", false); return;
+        }
+    }
+    if (option === "shutdown" && value !== "unit" && value !== "all") {
+        show("✗ Invalid shutdown target", false); return;
+    }
+
+    // Shutdown is destructive and does NOT self-recover like reboot -
+    // the unit(s) stay off until someone physically restores power.
+    // Always force an explicit confirmation before sending, and make
+    // the "All Cabinets" case unmistakably clear.
+    if (option === "shutdown") {
+        var targetLabel = (value === "all") ? "ALL CABINETS" : mac;
+        var confirmMsg  = "This will power OFF " + targetLabel +
+            ". The device will stay off until someone manually reconnects power. Are you sure?";
+        if (!confirm(confirmMsg)) {
+            show("Shutdown cancelled", null);
+            return;
+        }
+    }
+
+    show("Sending...");
+    try {
+        var res  = await fetch("/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mac: mac, option: option, value: value, sessionId: sessionId })
+        });
+        var data = await res.json();
+        if (data.status === "ok") {
+            if (data.newBroker) document.getElementById("manualBroker").value = data.newBroker;
+            if (option === "rf_mode") {
+                show("✓ RF Mode " + rfModeLabel(value) + " applied to " + mac + " (reader will reboot)", true);
+            } else if (option === "power") {
+                show("✓ TX Power " + powerLabel(value) + " applied to " + mac + " (reader will reboot)", true);
+            } else if (option === "dim") {
+                show("✓ Brightness " + dimLabel(value) + " applied to " + mac, true);
+            } else if (option === "antenna") {
+                show("✓ " + antennaLabel(value) + " applied to " + mac + " (reader will reboot)", true);
+            } else if (option === "shutdown") {
+                var targetLabel = (value === "all") ? "all cabinets" : mac;
+                show("✓ Shutdown command sent to " + targetLabel, true);
+            } else {
+                show("✓ Success!", true);
+            }
+        } else {
+            show("✗ " + data.message, false);
+        }
+    } catch(e) {
+        show("✗ Request error: " + e, false);
+    }
+}
+
+function show(msg, ok) {
+    var r = document.getElementById("result");
+    r.innerText  = msg;
+    r.className  = (ok === true) ? "msg ok" : (ok === false ? "msg fail" : "msg");
+}
+
+// Initialize input visibility for the default selected option on load
+updateInput();
+</script>
+</body>
+</html>

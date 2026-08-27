@@ -1,0 +1,13 @@
+{
+  "mac": "MASCAB01B",
+  "macAddress": "88:a2:9e:c0:c8:c7",
+  "hostname": "MASCAB01B",
+  "sessionId": "28219e993d6f4e9c8b51a02188bfe725",
+  "time": "2026-08-26 21:18:02",
+  "Door1": "Close",
+  "Light": "Off",
+  "Lock1": "Lock",
+  "Temperature": "21.4",
+  "Humidity": "89.9",
+  "IP_ETH0": "192.168.137.102"
+}
