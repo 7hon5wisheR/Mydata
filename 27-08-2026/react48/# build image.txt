@@ -1,0 +1,20 @@
+
+# build image
+docker build -t clientcommand .
+
+
+
+docker run -d -p 3000:3000 -p 3001:3001 ^
+  -e HOST_IP=192.168.137.1 ^
+  -e NUMBER_OF_CABINETS=2 ^
+  --name clientcommand clientcommand
+
+
+#auto start after restart
+docker update --restart unless-stopped clientcommand
+
+
+
+
+
+

@@ -1,0 +1,16 @@
+#build images
+docker build -t utilityrftuning .
+
+
+#run docker
+
+
+docker run -d --name utilityrftuning -p 5100:5100 ^
+  -v "%cd%\module.json:/app/module.json" ^
+  -v "%cd%\data:/app/data" ^
+  utilityrftuning
+
+
+
+#auto start after restart
+docker update --restart unless-stopped utilityrftuning

@@ -1,0 +1,63 @@
+coba uopdate ini saya kelitu:kode saya ini keliru, ini apps.py: dan config.json:{ "location": "MASCAB01", "consstring": "", "hostname": "MASCAB01B", "inventory_mode": "AA48", "auto_tune_passes": 3, "auto_tune_quiet_cycles": 2.5, "rssi_threshold": -62, "rssi_threshold_strict": -95, "min_reads_per_scan": 1, "rfid_filter": [ "8600", "6453" ], "scan_timeout": 12, "ip_broker": "192.168.137.1", "PORT": "ttyAMA0", "rf_mode": "2D", "logger": "enable", "version": "1.0.0(7)", "power": 33, "dim": 80, "antenna": [ "1", "2", "3", "4", "5" ] } nah disini saya set dim=80 itu gak boleh diubah sampoe saya ubag lewat api,, nah sekarang saya mau set gini lewat mqtt, ketika saya krim off dalama artian dim =100 seperto ini mosquitto_pub -h 192.168.137.1 -t "in" -m "{"mac":"MASCAB01B","dimlight":"off"}" nah itu jangan sampe merubah value dim =80 di confog.jso karena saya anggap lampu saat itu off, dan ketka saya krim on mosquitto_pub -h 192.168.137.1 -t "in" -m "{"mac":"MASCAB01B","dimlight":"on"}" nahh itu artinya lampunya kembali ke dim-=80.. namiun kenyataannya saat saya kitm off malah mengubnah bvalie dim di config.json nah sekarang saya mau  dim itu dicofing.json nilainya bisa 0-100,,, tapi posisi dim =on nah sedangakn off artinya memang dim =100,, tapi jangan ubah value dim yang saya set,,, jadi saya maunya gini config.json:{
+
+    "location": "MASCAB01",
+
+    "consstring": "",
+
+    "hostname": "MASCAB01B",
+
+    "inventory_mode": "AA48",
+
+    "auto_tune_passes": 3,
+
+    "auto_tune_quiet_cycles": 2.5,
+
+    "rssi_threshold": -62,
+
+    "rssi_threshold_strict": -95,
+
+    "min_reads_per_scan": 1,
+
+    "rfid_filter": [
+
+        "8600",
+
+        "6453"
+
+    ],
+
+    "scan_timeout": 12,
+
+    "ip_broker": "192.168.137.1",
+
+    "PORT": "ttyAMA0",
+
+    "rf_mode": "2D",
+
+    "logger": "enable",
+
+    "version": "1.0.0(7)",
+
+    "power": 33,
+
+    "dim": 80,
+
+    "dimlight":"off",
+
+    "antenna": [
+
+        "1",
+
+        "2",
+
+        "3",
+
+        "4",
+
+        "5"
+
+    ]
+
+}
+
+ nah dimlight =off artinya diset ke dim =100 saat kirm ini kan mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"MASCAB01B\",\"dimlight\":\"off\"}" nah saat kirm mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"MASCAB01B\",\"dimlight\":\"on\"}" maka ini menjadi     "dimlight":"on", dan vluneyta 80,, coba kamu update apps.py full agar  bisa seperri itu

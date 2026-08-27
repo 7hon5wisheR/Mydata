@@ -1,0 +1,21 @@
+#build images
+docker build -t utilitylist .
+
+
+#run docker
+
+
+docker run -d --name utilitylist -p 5100:5100 ^
+  -v "%cd%\module.json:/app/module.json" ^
+  -v "%cd%\data:/app/data" ^
+  utilitylist
+
+
+
+#auto start after restart
+docker update --restart unless-stopped utilitylist
+
+
+docker build -t policyweb .
+docker tag policyweb:latest maspects/policyweb:latest
+docker push maspects/policyweb:latest

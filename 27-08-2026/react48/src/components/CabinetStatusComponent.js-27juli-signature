@@ -1,0 +1,961 @@
+// CabinetStatusComponent.js
+import React, { useState, useEffect, useRef } from "react";
+import io from "socket.io-client";
+import mqtt from "mqtt";
+
+import RebootOnIcon from "./RebootON.png";
+import RebootOffIcon from "./RebootOFF.png";
+import LightOnIcon from "./LightON.png";
+import LightOffIcon from "./LightOFF.png";
+import ScanIcon from "./Scan.png";
+import StopIcon from "./Stop.png";
+import LockIcon from "./Lock.png";
+import UnlockIcon from "./Unlock.png";
+import DiagnosisIcon from "./diagnosis.png";
+import StartSessionIcon from "./Startsession.png";
+import StopSessionIcon from "./Stopsession.png";
+import NowStatus from "./Nowstatus.png";
+
+const apiHost = window.location.hostname || "127.0.0.1";
+
+// ============================================================
+// SINGLE BROKER CONFIG (broker2 removed per request)
+// ============================================================
+const BROKER = { id: "broker1", ws: "ws://20.81.43.213:15675/ws", user: "guest", pass: "guest" };
+//const BROKER = { id: "broker1", ws: "ws://192.168.137.1:15675/ws", user: "guest", pass: "guest" };
+
+// ============================================================
+// SCAN COMMAND SIGNATURE (Startscan / Stopscan)
+//
+// sig = md5(source + eth0_of_target_cabinet_lowercase_WITH_colons + time)
+//
+// - source : reuses `apiHost` (window.location.hostname) defined above -
+//            auto-detected, so the SAME code works regardless of where
+//            this dashboard is deployed.
+// - eth0   : the TARGET cabinet's own eth0 MAC (NOT this browser's) -
+//            taken from cabinets[mac].macAddress, populated from that
+//            cabinet's own periodic status broadcast ("macAddress"
+//            field) received over MQTT topic "out".
+// - time   : "YYYY-MM-DD HH:MM:SS" (local time, with seconds).
+//
+// This is for tracing/identification only - the device never blocks a
+// Startscan/Stopscan based on this, so a missing macAddress (e.g. no
+// status received yet for this cabinet) just means time/sig are
+// omitted from the payload - the command still goes through as normal.
+// ============================================================
+function md5(input) {
+  function rotl(x, n) { return (x << n) | (x >>> (32 - n)); }
+  function toWords(str) {
+    const bytes = new TextEncoder().encode(str);
+    const words = [];
+    for (let i = 0; i < bytes.length; i++) {
+      words[i >> 2] = (words[i >> 2] || 0) | (bytes[i] << ((i % 4) * 8));
+    }
+    return { words, byteLen: bytes.length };
+  }
+  const K = [];
+  for (let i = 0; i < 64; i++) K[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 4294967296);
+  const S = [
+    7,12,17,22, 7,12,17,22, 7,12,17,22, 7,12,17,22,
+    5, 9,14,20, 5, 9,14,20, 5, 9,14,20, 5, 9,14,20,
+    4,11,16,23, 4,11,16,23, 4,11,16,23, 4,11,16,23,
+    6,10,15,21, 6,10,15,21, 6,10,15,21, 6,10,15,21
+  ];
+  const { words, byteLen } = toWords(input);
+  const bitLen = byteLen * 8;
+  words[byteLen >> 2] = (words[byteLen >> 2] || 0) | (0x80 << ((byteLen % 4) * 8));
+  let wordCount = (((byteLen + 8) >> 6) + 1) * 16;
+  words[wordCount - 2] = bitLen >>> 0;
+  words[wordCount - 1] = 0;
+  for (let i = 0; i < wordCount; i++) if (words[i] === undefined) words[i] = 0;
+
+  let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+
+  for (let chunk = 0; chunk < wordCount; chunk += 16) {
+    const M = words.slice(chunk, chunk + 16);
+    let [A, B, C, D] = [a0, b0, c0, d0];
+    for (let i = 0; i < 64; i++) {
+      let F, g;
+      if (i < 16)      { F = (B & C) | (~B & D);        g = i; }
+      else if (i < 32) { F = (D & B) | (~D & C);        g = (5 * i + 1) % 16; }
+      else if (i < 48) { F = B ^ C ^ D;                 g = (3 * i + 5) % 16; }
+      else             { F = C ^ (B | (~D >>> 0));      g = (7 * i) % 16; }
+      F = (F + A + K[i] + (M[g] || 0)) >>> 0;
+      A = D; D = C; C = B;
+      B = (B + rotl(F, S[i])) >>> 0;
+    }
+    a0 = (a0 + A) >>> 0; b0 = (b0 + B) >>> 0; c0 = (c0 + C) >>> 0; d0 = (d0 + D) >>> 0;
+  }
+
+  function toHexLE(n) {
+    let hex = "";
+    for (let i = 0; i < 4; i++) hex += ((n >>> (i * 8)) & 0xff).toString(16).padStart(2, "0");
+    return hex;
+  }
+  return toHexLE(a0) + toHexLE(b0) + toHexLE(c0) + toHexLE(d0);
+}
+
+function formatSigTime(d = new Date()) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+         `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+// Builds { time, sig } for a Startscan/Stopscan command targeting `mac`,
+// or {} if we don't yet know that cabinet's eth0 MAC.
+function buildScanSignature(targetMacAddress) {
+  if (!targetMacAddress) return {};
+  const source = apiHost || "";
+  const eth0   = targetMacAddress.toLowerCase();
+  const time   = formatSigTime();
+  const sig    = md5(`${source}${eth0}${time}`);
+  return { time, sig };
+}
+
+// Always keep cabinet list sorted alphabetically (01A, 01B, 01C, ...)
+// regardless of connect/reconnect order, so a cabinet coming back online
+// doesn't get appended at the end out of sequence.
+const sortMacs = (arr) => [...arr].sort((a, b) => a.localeCompare(b));
+
+export default function CabinetStatusComponent() {
+  const [cabinetMacs, setCabinetMacs] = useState([]);
+  const [BACKEND_MAP, setBACKEND_MAP] = useState({});
+  const [configLoaded, setConfigLoaded] = useState(false);
+  const [selectedCabinet, setSelectedCabinet] = useState("");
+  const [cabinets, setCabinets] = useState({});
+
+  const [diagnosisLog, setDiagnosisLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("diagnosisLog")) || []; }
+    catch { return []; }
+  });
+  const pushDiagnosisLog = (entries) => {
+    setDiagnosisLog(entries.slice(-1000));
+    try { localStorage.setItem("diagnosisLog", JSON.stringify(entries.slice(-1000))); } catch {}
+  };
+
+  const startTimeRef = useRef({});
+  const lastRFIDData = useRef({});
+  const scanningTimeouts = useRef({});
+  const cabinetsRef = useRef({});
+  const scanningActiveRef = useRef({});
+  const stopForcedRef = useRef({});
+  const sessionIdsRef = useRef({});
+
+  // Single MQTT client (was mqttClientsRef map of brokerId -> client)
+  const mqttClientRef = useRef(null);
+
+  const socketRef = useRef(null);
+  const diagnosisInProgressRef = useRef({});
+  const scanTapCounterRef = useRef({});
+  const scanTapTimerRef = useRef({});
+  const pendingOutJsonResolversRef = useRef({});
+  const lastStatusTimeRef = useRef({});
+  const [cabinetStatusAge, setCabinetStatusAge] = useState({});
+
+  const ipToCabinetIdRef = useRef({});
+  const cabinetMacsRef = useRef([]);
+
+  // Buffer for "out" messages that arrived before IP->name mapping was known.
+  // Retried automatically once cabinetMacs/registry updates (fixes silent drops
+  // that used to happen on race between MQTT 'out' and Socket.IO 'cabinet-update').
+  const pendingOutMessagesRef = useRef([]); // [{ payload, addedAt }]
+
+  // Debounced localStorage writer (was a blocking write on every single event)
+  const localStorageWriteTimeoutRef = useRef(null);
+
+  const [showSessionIdBoxClose, setShowSessionIdBoxClose] = useState(false);
+  const [pendingCloseCabinetId, setPendingCloseCabinetId] = useState(null);
+  const [showSessionIdBoxSession, setShowSessionIdBoxSession] = useState(false);
+  const [sessionIdInput, setSessionIdInput] = useState("1233");
+  const [pendingSessionCabinetId, setPendingSessionCabinetId] = useState(null);
+  const [pendingSessionCommand, setPendingSessionCommand] = useState(null);
+  const [customAlert, setCustomAlert] = useState(null);
+  const [customConfirm, setCustomConfirm] = useState(null);
+
+  // ============================================================
+  // SOCKET.IO -- connect once, store in ref
+  // ============================================================
+  useEffect(() => {
+    const socket = io(`http://${apiHost}:3001`);
+    socketRef.current = socket;
+
+    socket.on("cabinet-update", ({ event, registry }) => {
+      console.log("[cabinet-update]", event);
+      const { cabinets: rawNames, nameToIp: n2ip, ipToName: ip2n } = registry;
+      const names = sortMacs(rawNames);
+
+      setCabinetMacs(names);
+      cabinetMacsRef.current = names;
+
+      const newIpMap = {};
+      names.forEach(name => { if (n2ip[name]) newIpMap[n2ip[name]] = name; });
+      ipToCabinetIdRef.current = newIpMap;
+
+      setBACKEND_MAP(prev => {
+        const next = { ...prev };
+        names.forEach(n => { if (!next[n]) next[n] = "rabbit"; });
+        return next;
+      });
+
+      if (event.oldName && event.oldName !== event.newName) {
+        const oldId = event.oldName;
+        const newId = event.newName;
+        const ip = event.ip;
+
+        setCabinets(prev => {
+          if (!prev[oldId]) return prev;
+          const next = { ...prev };
+          next[newId] = { ...next[oldId], hostname: newId, ip };
+          delete next[oldId];
+          cabinetsRef.current = next;
+          scheduleLocalStorageWrite();
+          return next;
+        });
+
+        const migrate = ref => {
+          if (ref.current[oldId] !== undefined) {
+            ref.current[newId] = ref.current[oldId];
+            delete ref.current[oldId];
+          }
+        };
+        [scanningTimeouts, scanningActiveRef, lastRFIDData, startTimeRef,
+         stopForcedRef, sessionIdsRef, scanTapCounterRef, scanTapTimerRef,
+         pendingOutJsonResolversRef, diagnosisInProgressRef].forEach(migrate);
+
+        setSelectedCabinet(prev => prev === oldId ? newId : prev);
+        setBACKEND_MAP(prev => {
+          const n = { ...prev, [newId]: prev[oldId] || "rabbit" };
+          delete n[oldId];
+          return n;
+        });
+
+        // Subscribe new cabinet name on the single broker client
+        const client = mqttClientRef.current;
+        if (client?.connected) client.subscribe(`${newId}/#`, { qos: 0 });
+
+        console.log(`[cabinet-update] Renamed ${oldId} -> ${newId}`);
+      } else if (!event.oldName) {
+        const newId = event.newName;
+        const ip = event.ip;
+
+        setCabinets(prev => {
+          if (prev[newId]) return prev;
+          const stored = JSON.parse(localStorage.getItem("cabinetsState") || "{}");
+          const next = {
+            ...prev,
+            [newId]: stored[newId] || {
+              doorStatus: "Ready", numberOfRFID: null, duration: "---",
+              inventory: [], isLocked: false, lightOn: true,
+              isScanningCommandActive: false, isRebooting: false,
+              isAdmin: false, isSessionActive: false,
+              hostname: newId, ip,
+            }
+          };
+          cabinetsRef.current = next;
+          return next;
+        });
+
+        if (scanningTimeouts.current[newId] === undefined) {
+          scanningTimeouts.current[newId] = null;
+          scanningActiveRef.current[newId] = false;
+          lastRFIDData.current[newId] = null;
+          startTimeRef.current[newId] = null;
+          stopForcedRef.current[newId] = false;
+          sessionIdsRef.current[newId] = null;
+          scanTapCounterRef.current[newId] = 0;
+          scanTapTimerRef.current[newId] = null;
+          pendingOutJsonResolversRef.current[newId] = null;
+          diagnosisInProgressRef.current[newId] = false;
+          lastStatusTimeRef.current[newId] = null;
+        }
+
+        const client = mqttClientRef.current;
+        if (client?.connected) client.subscribe(`${newId}/#`, { qos: 0 });
+
+        console.log(`[cabinet-update] New cabinet: ${newId} (${ip})`);
+      }
+
+      // Retry any "out" messages that previously failed to resolve to a
+      // known cabinet (race between MQTT 'out' and registry sync).
+      retryPendingOutMessages();
+    });
+
+    socket.on("cabinet-removed", ({ removed, registry }) => {
+      console.log("[cabinet-removed]", removed);
+      const { cabinets: rawNames, nameToIp: n2ip } = registry;
+      const names = sortMacs(rawNames);
+
+      setCabinetMacs(names);
+      cabinetMacsRef.current = names;
+
+      const newIpMap = {};
+      names.forEach(name => { if (n2ip[name]) newIpMap[n2ip[name]] = name; });
+      ipToCabinetIdRef.current = newIpMap;
+
+      removed.forEach(({ removedName }) => {
+        setCabinets(prev => {
+          if (!prev[removedName]) return prev;
+          const next = { ...prev };
+          delete next[removedName];
+          cabinetsRef.current = next;
+          scheduleLocalStorageWrite();
+          return next;
+        });
+
+        setSelectedCabinet(prev => prev === removedName ? "" : prev);
+        setBACKEND_MAP(prev => { const next = { ...prev }; delete next[removedName]; return next; });
+
+        console.log(`[cabinet-removed] Removed from UI: ${removedName}`);
+      });
+    });
+
+    return () => { socket.disconnect(); socketRef.current = null; };
+  }, []);
+
+  // ============================================================
+  // FETCH INITIAL CONFIG
+  // ============================================================
+  useEffect(() => {
+    fetch(`http://${apiHost}:3001/api/network-prefix`)
+      .then(r => r.json())
+      .then(data => {
+        const macs = sortMacs(data.cabinets || []);
+        const nameToIp = data.nameToIp || {};
+
+        setCabinetMacs(macs);
+        cabinetMacsRef.current = macs;
+        setBACKEND_MAP(Object.fromEntries(macs.map(m => [m, "rabbit"])));
+
+        const ipMap = {};
+        macs.forEach(mac => { if (nameToIp[mac]) ipMap[nameToIp[mac]] = mac; });
+        ipToCabinetIdRef.current = ipMap;
+
+        const stored = JSON.parse(localStorage.getItem("cabinetsState") || "{}");
+        const initialState = macs.reduce((acc, mac) => {
+          acc[mac] = stored[mac] || {
+            doorStatus: "Ready", numberOfRFID: null, duration: "---",
+            inventory: [], isLocked: false, lightOn: true,
+            isScanningCommandActive: false, isRebooting: false,
+            isAdmin: false, isSessionActive: false,
+            hostname: mac, ip: nameToIp[mac] || "",
+          };
+          return acc;
+        }, {});
+
+        setCabinets(initialState);
+        cabinetsRef.current = initialState;
+
+        macs.forEach(mac => {
+          scanningTimeouts.current[mac] = null;
+          scanningActiveRef.current[mac] = false;
+          lastRFIDData.current[mac] = null;
+          startTimeRef.current[mac] = null;
+          stopForcedRef.current[mac] = false;
+          sessionIdsRef.current[mac] = null;
+          scanTapCounterRef.current[mac] = 0;
+          scanTapTimerRef.current[mac] = null;
+          pendingOutJsonResolversRef.current[mac] = null;
+          diagnosisInProgressRef.current[mac] = false;
+          lastStatusTimeRef.current[mac] = null;
+        });
+
+        setConfigLoaded(true);
+        console.log("Cabinets:", macs);
+        console.log("IP Map:", ipMap);
+      })
+      .catch(err => {
+        console.error("Failed to load config:", err);
+        alert("Cannot load cabinet configuration!\n\nMake sure server is running on port 3001");
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!configLoaded) return;
+    const NO_STATUS_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const ages = {};
+      cabinetMacsRef.current.forEach(mac => {
+        const last = lastStatusTimeRef.current[mac];
+        ages[mac] = (!last || now - last > NO_STATUS_THRESHOLD_MS) ? "no_status" : "active";
+      });
+      setCabinetStatusAge(ages);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [configLoaded]);
+
+  // ============================================================
+  // Cabinets that have gone quiet for more than NO_STATUS_THRESHOLD_MS
+  // are AUTO-HIDDEN from both the status grid and the selector dropdown
+  // (previously they just got a "No Status" label but stayed visible,
+  // which meant e.g. [A, B, C] never visually shrank to [B, C] even
+  // though A had gone silent). They automatically reappear the moment
+  // a new status broadcast is received for them again - nothing here
+  // deletes the underlying cabinet data/state, it only affects what's
+  // rendered right now.
+  // ============================================================
+  const visibleCabinetMacs = cabinetMacs.filter(mac => cabinetStatusAge[mac] !== "no_status");
+
+  // If the currently-selected cabinet just went silent and got hidden,
+  // clear the selection so stale controls don't point at a cabinet the
+  // user can no longer see in the dropdown.
+  useEffect(() => {
+    if (selectedCabinet && !visibleCabinetMacs.includes(selectedCabinet)) {
+      setSelectedCabinet("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cabinetStatusAge]);
+
+  // ============================================================
+  // Debounced localStorage writer.
+  // Writing the full cabinets state (incl. large RFID inventory arrays)
+  // synchronously on every single MQTT message blocks the main thread,
+  // which gets noticeably worse with 3 cabinets reporting at once.
+  // We coalesce writes to at most once every 500ms.
+  // ============================================================
+  const scheduleLocalStorageWrite = () => {
+    if (localStorageWriteTimeoutRef.current) clearTimeout(localStorageWriteTimeoutRef.current);
+    localStorageWriteTimeoutRef.current = setTimeout(() => {
+      try { localStorage.setItem("cabinetsState", JSON.stringify(cabinetsRef.current)); } catch {}
+      localStorageWriteTimeoutRef.current = null;
+    }, 500);
+  };
+
+  const renameCabinet = (oldId, newId, ip) => {
+    if (oldId === newId) return;
+    console.log(`[RENAME] "${oldId}" -> "${newId}"  IP: ${ip}`);
+
+    setCabinetMacs(prev => {
+      const merged = prev.includes(newId)
+        ? prev.filter(m => m !== oldId)
+        : prev.map(m => m === oldId ? newId : m);
+      const next = sortMacs(merged);
+      cabinetMacsRef.current = next;
+      return next;
+    });
+
+    setCabinets(prev => {
+      const next = { ...prev };
+      const old = next[oldId] || {};
+      delete next[oldId];
+      next[newId] = { ...old, hostname: newId, ip };
+      cabinetsRef.current = next;
+      scheduleLocalStorageWrite();
+      return next;
+    });
+
+    const migrate = ref => {
+      if (ref.current[oldId] !== undefined) {
+        ref.current[newId] = ref.current[oldId];
+        delete ref.current[oldId];
+      }
+    };
+    [scanningTimeouts, scanningActiveRef, lastRFIDData, startTimeRef,
+     stopForcedRef, sessionIdsRef, scanTapCounterRef, scanTapTimerRef,
+     pendingOutJsonResolversRef, diagnosisInProgressRef].forEach(migrate);
+
+    if (ip) ipToCabinetIdRef.current[ip] = newId;
+    setSelectedCabinet(prev => prev === oldId ? newId : prev);
+    setBACKEND_MAP(prev => { const n = { ...prev, [newId]: prev[oldId] || "rabbit" }; delete n[oldId]; return n; });
+
+    const client = mqttClientRef.current;
+    if (client?.connected) client.subscribe(`${newId}/#`, { qos: 0 });
+  };
+
+  // ============================================================
+  // resolveOutMac
+  // ============================================================
+  const resolveOutMac = (payload) => {
+    const ip = payload.IP_ETH0 || null;
+    const payloadHostname = payload.hostname || payload.mac || null;
+
+    if (ip && ipToCabinetIdRef.current[ip]) {
+      const knownId = ipToCabinetIdRef.current[ip];
+      const hostnameChanged = payloadHostname && payloadHostname !== knownId;
+      return { resolvedId: knownId, needRename: hostnameChanged, newHostname: hostnameChanged ? payloadHostname : null, ip };
+    }
+
+    const mac = payload.mac || payload.hostname || null;
+    if (mac && cabinetMacsRef.current.includes(mac)) {
+      if (ip && !ipToCabinetIdRef.current[ip]) ipToCabinetIdRef.current[ip] = mac;
+      return { resolvedId: mac, needRename: false, newHostname: null, ip };
+    }
+
+    return { resolvedId: null, needRename: false, newHostname: null, ip };
+  };
+
+  // Retry "out" messages that previously failed to resolve to a known
+  // cabinet (e.g. arrived before the registry/IP map was synced).
+  // Drops anything older than 10s so the buffer never grows unbounded.
+  //
+  // NOTE: previously this used `Buffer.from(JSON.stringify(payload))`.
+  // `Buffer` is a Node.js global and does not exist in the browser unless
+  // explicitly polyfilled (CRA/webpack 5 no longer auto-polyfills it),
+  // which caused "ReferenceError: Buffer is not defined" the moment this
+  // retry path actually ran (i.e. after a rename/IP-change race), crashing
+  // the whole app. handleMqttMessage only ever calls buf.toString(), and a
+  // plain string already satisfies that, so we just pass the JSON string.
+  const retryPendingOutMessages = () => {
+    if (pendingOutMessagesRef.current.length === 0) return;
+    const now = Date.now();
+    const toRetry = pendingOutMessagesRef.current.filter(p => now - p.addedAt < 10000);
+    pendingOutMessagesRef.current = [];
+    toRetry.forEach(({ payload }) => {
+      handleMqttMessage("out", JSON.stringify(payload));
+    });
+  };
+
+  const updateCabinet = (mac, changes) => {
+    setCabinets(prev => {
+      const next = { ...prev, [mac]: { ...prev[mac], ...changes } };
+      cabinetsRef.current = next;
+      scheduleLocalStorageWrite();
+      return next;
+    });
+  };
+
+  const applySessionFromStatus = (mac, sessionId) => {
+    if (sessionId === undefined) return;
+    sessionIdsRef.current[mac] = sessionId || null;
+    updateCabinet(mac, { isSessionActive: !!sessionId });
+  };
+
+  const showAlert = msg => { setCustomAlert({ message: msg }); setTimeout(() => setCustomAlert(null), 1500); };
+  const showConfirm = (msg, cb) => setCustomConfirm({ message: msg, onConfirm: cb });
+
+  const handleRebootClick = cabinetId => {
+    if (!cabinets[cabinetId]?.isAdmin) { showAlert("Only admin can reboot!"); return; }
+    showConfirm(`Reboot cabinet ${cabinetId}?`, async () => {
+      await sendCommand(cabinetId, "reboot");
+      showAlert(`Cabinet ${cabinetId} is rebooting...`);
+    });
+  };
+
+  // ============================================================
+  // MQTT MESSAGE HANDLER (single broker now -- no brokerId param needed,
+  // kept signature minimal: topic + raw buffer)
+  // ============================================================
+  const handleMqttMessage = (topic, buf) => {
+    const msgStr = buf.toString();
+    let payload;
+    try {
+      payload = JSON.parse(msgStr);
+    } catch (e) {
+      console.error(`[MQTT PARSE FAIL] topic=${topic} len=${msgStr.length} err=${e.message}`);
+      console.error(`[MQTT PARSE FAIL] raw (first 300 chars):`, msgStr.slice(0, 300));
+      payload = msgStr;
+    }
+
+    const macFromTopic = cabinetMacsRef.current.find(m => topic.startsWith(`${m}/`));
+    if (!macFromTopic && topic !== "out" && topic !== "in") return;
+
+    let mac = macFromTopic;
+    console.log(`MQTT <-`, topic, payload);
+
+    if (topic === "in") {
+      if (payload?.cmd?.toLowerCase() === "reboot" && payload.mac && cabinetMacsRef.current.includes(payload.mac))
+        updateCabinet(payload.mac, { doorStatus: "Rebooting", numberOfRFID: null, duration: "---", inventory: [], isScanningCommandActive: false, isRebooting: true, lightOn: true, isLocked: false });
+      return;
+    }
+
+    if (topic === "out") {
+      if (!payload || typeof payload !== "object") {
+        console.warn(`[OUT DROPPED] non-object payload, type=${typeof payload}, raw=${msgStr.slice(0, 200)}`);
+        return;
+      }
+
+      if (socketRef.current) socketRef.current.emit("mqtt-out", payload);
+
+      const { resolvedId, needRename, newHostname, ip } = resolveOutMac(payload);
+
+      if (!resolvedId) {
+        console.warn(`[OUT pending] mac=${payload.mac} ip=${payload.IP_ETH0} -- buffering for retry`);
+        pendingOutMessagesRef.current.push({ payload, addedAt: Date.now() });
+        // keep buffer bounded
+        pendingOutMessagesRef.current = pendingOutMessagesRef.current.filter(p => Date.now() - p.addedAt < 10000);
+        return;
+      }
+
+      if (needRename && newHostname) {
+        showAlert(`Hostname changed: ${resolvedId} -> ${newHostname}`);
+        renameCabinet(resolvedId, newHostname, ip);
+        mac = newHostname;
+      } else {
+        mac = resolvedId;
+      }
+
+      // INVENTORY
+      if ("macaddress" in payload) {
+        const dur = payload.duration !== undefined ? `${payload.duration} S` : "---";
+        updateCabinet(mac, { doorStatus: "Ready", numberOfRFID: payload.count ?? null, duration: ` ${dur}`, inventory: payload.inventory || [], isScanningCommandActive: false, isRebooting: false, hostname: payload.hostname || mac, lightOn: payload.Light === "On", isLocked: payload.Lock1 === "Lock", ip: ip || "", macAddress: payload.macaddress || payload.macAddress || cabinetsRef.current[mac]?.macAddress || "" });
+        lastRFIDData.current[mac] = payload.count ?? null;
+        scanningActiveRef.current[mac] = false;
+        if (scanningTimeouts.current[mac]) { clearTimeout(scanningTimeouts.current[mac]); scanningTimeouts.current[mac] = null; }
+        const resolver = pendingOutJsonResolversRef.current[mac];
+        if (resolver) { pendingOutJsonResolversRef.current[mac] = null; resolver({ success: true, data: payload }); }
+        return;
+      }
+
+      // STATUS OBJECT
+      if ("Light" in payload || "Lock1" in payload || "Door1" in payload) {
+        lastStatusTimeRef.current[mac] = Date.now();
+        setCabinetStatusAge(prev => ({ ...prev, [mac]: "active" }));
+        if (diagnosisInProgressRef.current[mac]) return;
+        if ("sessionId" in payload) applySessionFromStatus(mac, payload.sessionId);
+        updateCabinet(mac, { hostname: payload.hostname || mac, lightOn: payload.Light === "On", isLocked: payload.Lock1 === "Lock", isAdmin: !!payload.admin, ip: ip || cabinetsRef.current[mac]?.ip || "", macAddress: payload.macAddress || cabinetsRef.current[mac]?.macAddress || "" });
+        if (payload.Door1 === "Open") {
+          scanningActiveRef.current[mac] = false;
+          if (scanningTimeouts.current[mac]) clearTimeout(scanningTimeouts.current[mac]);
+          updateCabinet(mac, { doorStatus: "Open", numberOfRFID: payload.count ?? lastRFIDData.current[mac] ?? null, duration: ` ${payload.duration ?? "---"} S`, inventory: [], isRebooting: false });
+        }
+        return;
+      }
+
+      // Simple string
+      const str = typeof payload === "string" ? payload : payload?.cmd || "";
+      if (str === "Open") {
+        if (scanningTimeouts.current[mac]) clearTimeout(scanningTimeouts.current[mac]);
+        scanningActiveRef.current[mac] = false;
+        updateCabinet(mac, { doorStatus: "Open", numberOfRFID: null, duration: "---", inventory: [] });
+      } else if (str === "Close") {
+        updateCabinet(mac, { doorStatus: "Close", numberOfRFID: null, duration: "---", inventory: [] });
+        if (scanningTimeouts.current[mac]) clearTimeout(scanningTimeouts.current[mac]);
+        setPendingCloseCabinetId(mac); setSessionIdInput("1233"); setShowSessionIdBoxClose(true);
+        scanningTimeouts.current[mac] = setTimeout(() => {
+          if (!scanningActiveRef.current[mac]) updateCabinet(mac, { doorStatus: "Ready", numberOfRFID: lastRFIDData.current[mac] || null, duration: "---", inventory: [], isRebooting: false });
+          scanningTimeouts.current[mac] = null;
+        }, 30000);
+      } else if (str === "Scanning") {
+        updateCabinet(mac, { doorStatus: "Scanning", numberOfRFID: null, duration: "---", inventory: [] });
+        if (scanningTimeouts.current[mac]) clearTimeout(scanningTimeouts.current[mac]);
+        scanningTimeouts.current[mac] = setTimeout(() => {
+          if (!stopForcedRef.current[mac]) { scanningActiveRef.current[mac] = true; if (!startTimeRef.current[mac]) startTimeRef.current[mac] = Date.now(); if (payload?.sessionId) sessionIdsRef.current[mac] = payload.sessionId; }
+          scanningTimeouts.current[mac] = null;
+        }, 1000);
+      } else if (str === "Ready") {
+        if (scanningTimeouts.current[mac]) clearTimeout(scanningTimeouts.current[mac]);
+        scanningActiveRef.current[mac] = false;
+        updateCabinet(mac, { doorStatus: "Ready", numberOfRFID: lastRFIDData.current[mac] || null, duration: "---", inventory: [], isRebooting: false });
+      }
+      return;
+    }
+
+    if (!mac) return;
+    if (topic === `${mac}/reboot` || payload?.cmd?.toLowerCase() === "reboot") {
+      if (!payload?.mac || payload.mac === mac) updateCabinet(mac, { doorStatus: "Rebooting", numberOfRFID: null, duration: "---", inventory: [], isScanningCommandActive: false, isRebooting: true, lightOn: true, isLocked: false });
+    }
+    if (topic === `${mac}/inRfidnumber`) updateCabinet(mac, { numberOfRFID: payload });
+    if (topic === `${mac}/session-update`) {
+      if (payload?.error) alert(payload.error);
+      else if (payload?.active) { sessionIdsRef.current[mac] = payload.sessionId; updateCabinet(mac, { isSessionActive: true }); }
+      else { sessionIdsRef.current[mac] = null; updateCabinet(mac, { isSessionActive: false }); }
+    }
+    if (topic === "reboot-broadcast" && payload?.mac && cabinetMacsRef.current.includes(payload.mac))
+      updateCabinet(payload.mac, { doorStatus: "Rebooting", numberOfRFID: null, duration: "---", inventory: [], isScanningCommandActive: false, isRebooting: true, lightOn: true, isLocked: false });
+  };
+
+  // ============================================================
+  // MQTT -- connect to the SINGLE broker (20.81.43.213 only)
+  // ============================================================
+  useEffect(() => {
+    if (!configLoaded || cabinetMacs.length === 0) return;
+
+    const client = mqtt.connect(BROKER.ws, {
+      username: BROKER.user,
+      password: BROKER.pass,
+      reconnectPeriod: 3000,
+      connectTimeout: 30_000,
+    });
+
+    client.on("connect", () => {
+      console.log(`MQTT connected -> ${BROKER.ws}`);
+      cabinetMacsRef.current.forEach(mac => client.subscribe(`${mac}/#`, { qos: 0 }));
+      client.subscribe("out", { qos: 0 });
+      client.subscribe("in", { qos: 0 });
+    });
+
+    client.on("message", (topic, buf) => handleMqttMessage(topic, buf));
+    client.on("error", e => console.error(`MQTT Error:`, e));
+    client.on("reconnect", () => console.log(`MQTT reconnecting...`));
+    client.on("offline", () => console.log(`MQTT offline`));
+
+    mqttClientRef.current = client;
+
+    return () => {
+      try { client.end(true); } catch {}
+      mqttClientRef.current = null;
+    };
+  }, [configLoaded, cabinetMacs]);
+
+  // ============================================================
+  // publishMqtt -- single broker, with HTTP fallback if disconnected
+  // (cabinetId param kept for call-site compatibility, no longer used
+  // for broker routing since there's only one broker now)
+  // ============================================================
+  const publishMqtt = (topic, message, cabinetId = null) => {
+    const msgStr = typeof message === "string" ? message : JSON.stringify(message);
+    const client = mqttClientRef.current;
+
+    if (client?.connected) {
+      console.log(`publishMqtt -> ${topic}`);
+      try {
+        client.publish(topic, msgStr);
+        return Promise.resolve();
+      } catch (e) {
+        console.error("Publish failed:", e);
+      }
+    }
+
+    // Fallback to HTTP if not connected
+    const mac = cabinetId || topic.split("/")[0];
+    return fetch(`http://${apiHost}:3001/api/command`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mac, topic, message }),
+    }).catch(e => console.error("HTTP Fallback failed:", e));
+  };
+
+  const BROADCAST_ALL = true;
+
+  const sendCommand = async (cabinetId, command, sessionId = null) => {
+    let topic = "", message = "";
+    const targetMac = BROADCAST_ALL ? "all" : cabinetId;
+    const backend = BACKEND_MAP[cabinetId] || "rabbit";
+    if (sessionId) sessionIdsRef.current[cabinetId] = sessionId;
+    const sid = sessionIdsRef.current[cabinetId] || "";
+
+    const post = (body) => fetch(`http://${apiHost}:3001/api/command`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(console.error);
+
+    if (command === "startsession") { topic = `${cabinetId}/in`; message = { cmd: "Start", sessionId: sid }; updateCabinet(cabinetId, { isSessionActive: true }); await post({ mac: cabinetId, topic, message }); }
+    else if (command === "stopsession") { topic = `${cabinetId}/in`; message = { cmd: "Stopsession", sessionId: sid }; updateCabinet(cabinetId, { isSessionActive: false }); await post({ mac: cabinetId, topic, message }); }
+    else if (command === "scan") {
+      topic = "in"; message = { rfid: "Startscan", sessionId: sid, mac: cabinetId, ...buildScanSignature(cabinetsRef.current[cabinetId]?.macAddress) };
+      updateCabinet(cabinetId, { doorStatus: "Open", numberOfRFID: null, duration: "---", inventory: [], isScanningCommandActive: true });
+      scanningActiveRef.current[cabinetId] = false; stopForcedRef.current[cabinetId] = false;
+      if (scanningTimeouts.current[cabinetId]) { clearTimeout(scanningTimeouts.current[cabinetId]); scanningTimeouts.current[cabinetId] = null; }
+      startTimeRef.current[cabinetId] = Date.now();
+      await publishMqtt(topic, message, cabinetId);
+      scanningTimeouts.current[cabinetId] = setTimeout(() => {
+        scanningTimeouts.current[cabinetId] = null;
+        if (!stopForcedRef.current[cabinetId] && !scanningActiveRef.current[cabinetId])
+          updateCabinet(cabinetId, { doorStatus: "Close", numberOfRFID: null, duration: "---", inventory: [] });
+      }, 2000);
+      return;
+    }
+    else if (command === "close") { topic = "in"; message = { rfid: "Stopscan", sessionId: sid, mac: cabinetId, ...buildScanSignature(cabinetsRef.current[cabinetId]?.macAddress) }; updateCabinet(cabinetId, { isScanningCommandActive: false, doorStatus: "Ready" }); }
+    else if (command === "nowstatus") { topic = "in"; message = { cmd: "NowStatus", sessionId: sid, mac: targetMac }; }
+    else if (command === "lock") { topic = "in"; message = { lock: "Lock", sessionId: sid, mac: targetMac }; }
+    else if (command === "unlock") { topic = "in"; message = { lock: "Unlock", sessionId: sid, mac: targetMac }; }
+    else if (command === "lighton") { topic = "in"; message = { light: "On", sessionId: sid, mac: targetMac }; updateCabinet(cabinetId, { lightOn: true }); }
+    else if (command === "lightoff") { topic = "in"; message = { light: "Off", sessionId: sid, mac: targetMac }; updateCabinet(cabinetId, { lightOn: false }); }
+    else if (command === "reboot") { topic = `${cabinetId}/reboot`; message = "Reboot"; updateCabinet(cabinetId, { doorStatus: "Rebooting", numberOfRFID: null, duration: "---", inventory: [], isScanningCommandActive: false, isRebooting: true, lightOn: false, isLocked: false }); }
+    else if (command === "diagnosis") {
+      topic = `${cabinetId}/in`; message = { cmd: "Scan", sessionId: sid };
+      await publishMqtt(topic, message, cabinetId);
+      return;
+    }
+
+    if (backend === "rabbit" && topic && message !== undefined) {
+      await publishMqtt(topic, message, cabinetId);
+      if (command === "startsession") await publishMqtt(`${cabinetId}/session-update`, { active: true, sessionId: sessionId || sid }, cabinetId);
+      else if (command === "stopsession") await publishMqtt(`${cabinetId}/session-update`, { active: false }, cabinetId);
+    }
+  };
+
+  const getStatusClassName = s => ({ Ready: "cabinet-item ready", Open: "cabinet-item open", Close: "cabinet-item close", Scanning: "cabinet-item scanning", Rebooting: "cabinet-item scanning" }[s] || "cabinet-item");
+
+  const btnStyle = { width: "60px", height: "60px", background: "none", border: "2px solid green", borderRadius: "6px", marginTop: "6px" };
+  const passwordBoxStyle = { position: "fixed", top: "20px", left: "50%", transform: "translateX(-50%)", background: "lightgreen", padding: "16px 20px", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.3)", zIndex: 3000, textAlign: "center", fontSize: "14px", width: "260px", animation: "fadeInDown 0.3s ease" };
+  const okBtnStyle = { marginRight: "10px", padding: "5px 12px", background: "green", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" };
+  const cancelBtnStyle = { padding: "5px 12px", background: "red", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" };
+  const modalBoxStyle = { position: "fixed", top: "20px", left: "50%", transform: "translateX(-50%)", background: "lightgreen", padding: "12px 18px", borderRadius: "6px", boxShadow: "0 2px 6px rgba(0,0,0,0.3)", zIndex: 2000, textAlign: "center", fontSize: "14px", width: "220px", animation: "slideDown 0.3s ease-out" };
+  const modalButton = { margin: "8px 4px 0 4px", padding: "4px 10px", fontSize: "13px", border: "none", borderRadius: "4px", cursor: "pointer", color: "white" };
+  const okButton = { ...modalButton, background: "green" };
+  const cancelButton = { ...modalButton, background: "red" };
+
+  useEffect(() => { if (showSessionIdBoxSession && !sessionIdInput) setSessionIdInput("1233"); }, [showSessionIdBoxSession]);
+
+  const waitForOutJson = (mac, timeoutMs = 300000) => new Promise(resolve => {
+    if (pendingOutJsonResolversRef.current[mac]) { try { pendingOutJsonResolversRef.current[mac]({ success: false, timeout: true }); } catch {} pendingOutJsonResolversRef.current[mac] = null; }
+    let done = false;
+    const timer = setTimeout(() => { if (done) return; done = true; pendingOutJsonResolversRef.current[mac] = null; resolve({ success: false, timeout: true }); }, timeoutMs);
+    pendingOutJsonResolversRef.current[mac] = result => { if (done) return; done = true; clearTimeout(timer); resolve(result); };
+  });
+
+  const runDiagnosis = async (mac, rounds = 10) => {
+    if (!mac) { showAlert("Please select a cabinet first!"); return; }
+    if (diagnosisInProgressRef.current[mac]) { showAlert("Diagnosis already in progress"); return; }
+    diagnosisInProgressRef.current[mac] = true;
+    let localEntries = []; pushDiagnosisLog([]); showAlert(`Diagnosis started (${rounds} scans max)`);
+    let maxPerScanObserved = 0, cumulativeSum = 0, validScanCount = 0;
+    for (let i = 1; i <= rounds; i++) {
+      try { await sendCommand(mac, "scan"); } catch {}
+      const res = await waitForOutJson(mac, 300000);
+      const formatted = new Date().toLocaleString("en-CA", { hour12: false }).replace(",", "");
+      if (res?.success && typeof res.data?.count === "number" && res.data.count > 0) {
+        const count = Number(res.data.count), duration = res.data.duration || 0;
+        validScanCount++; cumulativeSum += count; if (count > maxPerScanObserved) maxPerScanObserved = count;
+        const cumulativeMax = (maxPerScanObserved * validScanCount) || 1;
+        let pv = (cumulativeSum / cumulativeMax) * 100; if (!isFinite(pv)) pv = 0;
+        const pt = Number.isInteger(pv) ? `${pv}%` : `${pv.toFixed(2)}%`;
+        const entry = { macaddress: mac, sessionId: sessionIdsRef.current[mac] || "", time: formatted, roundAttempt: i, count, duration, valid: true, validScanIndex: validScanCount, cumulativeSum, maxPerScanObserved, cumulativeMax, percentValue: Math.round(pv * 100) / 100, percentText: pt };
+        localEntries.push(entry); pushDiagnosisLog(localEntries); showAlert(`Scan ${i} -> ${count} tags (${pt})`);
+      } else {
+        const entry = { macaddress: mac, sessionId: sessionIdsRef.current[mac] || "", time: formatted, roundAttempt: i, count: res?.data?.count ?? 0, duration: res?.data?.duration ?? 0, valid: false, timeout: !!res?.timeout };
+        localEntries.push(entry); pushDiagnosisLog(localEntries); showAlert(entry.timeout ? `Scan ${i} TIMEOUT` : `Scan ${i} failed`);
+      }
+      await new Promise(r => setTimeout(r, 300));
+    }
+    diagnosisInProgressRef.current[mac] = false;
+    const ve = localEntries.filter(e => e.valid);
+    const fSum = ve.reduce((s, e) => s + (e.count || 0), 0);
+    const fMax = ve.reduce((m, e) => Math.max(m, e.maxPerScanObserved || e.count || 0), 0);
+    const fCM = (fMax * ve.length) || 1;
+    const fP = fCM ? (fSum / fCM) * 100 : 0;
+    const fPT = Number.isInteger(fP) ? `${fP}%` : `${fP.toFixed(2)}%`;
+    const summary = { summary: true, validScanCount: ve.length, cumulativeSum: fSum, maxPerScanObserved: fMax, cumulativeMax: fCM, percentValue: Math.round(fP * 100) / 100, percentText: fPT, roundsAttempted: rounds, timestamp: new Date().toISOString() };
+    pushDiagnosisLog([...localEntries, summary]); showAlert("Diagnosis finished");
+  };
+
+  const handleScanClick = async (mac) => {
+    if (!mac) { showAlert("Please select a cabinet first!"); return; }
+    scanTapCounterRef.current[mac] = (scanTapCounterRef.current[mac] || 0) + 1;
+    if (scanTapTimerRef.current[mac]) clearTimeout(scanTapTimerRef.current[mac]);
+    scanTapTimerRef.current[mac] = setTimeout(() => { scanTapCounterRef.current[mac] = 0; }, 2000);
+    const cab = cabinets[mac];
+    if (!cab.isScanningCommandActive && cab.doorStatus === "Ready") { await sendCommand(mac, "scan"); showAlert("Scan started"); }
+    else { await sendCommand(mac, "close"); showAlert("Stop scan successful"); }
+  };
+
+  if (!configLoaded || cabinetMacs.length === 0) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", fontSize: "18px", flexDirection: "column", gap: "20px" }}>
+        <div>Loading cabinet configuration from server...</div>
+        <div style={{ fontSize: "14px", color: "#666" }}>Make sure backend server is running on port 3001</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="main-layout">
+      <div className="cabinet-container">
+        {visibleCabinetMacs.map(cabinetId => {
+          const cab = cabinets[cabinetId];
+          if (!cab) return null;
+          return (
+            <div key={cabinetId} className="cabinet-item">
+              <div className={getStatusClassName(cab.doorStatus)}>
+                <div className="cabinet-id">
+                  <div className="cabinet-hostname">{cab.hostname || cabinetId}</div>
+                </div>
+                <div className="status-container">
+                  <div className="status-text">{cab.doorStatus}</div>
+                  <div className="ready-number">{cab.numberOfRFID ?? "---"}</div>
+                  <div className="duration-text">Duration: {cab.duration}</div>
+                  <div style={{ fontSize: "8px", color: "white", marginTop: "3px", letterSpacing: "0.5px", height: "12px" }}>
+                    {cabinetStatusAge[cabinetId] === "no_status" ? "\u26A0 No Status" : cabinetStatusAge[cabinetId] === "active" ? "\u25CF Active" : ""}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="divider-dotted"></div>
+
+      <div className="control-panel">
+        <div className="cabinet-selector">
+          <label htmlFor="cabinetSelect"><b>Cabinet:</b></label>
+          <select id="cabinetSelect" value={selectedCabinet || ""} onChange={e => setSelectedCabinet(e.target.value)}>
+            <option value="">Select cabinet</option>
+            {visibleCabinetMacs.map(cabId => (
+              <option key={cabId} value={cabId}>{cabinets[cabId]?.hostname || cabId}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="button-group">
+          <button onClick={() => handleScanClick(selectedCabinet)} style={btnStyle} disabled={!selectedCabinet || cabinets[selectedCabinet]?.doorStatus === "Open"}>
+            <img src={selectedCabinet && cabinets[selectedCabinet]?.isScanningCommandActive ? StopIcon : ScanIcon} alt="Scan" style={{ width: "40px", height: "40px" }} />
+          </button>
+
+          <button onClick={() => {
+            if (!selectedCabinet) { showAlert("Please select a cabinet first!"); return; }
+            sendCommand(selectedCabinet, "nowstatus");
+            showAlert("NowStatus requested");
+          }} style={btnStyle} title="Request Now Status">
+            <img src={NowStatus} alt="NowStatus" style={{ width: "40px", height: "40px" }} />
+          </button>
+
+          <button onClick={() => { if (!selectedCabinet) { showAlert("Please select a cabinet first!"); return; } runDiagnosis(selectedCabinet, 10); }}
+            style={{ ...btnStyle, border: "2px solid orange", padding: "4px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
+            disabled={!selectedCabinet || cabinets[selectedCabinet]?.doorStatus === "Open"}>
+            <img src={DiagnosisIcon} alt="Diagnosis" style={{ width: "40px", height: "40px", marginBottom: "4px" }} />
+            <div style={{ fontSize: "14px", fontWeight: "bold", color: "orange", marginTop: "2px" }}>
+              {(() => {
+                if (!diagnosisLog?.length) return "0%";
+                const last = diagnosisLog[diagnosisLog.length - 1];
+                if (last?.summary && last.percentText) return last.percentText;
+                for (let i = diagnosisLog.length - 1; i >= 0; i--) { const e = diagnosisLog[i]; if ((e?.valid || e?.summary) && e?.percentText) return e.percentText; }
+                return "0%";
+              })()}
+            </div>
+          </button>
+
+          <button onClick={() => {
+            if (!selectedCabinet) { showAlert("Please select a cabinet first!"); return; }
+            const cab = cabinets[selectedCabinet];
+            if (cab.lightOn) { sendCommand(selectedCabinet, "lightoff"); showAlert("Light IS OFF"); }
+            else { sendCommand(selectedCabinet, "lighton"); showAlert("Light IS ON"); }
+          }} style={btnStyle}>
+            <img src={selectedCabinet && cabinets[selectedCabinet]?.lightOn ? LightOffIcon : LightOnIcon} alt="Light" style={{ width: "40px", height: "40px" }} />
+          </button>
+
+          <button onClick={() => {
+            if (!selectedCabinet) { showAlert("Please select a cabinet first!"); return; }
+            const cab = cabinets[selectedCabinet];
+            if (cab.isLocked) { sendCommand(selectedCabinet, "unlock"); updateCabinet(selectedCabinet, { isLocked: false }); showAlert("LOCK1 IS UNLOCKED"); }
+            else { sendCommand(selectedCabinet, "lock"); updateCabinet(selectedCabinet, { isLocked: true }); showAlert("LOCK1 IS LOCKED"); }
+          }} style={btnStyle}>
+            <img src={selectedCabinet && cabinets[selectedCabinet]?.isLocked ? UnlockIcon : LockIcon} alt="Lock" style={{ width: "40px", height: "50px" }} />
+          </button>
+        </div>
+      </div>
+
+      {showSessionIdBoxSession && (
+        <div style={passwordBoxStyle}>
+          <div style={{ marginBottom: "10px" }}>{pendingSessionCommand === "startsession" ? "Enter Session ID to Start:" : "Enter Session ID to Stop:"}</div>
+          <input type="text" value={sessionIdInput} onChange={e => setSessionIdInput(e.target.value)} />
+          <div style={{ marginTop: "10px" }}>
+            <button onClick={async () => {
+              const newSessionId = sessionIdInput.trim();
+              if (pendingSessionCommand === "startsession") {
+                if (!newSessionId) { showAlert("Session ID cannot be empty!"); return; }
+                for (const mac of cabinetMacs) { sessionIdsRef.current[mac] = newSessionId; await sendCommand(mac, "startsession", newSessionId); updateCabinet(mac, { isSessionActive: true }); }
+                showAlert(`Session ID ${newSessionId} is Active Now`);
+              } else {
+                for (const mac of cabinetMacs) { await sendCommand(mac, "stopsession", sessionIdsRef.current[mac]); sessionIdsRef.current[mac] = null; updateCabinet(mac, { isSessionActive: false }); }
+                showAlert("All session Stopped");
+              }
+              setShowSessionIdBoxSession(false);
+            }} style={okBtnStyle}>OK</button>
+            <button onClick={() => setShowSessionIdBoxSession(false)} style={cancelBtnStyle}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {customAlert && <div className="custom-alert"><span className="checkmark">&#10003;</span><span>{customAlert.message}</span></div>}
+
+      {customConfirm && (
+        <div style={modalBoxStyle}>
+          <div style={{ marginBottom: "8px" }}>{customConfirm.message}</div>
+          <div>
+            <button style={okButton} onClick={() => { customConfirm.onConfirm(); setCustomConfirm(null); }}>OK</button>
+            <button style={cancelButton} onClick={() => setCustomConfirm(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,22 @@
+
+
+struktur
+
+broker
+-library
+ --reader.py
+ --mqtts.py
+ --light.py
+ --door.py
+ --temperature.py
+ --humidity.py
+ --startstop.py
+ --status.py
+
+-apps.py
+-radarscancontrol.py
+-switchstatus.py
+-lightlockcontrol.py
+-light_pwm.py
+-run.py
+-send.py
