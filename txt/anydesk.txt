@@ -1,0 +1,58 @@
+docket hub
+ 
+muhamammad.rahim@mobileaspects.com
+ 
+[ass: M1t1g@t0r
+ 
+username : maspects
+ 
+
+1239998676
+1684577025
+95-0061-00@ad
+1794616883
+
+ssh alice@192.168.137.101
+ssh alice@192.168.137.102
+ssh alice@192.168.137.103
+
+15203
+@s3n9k4n9
+M1t1g@t0r
+7h0n5w15h3r
+pitucode bandepinataku passwordku
+
+
+"C:\Program Files\mosquitto\mosquitto_sub.exe" -h 20.81.43.213 -p 1883 -t "#" -v
+mosquitto_sub -h 192.168.137.1 -p 1883 -t "#" -v
+
+
+mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"MASCAB01B\",\"light\":\"off\"}"
+mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"MASCAB01B\",\"light\":\"on\"}"
+
+mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"all\",\"light\":\"off\"}"
+mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"all\",\"light\":\"on\"}"
+
+sudo systemctl daemon-reload
+sudo systemctl enable send.service
+
+
+sudo systemctl start send.service
+
+
+sudo systemctl stop send.service
+sudo systemctl enable send.service
+sudo systemctl start send.service
+
+
+sudo systemctl disable send.service
+
+
+docker tag policyweb:latest maspects/policyweb:latest
+docker push maspects/policyweb:latest
+
+docker tag react:latest maspects/react:latest
+docker push maspects/react:latest
+
+docker tag rabbit:latest maspects/rabbit:latest
+docker push maspects/rabbit:latest
