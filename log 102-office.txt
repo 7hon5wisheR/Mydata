@@ -1,0 +1,395 @@
+t Windows [Version 10.0.26100.9168]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\maoperator>ssh alice@192.168.137.102
+alice@192.168.137.102's password:
+Linux MASCAB01B 6.18.34+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.18.34-1+rpt1 (2026-06-09) aarch64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Aug 26 20:04:20 2026 from 192.168.137.1
+(venv) alice@MASCAB01B:~/broker $ sudo systemctl stop send.service
+(venv) alice@MASCAB01B:~/broker $ python send.py
+[SETCAP] Setting cap_net_bind_service on /usr/bin/python3...
+[SETCAP] sudo -n failed, trying without -n...
+[SETCAP] Failed: Invalid file 'setcap' for capability operation
+
+apps.py started (port 80)
+run.py (fallback) started
+radarScanControl.py (fallback) started
+lightLockControl.py (fallback) started
+2026-08-26 22:23:11 [INFO    ] [reader] [READER] Serial PORT=/dev/ttyAMA0
+2026-08-26 22:23:11 [INFO    ] [reader] [CONFIG] rf_mode=2D selected from config.json
+2026-08-26 22:23:11 [INFO    ] [reader] [CONFIG] antenna=[1, 2, 3, 4, 5] selected from config.json -> CMD=FF0B9102010102020303040405055040 (built fresh every time - works for any count/combination)
+2026-08-26 22:23:11 [INFO    ] [reader] [CONFIG] power=33dBm antenna=[1, 2, 3, 4, 5] -> CMD=FF249104010CE40CE401F4020CE40CE401F4030CE40CE401F4040CE40CE401F4050CE40CE401F48A69 (built fresh for exactly these antennas - 5 antenna(s), not a fixed count)
+2026-08-26 22:23:11 [INFO    ] [reader] [CONFIG] (manual mode) antenna_dwell_ms=2000 selected -> CMD=FF059502000007D0C1F3 (module's own factory default if this command is never sent is 4000ms)
+2026-08-26 22:23:11 [INFO    ] [reader] [CONFIG] RF-level Select filter ENABLED: EPC bank, prefix=8600 (16 bits, bit offset 0x20) -> module will only interrogate matching tags -> CMD=FF1EAA4D6F64756C6574656368AA48003F04800300000000000000201086006EBBFDA3
+2026-08-26 22:23:11 [INFO    ] [reader] [CONFIG] CMD_START_ASYNC_EX (0xAA58) built: dense_mode=True (ExConfigData[0]=0x00) -> CMD=FF27AA4D6F64756C6574656368AA580000000000000000000000000000000000000000003F008003C4BB9186
+2026-08-26 22:23:11 [INFO    ] [reader] [READER] inventory_mode=AA48
+2026-08-26 22:23:11 [INFO    ] [reader] [READER] EPC prefix filter: ('8600',)
+2026-08-26 22:23:11 [INFO    ] [reader] [READER] Antenna allow-list (tags outside this are dropped): [1, 2, 3, 4, 5]
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] Serial PORT=/dev/ttyAMA0
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] rf_mode=2D selected from config.json
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] antenna=[1, 2, 3, 4, 5] selected from config.json -> CMD=FF0B9102010102020303040405055040 (built fresh every time - works for any count/combination)
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] power=33dBm antenna=[1, 2, 3, 4, 5] -> CMD=FF249104010CE40CE401F4020CE40CE401F4030CE40CE401F4040CE40CE401F4050CE40CE401F48A69 (built fresh for exactly these antennas - 5 antenna(s), not a fixed count)
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] (manual mode) antenna_dwell_ms=2000 selected -> CMD=FF059502000007D0C1F3 (module's own factory default if this command is never sent is 4000ms)
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] RF-level Select filter ENABLED: EPC bank, prefix=8600 (16 bits, bit offset 0x20) -> module will only interrogate matching tags -> CMD=FF1EAA4D6F64756C6574656368AA48003F04800300000000000000201086006EBBFDA3
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] CMD_START_ASYNC_EX (0xAA58) built: dense_mode=True (ExConfigData[0]=0x00) -> CMD=FF27AA4D6F64756C6574656368AA580000000000000000000000000000000000000000003F008003C4BB9186
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] inventory_mode=AA48
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] EPC prefix filter: ('8600',)
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] Antenna allow-list (tags outside this are dropped): [1, 2, 3, 4, 5]
+2026-08-26 22:23:12 [INFO    ] [lightLockControl] [LIGHTLOCK] MACADDRESS : 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [lightLockControl] [LIGHTLOCK] CABINET    : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [lightLockControl] [LIGHTLOCK] BrokerAddr : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [lightLockControl] [LIGHTLOCK] HOSTNAME   : MASCAB01B
+/home/alice/broker/lightLockControl.py:143: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  mqttc_ll  = mqtt.Client(client_id=client_id, clean_session=True)
+2026-08-26 22:23:12 [INFO    ] [lightLockControl] [LIGHTLOCK] MQTT client started id=MASCAB01B-lightlock broker=192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [lightLockControl] [LIGHTLOCK] Connected rc=0
+2026-08-26 22:23:12 [INFO    ] [lightLockControl] [LIGHTLOCK] Subscribed to topic: in
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] MACADDRESS : 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] CABINET    : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] BrokerAddr : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] HOSTNAME   : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] LOCAL_IP   : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] MACADDRESS : 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] CABINET    : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] BrokerAddr : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] HOSTNAME   : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] MACADDRESS : 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] CABINET    : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [utilitys]  MACADDRESS: 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [utilitys]  CABINET:    MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] BrokerAddr : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [utilitys]  BrokerAddr: 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] HOSTNAME   : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [utilitys]  HOSTNAME:   MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [radar] [INIT] RADAR SCAN CONTROL MODE
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] LOCAL_IP   : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] MACADDRESS : 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] CABINET    : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] BrokerAddr : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] HOSTNAME   : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [utilitys]  MACADDRESS: 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [utilitys]  CABINET:    MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [utilitys]  BrokerAddr: 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [utilitys]  HOSTNAME:   MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [run] [INIT] MODE: SERVICE (REAL GPIO)
+2026-08-26 22:23:12 [INFO    ] [run] [INIT] Startup init
+2026-08-26 22:23:12 [INFO    ] [run] [INIT] GPIO defaults set: LIGHT=HIGH, LOCK=LOW, READER=HIGH
+2026-08-26 22:23:12 [DEBUG   ] [run] [LOCK] 2026-08-26 22:23:12 STATUS=Lock
+2026-08-26 22:23:12 [DEBUG   ] [run] [LIGHT] 2026-08-26 22:23:12 STATUS=On
+/home/alice/broker/radarScanControl.py:61: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  _mqttc = mqtt.Client(
+2026-08-26 22:23:12 [INFO    ] [radar] [RADAR] Connecting to MQTT broker 192.168.137.102:1883 ...
+2026-08-26 22:23:12 [INFO    ] [run] [LOCK] STATUS CHANGED -> Lock
+2026-08-26 22:23:12 [INFO    ] [run] [DOOR] DOOR1=Close | DOOR2=Open
+2026-08-26 22:23:12 [INFO    ] [run] [LIGHT] STATUS CHANGED -> On
+2026-08-26 22:23:12 [INFO    ] [radar] [RADAR] Waiting for door events...
+2026-08-26 22:23:12 [INFO    ] [radar] [RADAR] MQTT Connected rc=0
+2026-08-26 22:23:12 [INFO    ] [radar] [RADAR] Subscribed to topic: out
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] Connected rc=0
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] Client started id=MASCAB01B-run broker=192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [run] [INIT] MQTT started
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] Saved status.json (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] suppress_callback registered
+2026-08-26 22:23:12 [INFO    ] [run] [INIT] Suppress callback registered to mqtts
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] Published (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] Periodic status worker started
+2026-08-26 22:23:12 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] Saved status.json (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:12 [INFO    ] [run] [INIT] All workers started, entering main loop
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] Published (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:12 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01B', 'macAddress': '88:a2:9e:fd:90:91', 'hostname': 'MASCAB01B', 'sessionId': '28219e993d6f4e9c8b51a02188bfe725', 'time': '2026-08-26 22:23:12', 'Door1': 'Close', 'Light': 'Off', 'Lock1': 'Lock', 'Temperature': '21.4', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.102'}
+2026-08-26 22:23:12 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01B', 'macAddress': '88:a2:9e:fd:90:91', 'hostname': 'MASCAB01B', 'sessionId': '28219e993d6f4e9c8b51a02188bfe725', 'time': '2026-08-26 22:23:12', 'Door1': 'Close', 'Light': 'Off', 'Lock1': 'Lock', 'Temperature': '21.4', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.102'}
+2026-08-26 22:23:12 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01B', 'macAddress': '88:a2:9e:fd:90:91', 'hostname': 'MASCAB01B', 'sessionId': '28219e993d6f4e9c8b51a02188bfe725', 'time': '2026-08-26 22:23:12', 'Door1': 'Close', 'Light': 'Off', 'Lock1': 'Lock', 'Temperature': '21.4', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.102'}
+light_pwm.py (fallback) started
+switchStatus.py (fallback) started
+[send.py] All processes running...
+[INFO] Watching /home/alice/broker/config.json for 'dim' changes every 0.5s. Press Ctrl+C to stop.
+[INFO] Light updated to 20% PWM (config dim=80).
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] Serial PORT=/dev/ttyAMA0
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] rf_mode=2D selected from config.json
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] antenna=[1, 2, 3, 4, 5] selected from config.json -> CMD=FF0B9102010102020303040405055040 (built fresh every time - works for any count/combination)
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] power=33dBm antenna=[1, 2, 3, 4, 5] -> CMD=FF249104010CE40CE401F4020CE40CE401F4030CE40CE401F4040CE40CE401F4050CE40CE401F48A69 (built fresh for exactly these antennas - 5 antenna(s), not a fixed count)
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] (manual mode) antenna_dwell_ms=2000 selected -> CMD=FF059502000007D0C1F3 (module's own factory default if this command is never sent is 4000ms)
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] RF-level Select filter ENABLED: EPC bank, prefix=8600 (16 bits, bit offset 0x20) -> module will only interrogate matching tags -> CMD=FF1EAA4D6F64756C6574656368AA48003F04800300000000000000201086006EBBFDA3
+2026-08-26 22:23:12 [INFO    ] [reader] [CONFIG] CMD_START_ASYNC_EX (0xAA58) built: dense_mode=True (ExConfigData[0]=0x00) -> CMD=FF27AA4D6F64756C6574656368AA580000000000000000000000000000000000000000003F008003C4BB9186
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] inventory_mode=AA48
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] EPC prefix filter: ('8600',)
+2026-08-26 22:23:12 [INFO    ] [reader] [READER] Antenna allow-list (tags outside this are dropped): [1, 2, 3, 4, 5]
+2026-08-26 22:23:12 [INFO    ] [utilitys]  MACADDRESS: 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [utilitys]  CABINET:    MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [utilitys]  BrokerAddr: 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [utilitys]  HOSTNAME:   MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] MACADDRESS : 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] CABINET    : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] BrokerAddr : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [status] [STATUS] HOSTNAME   : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] LOCAL_IP   : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] MACADDRESS : 88:a2:9e:fd:90:91
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] CABINET    : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] BrokerAddr : 192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [mqtts] [MQTT] HOSTNAME   : MASCAB01B
+2026-08-26 22:23:12 [INFO    ] [switch] [INIT] SWITCH STATUS MODE (REAL GPIO)
+/home/alice/broker/switchStatus.py:112: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  c = mqtt_client.Client(client_id=client_id, clean_session=True)
+2026-08-26 22:23:12 [INFO    ] [switch] [SWITCH] MQTT publish-only client started id=MASCAB01B-switch broker=192.168.137.102
+2026-08-26 22:23:12 [INFO    ] [switch] [SWITCH] MQTT connected rc=0 (publish-only, no subscribe to 'in')
+2026-08-26 22:23:12 [INFO    ] [switch] [INIT] Door monitor running (ACTIVE LOW)
+2026-08-26 22:23:12 [INFO    ] [switch] [INIT] Door monitor thread started
+2026-08-26 22:23:12 [INFO    ] [switch] [INIT] Initial state: CLOSED
+2026-08-26 22:23:13 [INFO    ] [run] [LIGHT] STATUS CHANGED -> Off
+2026-08-26 22:23:13 [INFO    ] [status] [STATUS] Saved status.json (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:13 [INFO    ] [status] [STATUS] Published (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:13 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01B', 'macAddress': '88:a2:9e:fd:90:91', 'hostname': 'MASCAB01B', 'sessionId': '28219e993d6f4e9c8b51a02188bfe725', 'time': '2026-08-26 22:23:13', 'Door1': 'Close', 'Light': 'Off', 'Lock1': 'Lock', 'Temperature': '21.4', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.102'}
+2026-08-26 22:23:17 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:22 [INFO    ] [run] [SCAN] Startup scan triggered
+2026-08-26 22:23:22 [INFO    ] [startstops] [SCAN] Acquiring mutex...
+2026-08-26 22:23:22 [INFO    ] [startstops] [SCAN] Mutex acquired
+2026-08-26 22:23:22 [INFO    ] [startstops] [SCAN] Waiting for door CLOSED for 2 seconds...
+2026-08-26 22:23:22 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:22 [DEBUG   ] [run] [LOCK] 2026-08-26 22:23:22 STATUS=Lock
+2026-08-26 22:23:22 [DEBUG   ] [run] [LIGHT] 2026-08-26 22:23:22 STATUS=Off
+2026-08-26 22:23:22 [INFO    ] [startstops] [SCAN] Door initial: CLOSED
+2026-08-26 22:23:22 [INFO    ] [startstops] [SCAN] Door CLOSED confirmed, timer started
+============================================================
+Apps+Web Starting...
+============================================================
+/home/alice/broker/apps.py:1052: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  c = mqtt.Client()
+[RF_MODE] Startup state: 2D
+[POWER] Startup state: 33dBm
+[DIM] Startup state: 80%
+[ANTENNA] Startup state: [1, 2, 3, 4, 5]
+[VERSION] config.json version: 1.0.0(7)
+[STARTUP] Current hostname: MASCAB01B
+[STARTUP] Broker IP configured: 192.168.137.1
+[BROKER] Applying new broker: 192.168.137.1 -> 192.168.137.1 (force=True)
+[BROKER] bridge.conf updated -> 192.168.137.1
+2026-08-26 22:23:23 [INFO    ] [mqtts] [MQTT] Connected rc=0
+2026-08-26 22:23:23 [INFO    ] [radar] [RADAR] MQTT Connected rc=0
+2026-08-26 22:23:23 [INFO    ] [lightLockControl] [LIGHTLOCK] Connected rc=0
+2026-08-26 22:23:23 [INFO    ] [radar] [RADAR] Subscribed to topic: out
+2026-08-26 22:23:23 [INFO    ] [lightLockControl] [LIGHTLOCK] Subscribed to topic: in
+2026-08-26 22:23:23 [INFO    ] [switch] [SWITCH] MQTT connected rc=0 (publish-only, no subscribe to 'in')
+[WINDOWS HOSTNAME via nbtscan] 95-0061-00
+[RABBIT OK] queue=95-0061-00
+[BROKER] RabbitMQ queue/binding ensured
+/home/alice/broker/apps.py:769: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  c = mqtt.Client()
+2026-08-26 22:23:23 [INFO    ] [mqtts] [MQTT] Received topic=in payload={"ip_broker": "192.168.137.1", "mac": "all"}
+2026-08-26 22:23:23 [INFO    ] [lightLockControl] [LIGHTLOCK] Received topic=in payload={"ip_broker": "192.168.137.1", "mac": "all"}
+2026-08-26 22:23:23 [DEBUG   ] [mqtts] [MQTT] Parsed cmd= rfid= light= lock= sessionId= mac=all ip=
+2026-08-26 22:23:23 [DEBUG   ] [lightLockControl] [LIGHTLOCK] Parsed light='' lock='' mac='all' seconds=None
+2026-08-26 22:23:23 [DEBUG   ] [lightLockControl] [LIGHTLOCK] No light/lock in payload, skip.
+2026-08-26 22:23:23 [DEBUG   ] [run] [RUN] Worker publish suppressed for 1.0s
+[BROKER] ip_broker unchanged (192.168.137.1), skipping apply.
+2026-08-26 22:23:23 [INFO    ] [status] [STATUS] Saved status.json (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:23 [INFO    ] [status] [STATUS] Published (sessionId=28219e993d6f4e9c8b51a02188bfe725)
+2026-08-26 22:23:23 [INFO    ] [mqtts] [STATUS] status.json updated & published to 'out'
+2026-08-26 22:23:23 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01B', 'macAddress': '88:a2:9e:fd:90:91', 'hostname': 'MASCAB01B', 'sessionId': '28219e993d6f4e9c8b51a02188bfe725', 'time': '2026-08-26 22:23:23', 'Door1': 'Close', 'Light': 'Off', 'Lock1': 'Lock', 'Temperature': '21.4', 'Humidity': '90.0', 'IP_ETH0': '192.168.137.102'}
+[BROKER] ip_broker broadcast sent -> 192.168.137.1
+[STARTUP] Bridge + queue setup OK
+[AUTO-SET] Waiting 300s before auto-set...
+
+Apps+Web running on http://192.168.137.102:8082
+
+2026-08-26 22:23:24 [INFO    ] [startstops] [MQTT] SCANNING sent sessionId=28219e993d6f4e9c8b51a02188bfe725 time='' sig=''
+2026-08-26 22:23:24 [INFO    ] [radar] [RADAR] Message cmd='Scanning': {'mac': 'MASCAB01B', 'hostname': 'MASCAB01B', 'cmd': 'Scanning', 'sessionId': '28219e993d6f4e9c8b51a02188bfe725', 'time': '', 'sig': ''}
+2026-08-26 22:23:24 [INFO    ] [startstops] [SCAN] Spawning scan thread
+2026-08-26 22:23:24 [WARNING ] [radar] [RADAR] Unknown cmd=Scanning, skip
+2026-08-26 22:23:24 [INFO    ] [utilitys] [RFID] Snapshot rfid2.json -> rfid1.json
+2026-08-26 22:23:24 [INFO    ] [startstops] [SCAN] Reader enabled
+2026-08-26 22:23:24 [DEBUG   ] [run] [RUN] Worker publish suppress cleared
+2026-08-26 22:23:25 [DEBUG   ] [reader] [READER] >> Set Baudrate
+2026-08-26 22:23:26 [INFO    ] [reader] [READER] Baudrate set OK (921600)
+2026-08-26 22:23:26 [INFO    ] [reader] [READER] Connecting at 921600
+2026-08-26 22:23:27 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:27 [INFO    ] [reader] [READER] Connecting at 115200
+2026-08-26 22:23:27 [INFO    ] [reader] [READER] Application mode @ 115200
+2026-08-26 22:23:27 [WARNING ] [reader] [READER] Reader at non-target baud 115200, will be corrected on next set_baudrate()
+2026-08-26 22:23:27 [INFO    ] [startstops] [SCAN] Starting async scan...
+2026-08-26 22:23:27 [INFO    ] [reader] [CONFIG] rssi_threshold=-62dBm -> RSSI filter ENABLED at module level (0xAA5B): module itself will not upload reads weaker than -62dBm (they never cross the serial link at all) -> CMD=FF12AA4D6F64756C6574656368AA5B01AAC20072BB63C0
+2026-08-26 22:23:27 [INFO    ] [reader] [CONFIG] q_mode=dynamic -> CMD=FF039B051200CEE8 (module's own default)
+2026-08-26 22:23:27 [INFO    ] [reader] [AUTO-TUNE] scan_timeout=12.0s antenna_count=5 passes_target=3 -> dwell_ms=800 (ideal=800.0) one_cycle=4.00s quiet_stop=10.00s (2.50 cycles) passes_achieved=3.00
+2026-08-26 22:23:27 [INFO    ] [reader] [CONFIG] scan_timeout=12s quiet_stop=10.0s stable_threshold=0 rssi=-62(module-level 0xAA5B) prefix=('8600',) power=33dBm antenna_allowed=[1, 2, 3, 4, 5] dwell_ms=800 auto_tune=True inventory_mode=AA48 q=dynamic min_reads_per_scan=1 min_native_read_count=1 rssi_strict=-95dBm(if count<10)
+2026-08-26 22:23:27 [DEBUG   ] [reader] [READER] SET REGION: SUCCESS
+2026-08-26 22:23:28 [DEBUG   ] [reader] [READER] SET GEN2: SUCCESS
+2026-08-26 22:23:28 [WARNING ] [reader] [READER] SET POWER: STATUS=0105 RAW=ff00910105165d
+2026-08-26 22:23:28 [DEBUG   ] [reader] [READER] SET RSSI FILTER (0xAA5B): SUCCESS
+2026-08-26 22:23:28 [DEBUG   ] [reader] [READER] ENABLE ANT: SUCCESS
+2026-08-26 22:23:29 [WARNING ] [reader] [READER] SET ANTENNA DWELL: STATUS=0500 RAW=ff0095050052dc
+2026-08-26 22:23:29 [WARNING ] [reader] [SCAN] SET ANTENNA DWELL not confirmed - module may fall back to its own 4000ms/antenna default, which can make round-robin timing less predictable within scan_timeout.
+2026-08-26 22:23:29 [DEBUG   ] [reader] [READER] SET RFMODE: SUCCESS
+2026-08-26 22:23:29 [DEBUG   ] [reader] [READER] SET SESSION 1: SUCCESS
+2026-08-26 22:23:30 [DEBUG   ] [reader] [READER] SET TARGET AB: SUCCESS
+2026-08-26 22:23:30 [DEBUG   ] [reader] [READER] SET Q (dynamic): SUCCESS
+2026-08-26 22:23:30 [INFO    ] [reader] [SCAN] Setup took 3.16s (region/gen2/power/antenna/dwell/rfmode/session/target/q/start-async) - scan clock reset here, scan_timeout=12s now means 12s of actual listening time.
+2026-08-26 22:23:30 [INFO    ] [reader] [SCAN] Started (AA48) - max=12s quiet=10.0s dwell_ms=800 antenna_gate_open=True
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #001 EPC:860015332900000000001F34 RSSI:-51 NativeRC:1 Rate:971.8/s Total:1 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #002 EPC:860015332900000000001E65 RSSI:-49 NativeRC:1 Rate:1943.6/s Total:2 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #003 EPC:860015332900000000001F24 RSSI:-59 NativeRC:1 Rate:2915.4/s Total:3 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #004 EPC:860015332900000000001F43 RSSI:-52 NativeRC:1 Rate:3887.2/s Total:4 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #005 EPC:860015332900000000001ED6 RSSI:-56 NativeRC:1 Rate:4859.0/s Total:5 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #006 EPC:860015332900000000001F2D RSSI:-56 NativeRC:1 Rate:5830.8/s Total:6 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #007 EPC:860015332900000000001E7E RSSI:-56 NativeRC:1 Rate:6802.6/s Total:7 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #008 EPC:860015332900000000001F4A RSSI:-55 NativeRC:1 Rate:7774.4/s Total:8 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #009 EPC:860015332900000000001EE8 RSSI:-57 NativeRC:1 Rate:8746.2/s Total:9 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT1 NEW #010 EPC:860015332900000000001ECB RSSI:-53 NativeRC:1 Rate:9718.0/s Total:10 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #011 EPC:860015332900000000001EFE RSSI:-48 NativeRC:1 Rate:10689.8/s Total:11 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #012 EPC:860015332900000000001F00 RSSI:-49 NativeRC:1 Rate:11661.6/s Total:12 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #013 EPC:860015332900000000001E49 RSSI:-62 NativeRC:1 Rate:12633.4/s Total:13 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #014 EPC:860015332900000000001B83 RSSI:-47 NativeRC:1 Rate:13605.2/s Total:14 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #015 EPC:860015332900000000001E69 RSSI:-53 NativeRC:1 Rate:14577.1/s Total:15 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #016 EPC:860015332900000000001F36 RSSI:-56 NativeRC:1 Rate:15548.9/s Total:16 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #017 EPC:860015332900000000001EAD RSSI:-54 NativeRC:1 Rate:16520.7/s Total:17 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #018 EPC:860015332900000000001E82 RSSI:-53 NativeRC:1 Rate:17492.5/s Total:18 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #019 EPC:860015332900000000001F49 RSSI:-55 NativeRC:1 Rate:18464.3/s Total:19 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #020 EPC:860015332900000000001ECE RSSI:-54 NativeRC:1 Rate:19436.1/s Total:20 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #021 EPC:860015332900000000001E4A RSSI:-52 NativeRC:1 Rate:20407.9/s Total:21 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #022 EPC:860015332900000000001F53 RSSI:-53 NativeRC:1 Rate:21379.7/s Total:22 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #023 EPC:860015332900000000001E4D RSSI:-53 NativeRC:1 Rate:22351.5/s Total:23 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #024 EPC:860015332900000000001EEC RSSI:-55 NativeRC:1 Rate:23323.3/s Total:24 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #025 EPC:860015332900000000001ED5 RSSI:-54 NativeRC:1 Rate:24295.1/s Total:25 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #026 EPC:860015332900000000001E51 RSSI:-53 NativeRC:1 Rate:25266.9/s Total:26 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #027 EPC:860015332900000000001F2C RSSI:-55 NativeRC:1 Rate:26238.7/s Total:27 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #028 EPC:860015332900000000001E44 RSSI:-44 NativeRC:1 Rate:27210.5/s Total:28 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #029 EPC:860015332900000000001E4E RSSI:-55 NativeRC:1 Rate:28182.3/s Total:29 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #030 EPC:860015332900000000001F1E RSSI:-54 NativeRC:1 Rate:29154.1/s Total:30 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #031 EPC:860015332900000000001EF4 RSSI:-50 NativeRC:1 Rate:30125.9/s Total:31 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #032 EPC:860015332900000000001EFF RSSI:-52 NativeRC:1 Rate:31097.7/s Total:32 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #033 EPC:860015332900000000001EF2 RSSI:-46 NativeRC:1 Rate:32069.5/s Total:33 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #034 EPC:860015332900000000001F10 RSSI:-49 NativeRC:1 Rate:33041.3/s Total:34 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #035 EPC:860015332900000000001E41 RSSI:-47 NativeRC:1 Rate:34013.1/s Total:35 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #036 EPC:860015332900000000001F56 RSSI:-54 NativeRC:1 Rate:34984.9/s Total:36 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT2 NEW #037 EPC:860015332900000000001E6B RSSI:-52 NativeRC:1 Rate:35956.7/s Total:37 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #038 EPC:860015332900000000001F1B RSSI:-59 NativeRC:1 Rate:36928.5/s Total:38 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #039 EPC:860015332900000000001F2F RSSI:-46 NativeRC:1 Rate:37900.3/s Total:39 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #040 EPC:860015332900000000001F30 RSSI:-53 NativeRC:1 Rate:38872.1/s Total:40 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #041 EPC:860015332900000000001F5A RSSI:-53 NativeRC:1 Rate:39843.9/s Total:41 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #042 EPC:860015332900000000001EF3 RSSI:-54 NativeRC:1 Rate:40815.7/s Total:42 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #043 EPC:860015332900000000001F1C RSSI:-48 NativeRC:1 Rate:41787.6/s Total:43 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #044 EPC:860015332900000000001E59 RSSI:-52 NativeRC:1 Rate:42759.4/s Total:44 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #045 EPC:860015332900000000001F28 RSSI:-45 NativeRC:1 Rate:43731.2/s Total:45 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #046 EPC:860015332900000000001E3E RSSI:-55 NativeRC:1 Rate:44703.0/s Total:46 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #047 EPC:860015332900000000001F39 RSSI:-51 NativeRC:1 Rate:45674.8/s Total:47 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #048 EPC:860015332900000000001F32 RSSI:-49 NativeRC:1 Rate:46646.6/s Total:48 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #049 EPC:860015332900000000001F55 RSSI:-43 NativeRC:1 Rate:47618.4/s Total:49 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #050 EPC:860015332900000000001F35 RSSI:-54 NativeRC:1 Rate:48590.2/s Total:50 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #051 EPC:860015332900000000001EE1 RSSI:-50 NativeRC:1 Rate:49562.0/s Total:51 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #052 EPC:860015332900000000001EF6 RSSI:-60 NativeRC:1 Rate:50533.8/s Total:52 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #053 EPC:860015332900000000001F4D RSSI:-54 NativeRC:1 Rate:51505.6/s Total:53 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #054 EPC:860015332900000000001EA8 RSSI:-58 NativeRC:1 Rate:52477.4/s Total:54 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #055 EPC:860015332900000000001F2B RSSI:-57 NativeRC:1 Rate:53449.2/s Total:55 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #056 EPC:860015332900000000001ECF RSSI:-55 NativeRC:1 Rate:54421.0/s Total:56 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #057 EPC:860015332900000000001E70 RSSI:-55 NativeRC:1 Rate:55392.8/s Total:57 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #058 EPC:860015332900000000001E88 RSSI:-60 NativeRC:1 Rate:56364.6/s Total:58 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #059 EPC:860015332900000000001F3C RSSI:-58 NativeRC:1 Rate:57336.4/s Total:59 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #060 EPC:860015332900000000001E73 RSSI:-57 NativeRC:1 Rate:58308.2/s Total:60 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #061 EPC:860015332900000000001F02 RSSI:-58 NativeRC:1 Rate:59280.0/s Total:61 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #062 EPC:860015332900000000001E57 RSSI:-59 NativeRC:1 Rate:60251.8/s Total:62 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT3 NEW #063 EPC:860015332900000000001F48 RSSI:-62 NativeRC:1 Rate:61223.6/s Total:63 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT4 NEW #064 EPC:860015332900000000001E3B RSSI:-60 NativeRC:1 Rate:62195.4/s Total:64 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT4 NEW #065 EPC:860015332900000000001F15 RSSI:-55 NativeRC:1 Rate:63167.2/s Total:65 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT4 NEW #066 EPC:860015332900000000001F58 RSSI:-57 NativeRC:1 Rate:64139.0/s Total:66 Dup:1.0x
+2026-08-26 22:23:30 [INFO    ] [reader] [0.0s] ANT4 NEW #067 EPC:860015332900000000001F23 RSSI:-55 NativeRC:1 Rate:65110.8/s Total:67 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT5 NEW #068 EPC:860015332900000000001B85 RSSI:-57 NativeRC:1 Rate:700.1/s Total:68 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT5 NEW #069 EPC:860015332900000000001F3A RSSI:-54 NativeRC:1 Rate:710.4/s Total:69 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT5 NEW #070 EPC:860015332900000000001EFA RSSI:-57 NativeRC:1 Rate:720.7/s Total:70 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT1 NEW #071 EPC:860015332900000000001E6E RSSI:-49 NativeRC:1 Rate:731.0/s Total:72 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT1 NEW #072 EPC:860015332900000000001F22 RSSI:-50 NativeRC:1 Rate:741.3/s Total:73 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT1 NEW #073 EPC:860015332900000000001F11 RSSI:-51 NativeRC:1 Rate:751.6/s Total:74 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT1 NEW #074 EPC:860015332900000000001ED4 RSSI:-56 NativeRC:1 Rate:761.9/s Total:75 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT1 NEW #075 EPC:860015332900000000001F3F RSSI:-49 NativeRC:1 Rate:772.2/s Total:78 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT1 NEW #076 EPC:860015332900000000001F20 RSSI:-53 NativeRC:1 Rate:782.5/s Total:79 Dup:1.0x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.1s] ANT1 NEW #077 EPC:860015332900000000001F33 RSSI:-49 NativeRC:1 Rate:792.8/s Total:81 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #078 EPC:860015332900000000001B84 RSSI:-55 NativeRC:1 Rate:500.5/s Total:83 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #079 EPC:860015332900000000000431 RSSI:-36 NativeRC:1 Rate:507.0/s Total:84 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #080 EPC:860015332900000000001F50 RSSI:-48 NativeRC:1 Rate:513.4/s Total:86 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #081 EPC:860015332900000000000432 RSSI:-26 NativeRC:1 Rate:519.8/s Total:89 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #082 EPC:860015332900000000001E5B RSSI:-56 NativeRC:1 Rate:526.2/s Total:90 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #083 EPC:860015332900000000001E5C RSSI:-49 NativeRC:1 Rate:532.6/s Total:94 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #084 EPC:860015332900000000001F12 RSSI:-52 NativeRC:1 Rate:539.1/s Total:96 Dup:1.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #085 EPC:860015332900000000001EC9 RSSI:-43 NativeRC:1 Rate:545.5/s Total:99 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #086 EPC:860015332900000000001F37 RSSI:-52 NativeRC:1 Rate:406.1/s Total:100 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #087 EPC:860015332900000000001EDE RSSI:-50 NativeRC:1 Rate:410.8/s Total:104 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #088 EPC:860015332900000000001F1D RSSI:-54 NativeRC:1 Rate:415.5/s Total:106 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #089 EPC:860015332900000000001F4C RSSI:-50 NativeRC:1 Rate:420.2/s Total:108 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #090 EPC:860015332900000000001F40 RSSI:-52 NativeRC:1 Rate:425.0/s Total:109 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #091 EPC:860015332900000000001F29 RSSI:-48 NativeRC:1 Rate:429.7/s Total:110 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #092 EPC:860015332900000000001E4C RSSI:-46 NativeRC:1 Rate:434.4/s Total:112 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.2s] ANT1 NEW #093 EPC:860015332900000000001F31 RSSI:-46 NativeRC:1 Rate:439.1/s Total:115 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #094 EPC:860015332900000000001EEE RSSI:-53 NativeRC:1 Rate:349.0/s Total:116 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #095 EPC:860015332900000000001E47 RSSI:-46 NativeRC:1 Rate:352.8/s Total:117 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #096 EPC:860015332900000000001B86 RSSI:-55 NativeRC:1 Rate:356.5/s Total:118 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #097 EPC:860015332900000000001E6F RSSI:-46 NativeRC:1 Rate:360.2/s Total:119 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #098 EPC:860015332900000000001F0D RSSI:-48 NativeRC:1 Rate:363.9/s Total:122 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #099 EPC:860015332900000000000433 RSSI:-28 NativeRC:1 Rate:367.6/s Total:123 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #100 EPC:860015332900000000001ED2 RSSI:-53 NativeRC:1 Rate:371.3/s Total:124 Dup:1.2x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #101 EPC:860015332900000000001EFB RSSI:-54 NativeRC:1 Rate:306.9/s Total:136 Dup:1.3x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #102 EPC:860015332900000000001E4B RSSI:-48 NativeRC:1 Rate:309.9/s Total:143 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #103 EPC:860015332900000000001F4F RSSI:-55 NativeRC:1 Rate:313.0/s Total:145 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #104 EPC:860015332900000000001E3D RSSI:-56 NativeRC:1 Rate:316.0/s Total:146 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #105 EPC:860015332900000000001E68 RSSI:-56 NativeRC:1 Rate:319.0/s Total:148 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.3s] ANT1 NEW #106 EPC:860015332900000000001E71 RSSI:-45 NativeRC:1 Rate:322.1/s Total:149 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #107 EPC:860015332900000000001E72 RSSI:-57 NativeRC:1 Rate:276.8/s Total:150 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #108 EPC:860015332900000000001E85 RSSI:-45 NativeRC:1 Rate:279.4/s Total:153 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #109 EPC:860015332900000000001B87 RSSI:-55 NativeRC:1 Rate:282.0/s Total:156 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #110 EPC:860015332900000000001E6A RSSI:-57 NativeRC:1 Rate:284.6/s Total:158 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #111 EPC:860015332900000000001E55 RSSI:-53 NativeRC:1 Rate:287.2/s Total:159 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #112 EPC:860015332900000000001E5D RSSI:-61 NativeRC:1 Rate:289.8/s Total:162 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #113 EPC:860015332900000000001ED7 RSSI:-53 NativeRC:1 Rate:255.3/s Total:164 Dup:1.5x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #114 EPC:860015332900000000001ED1 RSSI:-50 NativeRC:1 Rate:257.5/s Total:165 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #115 EPC:860015332900000000001E6C RSSI:-62 NativeRC:1 Rate:259.8/s Total:166 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #116 EPC:860015332900000000001F0E RSSI:-62 NativeRC:1 Rate:262.1/s Total:167 Dup:1.4x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.4s] ANT1 NEW #117 EPC:860015332900000000001E40 RSSI:-57 NativeRC:1 Rate:264.3/s Total:172 Dup:1.5x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.5s] ANT2 NEW #118 EPC:860015332900000000001F38 RSSI:-59 NativeRC:1 Rate:236.9/s Total:174 Dup:1.5x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.5s] ANT2 NEW #119 EPC:860015332900000000001E3F RSSI:-47 NativeRC:1 Rate:238.9/s Total:177 Dup:1.5x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.5s] ANT2 NEW #120 EPC:860015332900000000001F4B RSSI:-57 NativeRC:1 Rate:240.9/s Total:180 Dup:1.5x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.5s] ANT2 NEW #121 EPC:860015332900000000001EA5 RSSI:-59 NativeRC:1 Rate:242.9/s Total:181 Dup:1.5x
+2026-08-26 22:23:31 [INFO    ] [reader] [0.9s] ANT2 NEW #122 EPC:860015332900000000001F57 RSSI:-62 NativeRC:1 Rate:130.7/s Total:262 Dup:2.1x
+2026-08-26 22:23:31 [INFO    ] [reader] [1.0s] ANT3 NEW #123 EPC:860015332900000000001F3B RSSI:-59 NativeRC:1 Rate:117.9/s Total:284 Dup:2.3x
+2026-08-26 22:23:32 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:32 [DEBUG   ] [run] [LOCK] 2026-08-26 22:23:32 STATUS=Lock
+2026-08-26 22:23:32 [DEBUG   ] [run] [LIGHT] 2026-08-26 22:23:32 STATUS=Off
+2026-08-26 22:23:32 [INFO    ] [reader] [1.6s] ANT2 NEW #124 EPC:860015332900000000001F26 RSSI:-58 NativeRC:1 Rate:78.1/s Total:398 Dup:3.2x
+2026-08-26 22:23:32 [INFO    ] [reader] [1.9s] ANT1 NEW #125 EPC:860015332900000000001E6D RSSI:-62 NativeRC:1 Rate:65.5/s Total:448 Dup:3.6x
+2026-08-26 22:23:32 [INFO    ] [reader] [2.0s] ANT1 NEW #126 EPC:860015332900000000001F44 RSSI:-60 NativeRC:1 Rate:64.1/s Total:457 Dup:3.6x
+2026-08-26 22:23:33 [INFO    ] [reader] [2.2s] ANT4 NEW #127 EPC:860015332900000000001ED3 RSSI:-54 NativeRC:1 Rate:56.8/s Total:502 Dup:4.0x
+2026-08-26 22:23:33 [INFO    ] [reader] [2.7s] ANT2 NEW #128 EPC:860015332900000000001E56 RSSI:-58 NativeRC:1 Rate:47.9/s Total:596 Dup:4.7x
+2026-08-26 22:23:34 [INFO    ] [reader] [3.9s] ANT1 NEW #129 EPC:860015332900000000001F3E RSSI:-58 NativeRC:1 Rate:33.0/s Total:831 Dup:6.4x
+2026-08-26 22:23:35 [INFO    ] [reader] [4.3s] ANT3 NEW #130 EPC:860015332900000000001ED0 RSSI:-58 NativeRC:1 Rate:30.2/s Total:909 Dup:7.0x
+2026-08-26 22:23:37 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:37 [INFO    ] [reader] [6.4s] ANT1 NEW #131 EPC:860015332900000000001EDD RSSI:-61 NativeRC:1 Rate:20.4/s Total:1329 Dup:10.1x
+2026-08-26 22:23:42 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:42 [DEBUG   ] [run] [LIGHT] 2026-08-26 22:23:42 STATUS=Off
+2026-08-26 22:23:42 [DEBUG   ] [run] [LOCK] 2026-08-26 22:23:42 STATUS=Lock
+2026-08-26 22:23:42 [INFO    ] [reader] [SCAN] Max scan time 12s reached - stopping
+2026-08-26 22:23:43 [INFO    ] [reader] [SCAN] Async scan stopped
+2026-08-26 22:23:43 [INFO    ] [reader] [SCAN] Done unique=131 duration=12s aborted=False antenna_gate_open=True
+2026-08-26 22:23:43 [ERROR   ] [startstops] [SCAN] Debounce step failed, publishing raw result: module 'reader' has no attribute 'apply_remove_debounce'
+2026-08-26 22:23:43 [INFO    ] [utilitys] [RFID] EPC raw=131 | filtered=131 | filter=['8600']
+2026-08-26 22:23:43 [INFO    ] [utilitys] [RFID] Saved rfid2.json | count=131 | add=0 | remove=1
+2026-08-26 22:23:43 [INFO    ] [mqtts] [MQTT] JSON published to out
+2026-08-26 22:23:43 [INFO    ] [utilitys] [RFID] MQTT published
+2026-08-26 22:23:43 [INFO    ] [radar] [RADAR] Message cmd='': {'macaddress': 'MASCAB01B', 'hostname': 'MASCAB01B', 'IP_ETH0': '192.168.137.102', 'sessionId': '28219e993d6f4e9c8b51a02188bfe725', 'time': '2026-08-26 22:23:43', 'duration': 12, 'count': 131, 'Door1': 'Close', 'Light': 'Off', 'Lock1': 'Lock', 'Temperature': '21.5', 'Humidity': '90.0', 'inventory': ['860015332900000000001F15', '860015332900000000001F31', '860015332900000000000433', '860015332900000000001E4D', '860015332900000000001EF6', '860015332900000000001F1B', '860015332900000000001F57', '860015332900000000001F0E', '860015332900000000001ECF', '860015332900000000001EF4', '860015332900000000001ED7', '860015332900000000000432', '860015332900000000001F11', '860015332900000000001F50', '860015332900000000001E3E', '860015332900000000001F12', '860015332900000000001EFB', '860015332900000000001ED2', '860015332900000000001F2D', '860015332900000000001F28', '860015332900000000001EE1', '860015332900000000001E59', '860015332900000000001F4A', '860015332900000000001E6E', '860015332900000000001F4D', '860015332900000000001F3A', '860015332900000000001E4E', '860015332900000000001F1E', '860015332900000000001F1C', '860015332900000000001F40', '860015332900000000001EF2', '860015332900000000001E6F', '860015332900000000001F00', '860015332900000000001F32', '860015332900000000001F4B', '860015332900000000001F29', '860015332900000000001ED3', '860015332900000000001F2C', '860015332900000000001F23', '860015332900000000001ED0', '860015332900000000001E49', '860015332900000000001B83', '860015332900000000001E72', '860015332900000000001F02', '860015332900000000001E65', '860015332900000000001E4C', '860015332900000000001EEE', '860015332900000000001F10', '860015332900000000001F53', '860015332900000000001E82', '860015332900000000001ED6', '860015332900000000001EC9', '860015332900000000001F43', '860015332900000000001F1D', '860015332900000000001E70', '860015332900000000001F58', '860015332900000000001B87', '860015332900000000001E69', '860015332900000000001E6B', '860015332900000000001F36', '860015332900000000001ED1', '860015332900000000001F5A', '860015332900000000001F55', '860015332900000000001F26', '860015332900000000001E6A', '860015332900000000001E6D', '860015332900000000001E5C', '860015332900000000001EE8', '860015332900000000001F56', '860015332900000000001F3F', '860015332900000000001E57', '860015332900000000001ED4', '860015332900000000001F39', '860015332900000000001E51', '860015332900000000001EF3', '860015332900000000001E85', '860015332900000000001E3B', '860015332900000000001E6C', '860015332900000000001E55', '860015332900000000001E68', '860015332900000000001F49', '860015332900000000001EDD', '860015332900000000001E4B', '860015332900000000001E5B', '860015332900000000001EFE', '860015332900000000001F4C', '860015332900000000001ED5', '860015332900000000001F4F', '860015332900000000001B85', '860015332900000000001E73', '860015332900000000001E3D', '860015332900000000001EFA', '860015332900000000001EDE', '860015332900000000001ECE', '860015332900000000001B86', '860015332900000000001E71', '860015332900000000001F48', '860015332900000000001F3E', '860015332900000000001E56', '860015332900000000001F3B', '860015332900000000001EEC', '860015332900000000001F2B', '860015332900000000001F2F', '860015332900000000001E40', '860015332900000000001F3C', '860015332900000000001F37', '860015332900000000001F24', '860015332900000000001F20', '860015332900000000001EFF', '860015332900000000001E5D', '860015332900000000001F34', '860015332900000000001E4A', '860015332900000000001E44', '860015332900000000001EAD', '860015332900000000001E88', '860015332900000000001E47', '860015332900000000001F22', '860015332900000000001F33', '860015332900000000001EA5', '860015332900000000001F44', '860015332900000000001EA8', '860015332900000000001F35', '860015332900000000001E41', '860015332900000000001E7E', '860015332900000000001E3F', '860015332900000000001F30', '860015332900000000001B84', '860015332900000000000431', '860015332900000000001F0D', '860015332900000000001ECB', '860015332900000000001F38'], 'add': [], 'remove': ['860015332900000000001F42'], 'mac': 'MASCAB01B'}
+2026-08-26 22:23:43 [INFO    ] [startstops] [SCAN] Scan completed & saved
+2026-08-26 22:23:43 [INFO    ] [startstops] [SCAN] Reader disabled
+2026-08-26 22:23:43 [INFO    ] [startstops] [SCAN] Mutex released
+2026-08-26 22:23:43 [INFO    ] [startstops] [SCAN] main(): hardware scan thread finished, returning
+2026-08-26 22:23:47 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:52 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:23:52 [DEBUG   ] [run] [LIGHT] 2026-08-26 22:23:52 STATUS=Off
+2026-08-26 22:23:52 [DEBUG   ] [run] [LOCK] 2026-08-26 22:23:52 STATUS=Lock
+2026-08-26 22:23:57 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:24:02 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-26 22:24:02 [DEBUG   ] [run] [LIGHT] 2026-08-26 22:24:02 STATUS=Off
+2026-08-26 22:24:02 [DEBUG   ] [run] [LOCK] 2026-08-26 22:24:02 STATUS=Lock
+
+

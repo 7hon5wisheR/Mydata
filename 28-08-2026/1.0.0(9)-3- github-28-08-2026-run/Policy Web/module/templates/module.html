@@ -571,7 +571,9 @@ function updateCabinetAvailability(freshList) {
         }
     });
 
-
+    // Kalau placeholder "(Belum ada cabinet terbaca)" masih aktif dan
+    // sekarang sudah ada cabinet yang terdeteksi -> hapus placeholder
+    // & auto-pilih cabinet pertama yang enable.
     if (hadNoSelectionYet && detectedUpper.length > 0) {
         var placeholder = sel.querySelector("option[value='']");
         if (placeholder) placeholder.remove();
@@ -589,7 +591,8 @@ async function pollCabinets() {
         var data = await res.json();
         updateCabinetAvailability(data.cabinets || []);
     } catch (e) {
-
+        // Diam-diam saja - koneksi sempat putus tidak perlu ganggu UI,
+        // percobaan berikutnya otomatis jalan lagi CABINET_POLL_MS ke depan.
         console.warn("[pollCabinets] gagal:", e);
     }
 }
@@ -1031,7 +1034,7 @@ var HINTS = {
     "power":         "TX power in dBm (25 - 33). Higher power = longer read range but more interference risk. Applying this will reboot the reader.",
     "dim":           "Lamp brightness level (100% Brightest ... Off = lamp minimum, steps of 10).",
     "antenna":       "Check any combination of antennas (e.g. just 3, or 1 and 4, or 2 through 7). Only the checked antenna(s) will be enabled. Applying this will reboot the reader.",
-    "shutdown":      "This powers OFF the reader completely. ",
+    "shutdown":      "This powers OFF the reader completely. Unlike Reboot, it will NOT come back online on its own - someone has to physically reconnect power. Choose 'All Cabinets' with care.",
 };
 
 var PLACEHOLDERS = {

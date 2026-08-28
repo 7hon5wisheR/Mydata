@@ -12,7 +12,9 @@ broker
  --humidity.py
  --startstop.py
  --status.py
+ --sublight.py
 
+-config.json
 -apps.py
 -radarscancontrol.py
 -switchstatus.py
