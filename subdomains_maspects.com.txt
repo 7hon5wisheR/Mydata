@@ -1,0 +1,4 @@
+kanban.maspects.com
+mail.maspects.com
+sftp.maspects.com
+vpn.maspects.com

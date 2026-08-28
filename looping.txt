@@ -1,0 +1,29 @@
+Ketemu penyebabnya — bukan looping di kode, tapi konflik GPIO antar-proses, dan ini persis risiko yang saya khawatirkan sebelumnya tapi salah saya kasih jaminan "aman":: GPIO.setwarnings(False)
+
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(ENABLE_GPIO, GPIO.OUT)
+
+GPIO.setup(PWM_GPIO, GPIO.OUT)
+
+_pwm = GPIO.PWM(PWM_GPIO, PWM_FREQ_HZ)
+
+_pwm.start(0)
+
+GPIO.output(ENABLE_GPIO, GPIO.LOW) Kode ini ada di level modul (bukan di dalam fungsi) — artinya setiap kali file ini di-import, kode ini langsung jalan, terlepas dari fungsi apa yang benar-benar kamu panggil.
+
+Saya bilang sebelumnya run.py aman karena "cuma manggil get_light_status() yang cuma baca file" — itu salah. Yang bahaya bukan fungsi yang dipanggil, tapi import sublight itu sendiri. Begitu run.py import sublight, otomatis:
+
+
+
+
+
+run.py (proses A) bikin GPIO.PWM() object sendiri di pin 18
+
+
+
+lightLockControl.py (proses B) juga punya GPIO.PWM() object sendiri di pin 18
+
+Dua proses, dua thread PWM software, sama-sama toggle pin fisik yang sama, tidak terkoordinasi sama sekali. Itu yang bikin lampu kedap-kedip — bukan looping logic, tapi dua sinyal PWM independen saling tabrakan di pin yang sama secara real-time.
+
+Perbaikan: bikin setup GPIO/PWM lazy (baru jalan saat benar-benar dibutuhkan)

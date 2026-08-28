@@ -7,7 +7,7 @@
     "auto_tune_quiet_cycles": 2.5,
     "rssi_threshold": -95,
     "rssi_threshold_strict": -95,
-    "min_reads_per_scan": 2,
+    "min_reads_per_scan": 1,
     "rfid_filter": [
         "8600",
         "6453"
@@ -17,7 +17,7 @@
     "PORT": "ttyAMA0",
     "rf_mode": "2D",
     "logger": "enable",
-    "version": "1.0.0(8)",
+    "version": "1.0.0(9)",
     "power": 33,
     "dim": 40,
     "antenna": [
