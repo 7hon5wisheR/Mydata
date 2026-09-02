@@ -1,0 +1,785 @@
+NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Aug 31 16:41:42 2026 from 192.168.137.1
+(venv) alice@MASCAB01A:~/broker $ sudo systemctl stop send.service
+(venv) alice@MASCAB01A:~/broker $ python send.py
+[SETCAP] Setting cap_net_bind_service on /usr/bin/python3...
+[SETCAP] sudo -n failed, trying without -n...
+[SETCAP] Failed: Invalid file 'setcap' for capability operation
+
+apps.py started (port 80)
+run.py (fallback) started
+radarScanControl.py (fallback) started
+lightLockControl.py (fallback) started
+switchStatus.py (fallback) started
+[send.py] All processes running...
+2026-08-31 23:54:54 [INFO    ] [reader] [READER] Serial PORT=/dev/ttyAMA0
+2026-08-31 23:54:54 [INFO    ] [reader] [CONFIG] rf_mode=2D selected from config.json
+2026-08-31 23:54:54 [INFO    ] [reader] [CONFIG] antenna=[1, 2, 3, 4, 5] selected from config.json -> CMD=FF0B9102010102020303040405055040 (built fresh every time - works for any count/combination)
+2026-08-31 23:54:54 [INFO    ] [reader] [CONFIG] power=33dBm antenna=[1, 2, 3, 4, 5] -> CMD=FF249104010CE40CE401F4020CE40CE401F4030CE40CE401F4040CE40CE401F4050CE40CE401F48A69 (built fresh for exactly these antennas - 5 antenna(s), not a fixed count)
+2026-08-31 23:54:54 [INFO    ] [reader] [CONFIG] (manual mode) antenna_dwell_ms=2000 selected -> CMD=FF059502000007D0C1F3 (module's own factory default if this command is never sent is 4000ms)
+2026-08-31 23:54:54 [INFO    ] [reader] [CONFIG] RF-level Select filter ENABLED: EPC bank, prefix=8600 (16 bits, bit offset 0x20) -> module will only interrogate matching tags -> CMD=FF1EAA4D6F64756C6574656368AA48003F04800300000000000000201086006EBBFDA3
+2026-08-31 23:54:54 [INFO    ] [reader] [CONFIG] CMD_START_ASYNC_EX (0xAA58) built: dense_mode=True (ExConfigData[0]=0x00) -> CMD=FF27AA4D6F64756C6574656368AA580000000000000000000000000000000000000000003F008003C4BB9186
+2026-08-31 23:54:54 [INFO    ] [reader] [READER] inventory_mode=AA48
+2026-08-31 23:54:54 [INFO    ] [reader] [READER] EPC prefix filter: ('8600',)
+2026-08-31 23:54:54 [INFO    ] [reader] [READER] Antenna allow-list (tags outside this are dropped): [1, 2, 3, 4, 5]
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] Serial PORT=/dev/ttyAMA0
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] rf_mode=2D selected from config.json
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] antenna=[1, 2, 3, 4, 5] selected from config.json -> CMD=FF0B9102010102020303040405055040 (built fresh every time - works for any count/combination)
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] power=33dBm antenna=[1, 2, 3, 4, 5] -> CMD=FF249104010CE40CE401F4020CE40CE401F4030CE40CE401F4040CE40CE401F4050CE40CE401F48A69 (built fresh for exactly these antennas - 5 antenna(s), not a fixed count)
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] (manual mode) antenna_dwell_ms=2000 selected -> CMD=FF059502000007D0C1F3 (module's own factory default if this command is never sent is 4000ms)
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] RF-level Select filter ENABLED: EPC bank, prefix=8600 (16 bits, bit offset 0x20) -> module will only interrogate matching tags -> CMD=FF1EAA4D6F64756C6574656368AA48003F04800300000000000000201086006EBBFDA3
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] CMD_START_ASYNC_EX (0xAA58) built: dense_mode=True (ExConfigData[0]=0x00) -> CMD=FF27AA4D6F64756C6574656368AA580000000000000000000000000000000000000000003F008003C4BB9186
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] inventory_mode=AA48
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] EPC prefix filter: ('8600',)
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] Antenna allow-list (tags outside this are dropped): [1, 2, 3, 4, 5]
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] MACADDRESS : 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] CABINET    : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] BrokerAddr : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] HOSTNAME   : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] LOCAL_IP   : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] MACADDRESS : 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] CABINET    : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] BrokerAddr : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] HOSTNAME   : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [utilitys]  MACADDRESS: 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [utilitys]  CABINET:    MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [utilitys]  BrokerAddr: 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [utilitys]  HOSTNAME:   MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [radar] [INIT] RADAR SCAN CONTROL MODE
+/home/alice/broker/radarScanControl.py:61: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  _mqttc = mqtt.Client(
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] Connecting to MQTT broker 192.168.137.101:1883 ...
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] MQTT Connected rc=0
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] Waiting for door events...
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] Subscribed to topic: out
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] MACADDRESS : 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] CABINET    : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] BrokerAddr : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] HOSTNAME   : MASCAB01A
+/home/alice/broker/lightLockControl.py:143: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  mqttc_ll  = mqtt.Client(client_id=client_id, clean_session=True)
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] MQTT client started id=MASCAB01A-lightlock broker=192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] Connected rc=0
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] Subscribed to topic: in
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] MACADDRESS : 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] CABINET    : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] BrokerAddr : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] HOSTNAME   : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] LOCAL_IP   : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] MACADDRESS : 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] CABINET    : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] BrokerAddr : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] HOSTNAME   : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [utilitys]  MACADDRESS: 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [utilitys]  CABINET:    MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [utilitys]  BrokerAddr: 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [utilitys]  HOSTNAME:   MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [run] [INIT] MODE: SERVICE (REAL GPIO)
+2026-08-31 23:54:55 [INFO    ] [run] [INIT] Startup init
+2026-08-31 23:54:55 [INFO    ] [run] [INIT] GPIO defaults set: LOCK=LOW, READER=HIGH (LIGHT handled via MQTT - see force_light_on_at_startup)
+2026-08-31 23:54:55 [DEBUG   ] [run] [LOCK] 2026-08-31 23:54:55 STATUS=Lock
+2026-08-31 23:54:55 [INFO    ] [run] [DOOR] DOOR1=Close | DOOR2=Open
+2026-08-31 23:54:55 [INFO    ] [run] [LOCK] STATUS CHANGED -> Lock
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] Serial PORT=/dev/ttyAMA0
+2026-08-31 23:54:55 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:54:55 STATUS=On
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] rf_mode=2D selected from config.json
+2026-08-31 23:54:55 [INFO    ] [run] [LIGHT] STATUS CHANGED -> On
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] antenna=[1, 2, 3, 4, 5] selected from config.json -> CMD=FF0B9102010102020303040405055040 (built fresh every time - works for any count/combination)
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] power=33dBm antenna=[1, 2, 3, 4, 5] -> CMD=FF249104010CE40CE401F4020CE40CE401F4030CE40CE401F4040CE40CE401F4050CE40CE401F48A69 (built fresh for exactly these antennas - 5 antenna(s), not a fixed count)
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] (manual mode) antenna_dwell_ms=2000 selected -> CMD=FF059502000007D0C1F3 (module's own factory default if this command is never sent is 4000ms)
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] RF-level Select filter ENABLED: EPC bank, prefix=8600 (16 bits, bit offset 0x20) -> module will only interrogate matching tags -> CMD=FF1EAA4D6F64756C6574656368AA48003F04800300000000000000201086006EBBFDA3
+2026-08-31 23:54:55 [INFO    ] [reader] [CONFIG] CMD_START_ASYNC_EX (0xAA58) built: dense_mode=True (ExConfigData[0]=0x00) -> CMD=FF27AA4D6F64756C6574656368AA580000000000000000000000000000000000000000003F008003C4BB9186
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] inventory_mode=AA48
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] EPC prefix filter: ('8600',)
+2026-08-31 23:54:55 [INFO    ] [reader] [READER] Antenna allow-list (tags outside this are dropped): [1, 2, 3, 4, 5]
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] Client started id=MASCAB01A-run broker=192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [run] [INIT] MQTT started
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] Connected rc=0
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] suppress_callback registered
+2026-08-31 23:54:55 [INFO    ] [run] [INIT] Suppress callback registered to mqtts
+2026-08-31 23:54:55 [INFO    ] [run] [INIT] Published startup light-on command to topic 'in': {"light": "On", "mac": "all"}
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Periodic status worker started
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] Received topic=in payload={"light": "On", "mac": "all"}
+2026-08-31 23:54:55 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:54:55 [DEBUG   ] [mqtts] [MQTT] Parsed cmd= rfid= light=On lock= sessionId= mac=all ip=
+2026-08-31 23:54:55 [INFO    ] [run] [INIT] All workers started, entering main loop
+2026-08-31 23:54:55 [DEBUG   ] [run] [RUN] Worker publish suppressed for 1.0s
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Saved status.json (sessionId=)
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Saved status.json (sessionId=)
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Published (sessionId=)
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] light='On' lock='' hardware handled by lightLockControl.py
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] Received topic=in payload={"light": "On", "mac": "all"}
+2026-08-31 23:54:55 [DEBUG   ] [lightLockControl] [LIGHTLOCK] Parsed light='On' lock='' mac='all' seconds=None
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Published (sessionId=)
+2026-08-31 23:54:55 [DEBUG   ] [lightLockControl] [LIGHTLOCK] MAC filter passed - target: 'all'
+2026-08-31 23:54:55 [DEBUG   ] [mqtts] [MQTT] Waiting 200ms for hardware to settle before status update...
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHT] On (permanent)
+2026-08-31 23:54:55 [INFO    ] [utilitys]  MACADDRESS: 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [sublight] [SUBLIGHT] GPIO initialized lazily - this process is now the PWM owner
+2026-08-31 23:54:55 [INFO    ] [utilitys]  CABINET:    MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [utilitys]  BrokerAddr: 192.168.137.101
+[LIGHT] Mutex acquired (/tmp/light.lock)
+2026-08-31 23:54:55 [INFO    ] [utilitys]  HOSTNAME:   MASCAB01A
+2026-08-31 23:54:55 [WARNING ] [sublight] [SUBLIGHT] Failed to read 'dim' from /home/alice/broker/library/config.json: [Errno 2] No such file or directory: '/home/alice/broker/library/config.json'. Defaulting dim=0 (brightest).
+SUB ON -> brightness 100%
+2026-08-31 23:54:55 [INFO    ] [sublight] [SUBLIGHT] ON -> brightness 100%
+[LIGHT] Mutex released (/tmp/light.lock)
+2026-08-31 23:54:55 [INFO    ] [lightLockControl] [LIGHTLOCK] Hardware executed. Status update handled by mqtts.py.
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] MACADDRESS : 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] CABINET    : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] BrokerAddr : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] HOSTNAME   : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=)
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] LOCAL_IP   : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] MACADDRESS : 88:a2:9e:fd:8e:9c
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] CABINET    : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] BrokerAddr : 192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [mqtts] [MQTT] HOSTNAME   : MASCAB01A
+2026-08-31 23:54:55 [INFO    ] [switch] [INIT] SWITCH STATUS MODE (REAL GPIO)
+/home/alice/broker/switchStatus.py:112: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  c = mqtt_client.Client(client_id=client_id, clean_session=True)
+2026-08-31 23:54:55 [INFO    ] [switch] [SWITCH] MQTT publish-only client started id=MASCAB01A-switch broker=192.168.137.101
+2026-08-31 23:54:55 [INFO    ] [switch] [SWITCH] MQTT connected rc=0 (publish-only, no subscribe to 'in')
+2026-08-31 23:54:55 [INFO    ] [switch] [INIT] Door monitor running (ACTIVE LOW)
+2026-08-31 23:54:55 [INFO    ] [switch] [INIT] Door monitor thread started
+2026-08-31 23:54:55 [INFO    ] [switch] [INIT] Initial state: CLOSED
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Saved status.json (sessionId=)
+2026-08-31 23:54:55 [INFO    ] [status] [STATUS] Published (sessionId=)
+2026-08-31 23:54:55 [INFO    ] [mqtts] [STATUS] status.json updated & published to 'out'
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:54:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.3', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:54:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.3', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:54:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.3', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:54:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:54:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.3', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:54:56 [DEBUG   ] [run] [RUN] Worker publish suppress cleared
+2026-08-31 23:55:00 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:05 [INFO    ] [run] [SCAN] Startup scan triggered
+2026-08-31 23:55:05 [INFO    ] [startstops] [SCAN] Acquiring mutex...
+2026-08-31 23:55:05 [INFO    ] [startstops] [SCAN] Mutex acquired
+2026-08-31 23:55:05 [INFO    ] [startstops] [SCAN] Waiting for door CLOSED for 2 seconds...
+2026-08-31 23:55:05 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:05 [DEBUG   ] [run] [LOCK] 2026-08-31 23:55:05 STATUS=Lock
+2026-08-31 23:55:05 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:55:05 STATUS=On
+2026-08-31 23:55:05 [INFO    ] [startstops] [SCAN] Door initial: CLOSED
+2026-08-31 23:55:05 [INFO    ] [startstops] [SCAN] Door CLOSED confirmed, timer started
+============================================================
+Apps+Web Starting...
+============================================================
+/home/alice/broker/apps.py:1053: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  c = mqtt.Client()
+[RF_MODE] Startup state: 2D
+[POWER] Startup state: 33dBm
+[DIM] Startup state: 90%
+[ANTENNA] Startup state: [1, 2, 3, 4, 5]
+[VERSION] config.json version: 1.0.0(9)
+[STARTUP] Current hostname: MASCAB01A
+[STARTUP] Broker IP configured: 192.168.137.1
+[BROKER] Applying new broker: 192.168.137.1 -> 192.168.137.1 (force=True)
+[BROKER] bridge.conf updated -> 192.168.137.1
+2026-08-31 23:55:06 [INFO    ] [radar] [RADAR] MQTT Connected rc=0
+2026-08-31 23:55:06 [INFO    ] [mqtts] [MQTT] Connected rc=0
+2026-08-31 23:55:06 [INFO    ] [switch] [SWITCH] MQTT connected rc=0 (publish-only, no subscribe to 'in')
+2026-08-31 23:55:06 [INFO    ] [lightLockControl] [LIGHTLOCK] Connected rc=0
+2026-08-31 23:55:06 [INFO    ] [lightLockControl] [LIGHTLOCK] Subscribed to topic: in
+2026-08-31 23:55:06 [INFO    ] [radar] [RADAR] Subscribed to topic: out
+[WINDOWS HOSTNAME via nbtscan] 95-0061-00
+[RABBIT OK] queue=95-0061-00
+[BROKER] RabbitMQ queue/binding ensured
+/home/alice/broker/apps.py:770: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  c = mqtt.Client()
+2026-08-31 23:55:07 [INFO    ] [mqtts] [MQTT] Received topic=in payload={"ip_broker": "192.168.137.1", "mac": "all"}
+2026-08-31 23:55:07 [INFO    ] [lightLockControl] [LIGHTLOCK] Received topic=in payload={"ip_broker": "192.168.137.1", "mac": "all"}
+2026-08-31 23:55:07 [DEBUG   ] [lightLockControl] [LIGHTLOCK] Parsed light='' lock='' mac='all' seconds=None
+2026-08-31 23:55:07 [DEBUG   ] [mqtts] [MQTT] Parsed cmd= rfid= light= lock= sessionId= mac=all ip=
+2026-08-31 23:55:07 [DEBUG   ] [lightLockControl] [LIGHTLOCK] No light/lock in payload, skip.
+2026-08-31 23:55:07 [DEBUG   ] [run] [RUN] Worker publish suppressed for 1.0s
+[BROKER] ip_broker unchanged (192.168.137.1), skipping apply.
+2026-08-31 23:55:07 [INFO    ] [status] [STATUS] Saved status.json (sessionId=)
+2026-08-31 23:55:07 [INFO    ] [status] [STATUS] Published (sessionId=)
+2026-08-31 23:55:07 [INFO    ] [mqtts] [STATUS] status.json updated & published to 'out'
+2026-08-31 23:55:07 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:55:07', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.3', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:55:07 [INFO    ] [startstops] [MQTT] SCANNING sent sessionId= time='' sig=''
+2026-08-31 23:55:07 [INFO    ] [radar] [RADAR] Message cmd='Scanning': {'mac': 'MASCAB01A', 'hostname': 'MASCAB01A', 'cmd': 'Scanning', 'sessionId': '', 'time': '', 'sig': ''}
+2026-08-31 23:55:07 [INFO    ] [startstops] [SCAN] Spawning scan thread
+2026-08-31 23:55:07 [WARNING ] [radar] [RADAR] Unknown cmd=Scanning, skip
+2026-08-31 23:55:07 [INFO    ] [utilitys] [RFID] Snapshot rfid2.json -> rfid1.json
+2026-08-31 23:55:07 [INFO    ] [startstops] [SCAN] Reader enabled
+[BROKER] ip_broker broadcast sent -> 192.168.137.1
+[STARTUP] Bridge + queue setup OK
+[AUTO-SET] Waiting 300s before auto-set...
+
+Apps+Web running on http://192.168.137.101:8082
+
+2026-08-31 23:55:08 [DEBUG   ] [run] [RUN] Worker publish suppress cleared
+2026-08-31 23:55:08 [DEBUG   ] [reader] [READER] >> Set Baudrate
+2026-08-31 23:55:09 [INFO    ] [reader] [READER] Baudrate set OK (921600)
+2026-08-31 23:55:10 [INFO    ] [reader] [READER] Connecting at 921600
+2026-08-31 23:55:10 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:10 [INFO    ] [reader] [READER] Connecting at 115200
+2026-08-31 23:55:10 [INFO    ] [reader] [READER] Application mode @ 115200
+2026-08-31 23:55:10 [WARNING ] [reader] [READER] Reader at non-target baud 115200, will be corrected on next set_baudrate()
+2026-08-31 23:55:10 [INFO    ] [startstops] [SCAN] Starting async scan...
+2026-08-31 23:55:10 [INFO    ] [reader] [CONFIG] rssi_threshold=-95dBm -> RSSI filter ENABLED at module level (0xAA5B): module itself will not upload reads weaker than -95dBm (they never cross the serial link at all) -> CMD=FF12AA4D6F64756C6574656368AA5B01AAA10051BB1EB9
+2026-08-31 23:55:10 [INFO    ] [reader] [CONFIG] q_mode=dynamic -> CMD=FF039B051200CEE8 (module's own default)
+2026-08-31 23:55:10 [INFO    ] [reader] [AUTO-TUNE] scan_timeout=12.0s antenna_count=5 passes_target=3 -> dwell_ms=800 (ideal=800.0) one_cycle=4.00s quiet_stop=10.00s (2.50 cycles) passes_achieved=3.00
+2026-08-31 23:55:10 [INFO    ] [reader] [CONFIG] scan_timeout=12s quiet_stop=10.0s stable_threshold=0 rssi=-95(module-level 0xAA5B) prefix=('8600',) power=33dBm antenna_allowed=[1, 2, 3, 4, 5] dwell_ms=800 auto_tune=True inventory_mode=AA48 q=dynamic min_reads_per_scan=1 min_native_read_count=1 rssi_strict=-55dBm(if count<10)
+2026-08-31 23:55:11 [DEBUG   ] [reader] [READER] SET REGION: SUCCESS
+2026-08-31 23:55:11 [DEBUG   ] [reader] [READER] SET GEN2: SUCCESS
+2026-08-31 23:55:11 [WARNING ] [reader] [READER] SET POWER: STATUS=0105 RAW=ff00910105165d
+2026-08-31 23:55:11 [DEBUG   ] [reader] [READER] SET RSSI FILTER (0xAA5B): SUCCESS
+2026-08-31 23:55:12 [DEBUG   ] [reader] [READER] ENABLE ANT: SUCCESS
+2026-08-31 23:55:12 [WARNING ] [reader] [READER] SET ANTENNA DWELL: STATUS=0500 RAW=ff0095050052dc
+2026-08-31 23:55:12 [WARNING ] [reader] [SCAN] SET ANTENNA DWELL not confirmed - module may fall back to its own 4000ms/antenna default, which can make round-robin timing less predictable within scan_timeout.
+2026-08-31 23:55:12 [DEBUG   ] [reader] [READER] SET RFMODE: SUCCESS
+2026-08-31 23:55:13 [DEBUG   ] [reader] [READER] SET SESSION 1: SUCCESS
+2026-08-31 23:55:13 [DEBUG   ] [reader] [READER] SET TARGET AB: SUCCESS
+2026-08-31 23:55:13 [DEBUG   ] [reader] [READER] SET Q (dynamic): SUCCESS
+2026-08-31 23:55:14 [INFO    ] [reader] [SCAN] Setup took 3.16s (region/gen2/power/antenna/dwell/rfmode/session/target/q/start-async) - scan clock reset here, scan_timeout=12s now means 12s of actual listening time.
+2026-08-31 23:55:14 [INFO    ] [reader] [SCAN] Started (AA48) - max=12s quiet=10.0s dwell_ms=800 antenna_gate_open=True
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #001 EPC:860015332900000000001D00 RSSI:-32 NativeRC:1 Rate:899.1/s Total:1 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #002 EPC:860015332900000000001D05 RSSI:-50 NativeRC:1 Rate:1798.2/s Total:2 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #003 EPC:860015332900000000001E7F RSSI:-44 NativeRC:1 Rate:2697.3/s Total:3 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #004 EPC:860015332900000000001D3A RSSI:-46 NativeRC:1 Rate:3596.4/s Total:4 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #005 EPC:860015332900000000001D13 RSSI:-40 NativeRC:1 Rate:4495.5/s Total:5 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #006 EPC:860015332900000000001D23 RSSI:-50 NativeRC:1 Rate:5394.6/s Total:6 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #007 EPC:860015332900000000002ED6 RSSI:-48 NativeRC:1 Rate:6293.7/s Total:7 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #008 EPC:860015332900000000002E9F RSSI:-45 NativeRC:1 Rate:7192.8/s Total:8 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #009 EPC:860015332900000000002EFD RSSI:-47 NativeRC:1 Rate:8091.9/s Total:9 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #010 EPC:860015332900000000002EC7 RSSI:-42 NativeRC:1 Rate:8991.0/s Total:10 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #011 EPC:860015332900000000001D17 RSSI:-39 NativeRC:1 Rate:9890.1/s Total:11 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #012 EPC:860015332900000000002F07 RSSI:-58 NativeRC:1 Rate:10789.2/s Total:12 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #013 EPC:860015332900000000002E81 RSSI:-54 NativeRC:1 Rate:11688.3/s Total:13 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #014 EPC:860015332900000000002EF6 RSSI:-55 NativeRC:1 Rate:12587.4/s Total:14 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #015 EPC:860015332900000000001D03 RSSI:-39 NativeRC:1 Rate:13486.5/s Total:15 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #016 EPC:860015332900000000002E35 RSSI:-54 NativeRC:1 Rate:14385.6/s Total:16 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #017 EPC:860015332900000000002EA9 RSSI:-47 NativeRC:1 Rate:15284.7/s Total:17 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #018 EPC:860015332900000000002E8A RSSI:-50 NativeRC:1 Rate:16183.8/s Total:18 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #019 EPC:860015332900000000002EC6 RSSI:-46 NativeRC:1 Rate:17082.9/s Total:19 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #020 EPC:860015332900000000002ECD RSSI:-40 NativeRC:1 Rate:17982.0/s Total:20 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #021 EPC:860015332900000000001D16 RSSI:-38 NativeRC:1 Rate:18881.1/s Total:21 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #022 EPC:860015332900000000001D4E RSSI:-60 NativeRC:1 Rate:19780.2/s Total:22 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #023 EPC:860015332900000000001D47 RSSI:-44 NativeRC:1 Rate:20679.3/s Total:23 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #024 EPC:860015332900000000002E8C RSSI:-56 NativeRC:1 Rate:21578.4/s Total:24 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #025 EPC:860015332900000000002E7D RSSI:-53 NativeRC:1 Rate:22477.5/s Total:25 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #026 EPC:860015332900000000002EED RSSI:-49 NativeRC:1 Rate:23376.6/s Total:26 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #027 EPC:860015332900000000002E7A RSSI:-56 NativeRC:1 Rate:24275.7/s Total:27 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #028 EPC:860015332900000000002E6C RSSI:-42 NativeRC:1 Rate:25174.8/s Total:28 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #029 EPC:860015332900000000001D31 RSSI:-51 NativeRC:1 Rate:26073.9/s Total:29 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #030 EPC:860015332900000000002E5C RSSI:-47 NativeRC:1 Rate:26973.0/s Total:30 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #031 EPC:860015332900000000002F0A RSSI:-47 NativeRC:1 Rate:27872.1/s Total:31 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #032 EPC:860015332900000000002E4F RSSI:-51 NativeRC:1 Rate:28771.2/s Total:32 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #033 EPC:860015332900000000002EAC RSSI:-57 NativeRC:1 Rate:29670.3/s Total:33 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #034 EPC:860015332900000000001D5B RSSI:-51 NativeRC:1 Rate:30569.4/s Total:34 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #035 EPC:860015332900000000002E93 RSSI:-46 NativeRC:1 Rate:31468.5/s Total:35 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #036 EPC:860015332900000000002E8D RSSI:-50 NativeRC:1 Rate:32367.6/s Total:36 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #037 EPC:860015332900000000001D5D RSSI:-54 NativeRC:1 Rate:33266.7/s Total:37 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #038 EPC:860015332900000000002E6A RSSI:-47 NativeRC:1 Rate:34165.8/s Total:38 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #039 EPC:860015332900000000001D29 RSSI:-43 NativeRC:1 Rate:35064.9/s Total:39 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #040 EPC:860015332900000000002EC0 RSSI:-44 NativeRC:1 Rate:35964.0/s Total:40 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #041 EPC:860015332900000000002E7F RSSI:-57 NativeRC:1 Rate:36863.1/s Total:41 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #042 EPC:860015332900000000002F13 RSSI:-36 NativeRC:1 Rate:37762.2/s Total:42 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #043 EPC:860015332900000000002E41 RSSI:-43 NativeRC:1 Rate:38661.3/s Total:43 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #044 EPC:860015332900000000002E68 RSSI:-46 NativeRC:1 Rate:39560.4/s Total:44 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #045 EPC:860015332900000000001D44 RSSI:-52 NativeRC:1 Rate:40459.5/s Total:45 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #046 EPC:860015332900000000001D4D RSSI:-62 NativeRC:1 Rate:41358.6/s Total:46 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #047 EPC:860015332900000000002E56 RSSI:-55 NativeRC:1 Rate:42257.7/s Total:47 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #048 EPC:860015332900000000002E59 RSSI:-40 NativeRC:1 Rate:43156.8/s Total:48 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #049 EPC:860015332900000000001D1B RSSI:-58 NativeRC:1 Rate:44055.9/s Total:49 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #050 EPC:860015332900000000002EC8 RSSI:-44 NativeRC:1 Rate:44955.0/s Total:50 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #051 EPC:860015332900000000001D0C RSSI:-54 NativeRC:1 Rate:45854.1/s Total:51 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #052 EPC:860015332900000000002F02 RSSI:-50 NativeRC:1 Rate:46753.2/s Total:52 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #053 EPC:860015332900000000002E2B RSSI:-54 NativeRC:1 Rate:47652.3/s Total:53 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #054 EPC:860015332900000000002EE9 RSSI:-44 NativeRC:1 Rate:48551.4/s Total:54 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #055 EPC:860015332900000000002E84 RSSI:-49 NativeRC:1 Rate:49450.5/s Total:55 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #056 EPC:860015332900000000001D02 RSSI:-47 NativeRC:1 Rate:50349.6/s Total:56 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #057 EPC:860015332900000000002E27 RSSI:-43 NativeRC:1 Rate:51248.7/s Total:57 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #058 EPC:860015332900000000002E64 RSSI:-53 NativeRC:1 Rate:52147.8/s Total:58 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #059 EPC:860015332900000000002E23 RSSI:-50 NativeRC:1 Rate:53046.9/s Total:59 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #060 EPC:860015332900000000002F0C RSSI:-55 NativeRC:1 Rate:53946.0/s Total:60 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #061 EPC:860015332900000000002E51 RSSI:-50 NativeRC:1 Rate:54845.1/s Total:61 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #062 EPC:860015332900000000001D2A RSSI:-49 NativeRC:1 Rate:55744.2/s Total:62 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #063 EPC:860015332900000000001D34 RSSI:-58 NativeRC:1 Rate:56643.3/s Total:63 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #064 EPC:860015332900000000001D15 RSSI:-55 NativeRC:1 Rate:57542.4/s Total:64 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #065 EPC:860015332900000000002EF4 RSSI:-41 NativeRC:1 Rate:58441.5/s Total:65 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #066 EPC:860015332900000000002EF7 RSSI:-59 NativeRC:1 Rate:59340.6/s Total:66 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #067 EPC:860015332900000000002EB6 RSSI:-48 NativeRC:1 Rate:60239.7/s Total:67 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #068 EPC:860015332900000000002EDD RSSI:-41 NativeRC:1 Rate:61138.8/s Total:68 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #069 EPC:860015332900000000002E37 RSSI:-51 NativeRC:1 Rate:62037.9/s Total:69 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #070 EPC:860015332900000000002EA2 RSSI:-49 NativeRC:1 Rate:62937.0/s Total:70 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #071 EPC:860015332900000000001D14 RSSI:-43 NativeRC:1 Rate:63836.1/s Total:71 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #072 EPC:860015332900000000002ED9 RSSI:-34 NativeRC:1 Rate:64735.2/s Total:72 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #073 EPC:860015332900000000001D5E RSSI:-56 NativeRC:1 Rate:65634.3/s Total:73 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #074 EPC:860015332900000000002EA0 RSSI:-43 NativeRC:1 Rate:66533.4/s Total:74 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #075 EPC:860015332900000000002E45 RSSI:-50 NativeRC:1 Rate:67432.5/s Total:75 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #076 EPC:860015332900000000001EB8 RSSI:-42 NativeRC:1 Rate:68331.6/s Total:76 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #077 EPC:860015332900000000002EBB RSSI:-51 NativeRC:1 Rate:69230.7/s Total:77 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #078 EPC:860015332900000000002F01 RSSI:-50 NativeRC:1 Rate:70129.8/s Total:78 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #079 EPC:860015332900000000002E76 RSSI:-44 NativeRC:1 Rate:71028.9/s Total:79 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #080 EPC:8600153329000000000003E8 RSSI:-36 NativeRC:1 Rate:71928.0/s Total:80 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #081 EPC:860015332900000000001D2F RSSI:-46 NativeRC:1 Rate:72827.1/s Total:81 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #082 EPC:860015332900000000001D30 RSSI:-43 NativeRC:1 Rate:73726.2/s Total:82 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #083 EPC:860015332900000000002F09 RSSI:-51 NativeRC:1 Rate:74625.3/s Total:83 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #084 EPC:860015332900000000002EAA RSSI:-43 NativeRC:1 Rate:75524.4/s Total:84 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #085 EPC:860015332900000000002EA4 RSSI:-39 NativeRC:1 Rate:76423.5/s Total:85 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #086 EPC:860015332900000000002E55 RSSI:-41 NativeRC:1 Rate:77322.6/s Total:86 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #087 EPC:860015332900000000002EE0 RSSI:-40 NativeRC:1 Rate:78221.7/s Total:87 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #088 EPC:860015332900000000002E61 RSSI:-59 NativeRC:1 Rate:79120.8/s Total:88 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #089 EPC:860015332900000000002E3F RSSI:-50 NativeRC:1 Rate:80019.9/s Total:89 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #090 EPC:860015332900000000002E9D RSSI:-51 NativeRC:1 Rate:80919.0/s Total:90 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #091 EPC:860015332900000000002E8B RSSI:-51 NativeRC:1 Rate:81818.1/s Total:91 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #092 EPC:860015332900000000002E74 RSSI:-49 NativeRC:1 Rate:82717.2/s Total:92 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #093 EPC:860015332900000000002EBE RSSI:-57 NativeRC:1 Rate:83616.3/s Total:93 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #094 EPC:860015332900000000001D3C RSSI:-42 NativeRC:1 Rate:84515.5/s Total:94 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #095 EPC:860015332900000000001D49 RSSI:-48 NativeRC:1 Rate:85414.6/s Total:95 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #096 EPC:860015332900000000002EDC RSSI:-41 NativeRC:1 Rate:86313.7/s Total:96 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #097 EPC:860015332900000000002E2F RSSI:-36 NativeRC:1 Rate:87212.8/s Total:97 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #098 EPC:860015332900000000002E85 RSSI:-46 NativeRC:1 Rate:88111.9/s Total:98 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #099 EPC:860015332900000000002EA5 RSSI:-41 NativeRC:1 Rate:89011.0/s Total:99 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #100 EPC:860015332900000000002ECC RSSI:-37 NativeRC:1 Rate:89910.1/s Total:100 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.0s] ANT1 NEW #101 EPC:860015332900000000002ED8 RSSI:-38 NativeRC:1 Rate:90809.2/s Total:101 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #102 EPC:860015332900000000002E4A RSSI:-53 NativeRC:1 Rate:851.4/s Total:102 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #103 EPC:860015332900000000002F14 RSSI:-45 NativeRC:1 Rate:859.8/s Total:103 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #104 EPC:860015332900000000002E48 RSSI:-50 NativeRC:1 Rate:868.1/s Total:104 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #105 EPC:860015332900000000002EB3 RSSI:-61 NativeRC:1 Rate:876.5/s Total:105 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #106 EPC:860015332900000000002E47 RSSI:-45 NativeRC:1 Rate:884.8/s Total:106 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #107 EPC:860015332900000000002EAB RSSI:-39 NativeRC:1 Rate:893.2/s Total:107 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #108 EPC:860015332900000000002E70 RSSI:-44 NativeRC:1 Rate:901.5/s Total:108 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #109 EPC:860015332900000000001D39 RSSI:-50 NativeRC:1 Rate:909.9/s Total:109 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #110 EPC:860015332900000000001D3B RSSI:-54 NativeRC:1 Rate:918.2/s Total:110 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #111 EPC:860015332900000000001D38 RSSI:-57 NativeRC:1 Rate:926.6/s Total:111 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #112 EPC:860015332900000000002E25 RSSI:-37 NativeRC:1 Rate:934.9/s Total:112 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #113 EPC:860015332900000000002E7B RSSI:-59 NativeRC:1 Rate:943.3/s Total:113 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #114 EPC:860015332900000000001CFC RSSI:-55 NativeRC:1 Rate:951.6/s Total:114 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #115 EPC:860015332900000000002EB4 RSSI:-51 NativeRC:1 Rate:960.0/s Total:115 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #116 EPC:860015332900000000002E5B RSSI:-56 NativeRC:1 Rate:968.3/s Total:116 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #117 EPC:860015332900000000002E44 RSSI:-52 NativeRC:1 Rate:976.7/s Total:117 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #118 EPC:860015332900000000002EE8 RSSI:-47 NativeRC:1 Rate:985.0/s Total:118 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #119 EPC:860015332900000000001D1D RSSI:-52 NativeRC:1 Rate:993.4/s Total:119 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #120 EPC:860015332900000000002F10 RSSI:-50 NativeRC:1 Rate:1001.7/s Total:120 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #121 EPC:860015332900000000002E21 RSSI:-43 NativeRC:1 Rate:1010.0/s Total:121 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #122 EPC:860015332900000000001D07 RSSI:-43 NativeRC:1 Rate:1018.4/s Total:122 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #123 EPC:860015332900000000002E2E RSSI:-50 NativeRC:1 Rate:1026.7/s Total:123 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #124 EPC:860015332900000000002EFB RSSI:-59 NativeRC:1 Rate:1035.1/s Total:124 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #125 EPC:860015332900000000002E3A RSSI:-57 NativeRC:1 Rate:1043.4/s Total:125 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #126 EPC:860015332900000000002F1A RSSI:-42 NativeRC:1 Rate:1051.8/s Total:126 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #127 EPC:860015332900000000001CFA RSSI:-41 NativeRC:1 Rate:1060.1/s Total:127 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #128 EPC:860015332900000000002E4C RSSI:-55 NativeRC:1 Rate:1068.5/s Total:128 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #129 EPC:860015332900000000001EAE RSSI:-44 NativeRC:1 Rate:1076.8/s Total:129 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #130 EPC:860015332900000000002EEB RSSI:-42 NativeRC:1 Rate:1085.2/s Total:130 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #131 EPC:860015332900000000002ED3 RSSI:-42 NativeRC:1 Rate:1093.5/s Total:131 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #132 EPC:860015332900000000002E9C RSSI:-54 NativeRC:1 Rate:1101.9/s Total:132 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #133 EPC:860015332900000000002ED2 RSSI:-53 NativeRC:1 Rate:1110.2/s Total:133 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #134 EPC:860015332900000000002EFC RSSI:-41 NativeRC:1 Rate:1118.6/s Total:134 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #135 EPC:860015332900000000002E2D RSSI:-37 NativeRC:1 Rate:1126.9/s Total:135 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.1s] ANT1 NEW #136 EPC:860015332900000000001D41 RSSI:-49 NativeRC:1 Rate:1135.3/s Total:136 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #137 EPC:860015332900000000001D3E RSSI:-46 NativeRC:1 Rate:761.1/s Total:137 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #138 EPC:860015332900000000001D53 RSSI:-52 NativeRC:1 Rate:766.6/s Total:138 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #139 EPC:860015332900000000002EC2 RSSI:-38 NativeRC:1 Rate:772.2/s Total:139 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #140 EPC:860015332900000000002E54 RSSI:-44 NativeRC:1 Rate:777.7/s Total:140 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #141 EPC:860015332900000000002ECA RSSI:-45 NativeRC:1 Rate:783.3/s Total:141 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #142 EPC:860015332900000000002E6D RSSI:-60 NativeRC:1 Rate:788.9/s Total:142 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #143 EPC:860015332900000000002E99 RSSI:-48 NativeRC:1 Rate:794.4/s Total:143 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #144 EPC:860015332900000000001D11 RSSI:-40 NativeRC:1 Rate:800.0/s Total:144 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #145 EPC:860015332900000000002EB5 RSSI:-49 NativeRC:1 Rate:805.5/s Total:145 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #146 EPC:860015332900000000002ECF RSSI:-55 NativeRC:1 Rate:811.1/s Total:146 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #147 EPC:860015332900000000002E50 RSSI:-47 NativeRC:1 Rate:816.6/s Total:147 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #148 EPC:860015332900000000002E88 RSSI:-57 NativeRC:1 Rate:822.2/s Total:148 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #149 EPC:860015332900000000002E58 RSSI:-53 NativeRC:1 Rate:827.7/s Total:149 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #150 EPC:860015332900000000001D3D RSSI:-40 NativeRC:1 Rate:833.3/s Total:150 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #151 EPC:860015332900000000002E5E RSSI:-50 NativeRC:1 Rate:838.9/s Total:151 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #152 EPC:860015332900000000002F18 RSSI:-50 NativeRC:1 Rate:844.4/s Total:152 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #153 EPC:860015332900000000002EA6 RSSI:-46 NativeRC:1 Rate:850.0/s Total:153 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #154 EPC:860015332900000000001EA2 RSSI:-61 NativeRC:1 Rate:654.6/s Total:154 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #155 EPC:860015332900000000002EE4 RSSI:-43 NativeRC:1 Rate:658.9/s Total:155 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #156 EPC:860015332900000000002EB7 RSSI:-47 NativeRC:1 Rate:663.1/s Total:156 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #157 EPC:860015332900000000002E4B RSSI:-52 NativeRC:1 Rate:667.4/s Total:157 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #158 EPC:860015332900000000001D3F RSSI:-39 NativeRC:1 Rate:671.7/s Total:158 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #159 EPC:860015332900000000002EF2 RSSI:-41 NativeRC:1 Rate:675.9/s Total:159 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #160 EPC:860015332900000000001CFB RSSI:-35 NativeRC:1 Rate:680.2/s Total:160 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #161 EPC:860015332900000000002E3B RSSI:-47 NativeRC:1 Rate:684.4/s Total:161 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #162 EPC:860015332900000000002E75 RSSI:-59 NativeRC:1 Rate:688.7/s Total:162 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #163 EPC:860015332900000000001D52 RSSI:-62 NativeRC:1 Rate:692.9/s Total:163 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #164 EPC:860015332900000000002EEC RSSI:-50 NativeRC:1 Rate:697.2/s Total:164 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.2s] ANT1 NEW #165 EPC:860015332900000000001D48 RSSI:-33 NativeRC:1 Rate:701.4/s Total:165 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #166 EPC:860015332900000000001D0D RSSI:-62 NativeRC:1 Rate:574.3/s Total:166 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #167 EPC:860015332900000000001D58 RSSI:-40 NativeRC:1 Rate:577.8/s Total:167 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #168 EPC:860015332900000000001D20 RSSI:-52 NativeRC:1 Rate:581.2/s Total:168 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #169 EPC:860015332900000000002EDE RSSI:-34 NativeRC:1 Rate:584.7/s Total:169 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #170 EPC:860015332900000000001D4C RSSI:-50 NativeRC:1 Rate:588.2/s Total:170 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #171 EPC:860015332900000000002EFE RSSI:-61 NativeRC:1 Rate:591.6/s Total:171 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #172 EPC:860015332900000000002EBA RSSI:-45 NativeRC:1 Rate:595.1/s Total:172 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #173 EPC:860015332900000000002EE1 RSSI:-39 NativeRC:1 Rate:598.5/s Total:173 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #174 EPC:860015332900000000002EE5 RSSI:-57 NativeRC:1 Rate:602.0/s Total:174 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #175 EPC:860015332900000000002EA7 RSSI:-49 NativeRC:1 Rate:605.5/s Total:175 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #176 EPC:860015332900000000001D42 RSSI:-53 NativeRC:1 Rate:608.9/s Total:176 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #177 EPC:860015332900000000002EFF RSSI:-56 NativeRC:1 Rate:612.4/s Total:177 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #178 EPC:860015332900000000001E7A RSSI:-58 NativeRC:1 Rate:615.8/s Total:178 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #179 EPC:860015332900000000001D24 RSSI:-46 NativeRC:1 Rate:619.3/s Total:179 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #180 EPC:860015332900000000001D19 RSSI:-37 NativeRC:1 Rate:622.8/s Total:180 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #181 EPC:860015332900000000002F00 RSSI:-48 NativeRC:1 Rate:626.2/s Total:181 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #182 EPC:860015332900000000001D36 RSSI:-50 NativeRC:1 Rate:528.9/s Total:182 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #183 EPC:860015332900000000001CFE RSSI:-43 NativeRC:1 Rate:531.8/s Total:183 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #184 EPC:860015332900000000002E1C RSSI:-50 NativeRC:1 Rate:534.7/s Total:184 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #185 EPC:860015332900000000002E49 RSSI:-36 NativeRC:1 Rate:537.6/s Total:185 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #186 EPC:860015332900000000002EBC RSSI:-44 NativeRC:1 Rate:540.5/s Total:186 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #187 EPC:860015332900000000002E24 RSSI:-50 NativeRC:1 Rate:543.4/s Total:187 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #188 EPC:860015332900000000002E20 RSSI:-54 NativeRC:1 Rate:546.3/s Total:188 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #189 EPC:860015332900000000001D40 RSSI:-48 NativeRC:1 Rate:549.2/s Total:189 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #190 EPC:860015332900000000002E39 RSSI:-33 NativeRC:1 Rate:552.1/s Total:190 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #191 EPC:860015332900000000002E43 RSSI:-46 NativeRC:1 Rate:555.1/s Total:191 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #192 EPC:860015332900000000002EF9 RSSI:-40 NativeRC:1 Rate:558.0/s Total:192 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #193 EPC:860015332900000000002F17 RSSI:-44 NativeRC:1 Rate:560.9/s Total:193 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #194 EPC:860015332900000000002E87 RSSI:-47 NativeRC:1 Rate:563.8/s Total:194 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #195 EPC:860015332900000000002E29 RSSI:-42 NativeRC:1 Rate:566.7/s Total:195 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.3s] ANT1 NEW #196 EPC:860015332900000000002EF8 RSSI:-41 NativeRC:1 Rate:569.6/s Total:196 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #197 EPC:860015332900000000002E82 RSSI:-41 NativeRC:1 Rate:494.2/s Total:197 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #198 EPC:860015332900000000002EF3 RSSI:-42 NativeRC:1 Rate:496.7/s Total:198 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #199 EPC:860015332900000000002E72 RSSI:-43 NativeRC:1 Rate:499.2/s Total:199 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #200 EPC:860015332900000000002E1D RSSI:-43 NativeRC:1 Rate:501.7/s Total:200 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #201 EPC:860015332900000000002E78 RSSI:-44 NativeRC:1 Rate:504.2/s Total:201 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #202 EPC:860015332900000000001EA9 RSSI:-55 NativeRC:1 Rate:506.7/s Total:202 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #203 EPC:860015332900000000002E90 RSSI:-59 NativeRC:1 Rate:509.2/s Total:203 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #204 EPC:860015332900000000002EEF RSSI:-46 NativeRC:1 Rate:511.8/s Total:204 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #205 EPC:860015332900000000001D2C RSSI:-43 NativeRC:1 Rate:514.3/s Total:205 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #206 EPC:860015332900000000001D1C RSSI:-61 NativeRC:1 Rate:516.8/s Total:206 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #207 EPC:860015332900000000002EFA RSSI:-39 NativeRC:1 Rate:519.3/s Total:207 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #208 EPC:860015332900000000001D22 RSSI:-56 NativeRC:1 Rate:521.8/s Total:208 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #209 EPC:860015332900000000001D06 RSSI:-49 NativeRC:1 Rate:524.3/s Total:209 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #210 EPC:860015332900000000002EEE RSSI:-43 NativeRC:1 Rate:526.8/s Total:210 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #211 EPC:860015332900000000001D4F RSSI:-57 NativeRC:1 Rate:529.3/s Total:211 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.4s] ANT1 NEW #212 EPC:860015332900000000001D28 RSSI:-32 NativeRC:1 Rate:531.8/s Total:212 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #213 EPC:860015332900000000001D21 RSSI:-53 NativeRC:1 Rate:469.7/s Total:213 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #214 EPC:860015332900000000001CFF RSSI:-39 NativeRC:1 Rate:471.9/s Total:214 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #215 EPC:860015332900000000002E34 RSSI:-46 NativeRC:1 Rate:474.1/s Total:215 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #216 EPC:860015332900000000001D55 RSSI:-58 NativeRC:1 Rate:476.3/s Total:216 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #217 EPC:860015332900000000002E79 RSSI:-58 NativeRC:1 Rate:478.5/s Total:217 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #218 EPC:860015332900000000002E42 RSSI:-47 NativeRC:1 Rate:480.7/s Total:218 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #219 EPC:860015332900000000001D26 RSSI:-45 NativeRC:1 Rate:482.9/s Total:219 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #220 EPC:860015332900000000002EE6 RSSI:-59 NativeRC:1 Rate:485.1/s Total:220 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #221 EPC:860015332900000000001D56 RSSI:-44 NativeRC:1 Rate:487.3/s Total:221 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #222 EPC:860015332900000000002F06 RSSI:-56 NativeRC:1 Rate:489.5/s Total:222 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #223 EPC:860015332900000000002EF1 RSSI:-44 NativeRC:1 Rate:491.7/s Total:223 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #224 EPC:860015332900000000002E1F RSSI:-52 NativeRC:1 Rate:493.9/s Total:224 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #225 EPC:860015332900000000002F05 RSSI:-44 NativeRC:1 Rate:496.1/s Total:225 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #226 EPC:860015332900000000002E26 RSSI:-60 NativeRC:1 Rate:498.4/s Total:226 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #227 EPC:860015332900000000001D33 RSSI:-58 NativeRC:1 Rate:500.6/s Total:227 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #228 EPC:860015332900000000002F08 RSSI:-63 NativeRC:1 Rate:448.8/s Total:228 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #229 EPC:860015332900000000002E57 RSSI:-41 NativeRC:1 Rate:450.7/s Total:229 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #230 EPC:860015332900000000001D51 RSSI:-55 NativeRC:1 Rate:452.7/s Total:230 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #231 EPC:860015332900000000002E95 RSSI:-46 NativeRC:1 Rate:454.7/s Total:231 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #232 EPC:860015332900000000002EC3 RSSI:-41 NativeRC:1 Rate:456.7/s Total:232 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #233 EPC:860015332900000000002E4D RSSI:-41 NativeRC:1 Rate:458.6/s Total:233 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #234 EPC:860015332900000000002E38 RSSI:-49 NativeRC:1 Rate:460.6/s Total:234 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #235 EPC:860015332900000000002ED4 RSSI:-41 NativeRC:1 Rate:462.6/s Total:235 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #236 EPC:860015332900000000002E22 RSSI:-59 NativeRC:1 Rate:464.5/s Total:236 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #237 EPC:860015332900000000002E92 RSSI:-47 NativeRC:1 Rate:466.5/s Total:237 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #238 EPC:860015332900000000002E31 RSSI:-47 NativeRC:1 Rate:468.5/s Total:238 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #239 EPC:860015332900000000002E62 RSSI:-42 NativeRC:1 Rate:470.4/s Total:239 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #240 EPC:860015332900000000001D5C RSSI:-56 NativeRC:1 Rate:472.4/s Total:240 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #241 EPC:860015332900000000001E8D RSSI:-53 NativeRC:1 Rate:474.4/s Total:241 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.5s] ANT1 NEW #242 EPC:860015332900000000002E32 RSSI:-44 NativeRC:1 Rate:476.3/s Total:242 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #243 EPC:860015332900000000001D5A RSSI:-63 NativeRC:1 Rate:431.9/s Total:243 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #244 EPC:860015332900000000001EA6 RSSI:-57 NativeRC:1 Rate:433.7/s Total:244 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #245 EPC:860015332900000000001D25 RSSI:-52 NativeRC:1 Rate:435.5/s Total:245 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #246 EPC:860015332900000000002ECB RSSI:-49 NativeRC:1 Rate:437.3/s Total:246 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #247 EPC:860015332900000000001D0E RSSI:-61 NativeRC:1 Rate:439.1/s Total:247 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #248 EPC:860015332900000000001D1E RSSI:-54 NativeRC:1 Rate:440.8/s Total:248 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #249 EPC:860015332900000000002E71 RSSI:-61 NativeRC:1 Rate:442.6/s Total:249 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #250 EPC:860015332900000000002E28 RSSI:-64 NativeRC:1 Rate:444.4/s Total:250 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #251 EPC:860015332900000000002F15 RSSI:-41 NativeRC:1 Rate:446.2/s Total:251 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #252 EPC:860015332900000000002E77 RSSI:-60 NativeRC:1 Rate:447.9/s Total:252 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #253 EPC:860015332900000000002E8E RSSI:-55 NativeRC:1 Rate:449.7/s Total:253 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #254 EPC:860015332900000000001D2D RSSI:-41 NativeRC:1 Rate:451.5/s Total:254 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #255 EPC:860015332900000000001D4B RSSI:-60 NativeRC:1 Rate:453.3/s Total:255 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #256 EPC:860015332900000000002E73 RSSI:-65 NativeRC:1 Rate:455.1/s Total:256 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #257 EPC:860015332900000000001D54 RSSI:-49 NativeRC:1 Rate:456.8/s Total:257 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #258 EPC:860015332900000000002ED1 RSSI:-40 NativeRC:1 Rate:458.6/s Total:258 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #259 EPC:860015332900000000001EAF RSSI:-50 NativeRC:1 Rate:419.5/s Total:259 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #260 EPC:860015332900000000002EB8 RSSI:-46 NativeRC:1 Rate:421.2/s Total:260 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #261 EPC:860015332900000000002E96 RSSI:-44 NativeRC:1 Rate:422.8/s Total:261 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #262 EPC:860015332900000000002F0E RSSI:-58 NativeRC:1 Rate:424.4/s Total:262 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #263 EPC:860015332900000000002E91 RSSI:-50 NativeRC:1 Rate:426.0/s Total:263 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #264 EPC:860015332900000000001D45 RSSI:-50 NativeRC:1 Rate:427.6/s Total:264 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #265 EPC:860015332900000000002EAE RSSI:-62 NativeRC:1 Rate:429.3/s Total:265 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #266 EPC:860015332900000000002E4E RSSI:-51 NativeRC:1 Rate:430.9/s Total:266 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #267 EPC:860015332900000000002E67 RSSI:-57 NativeRC:1 Rate:432.5/s Total:267 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #268 EPC:860015332900000000002EF0 RSSI:-47 NativeRC:1 Rate:434.1/s Total:268 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #269 EPC:860015332900000000002E94 RSSI:-48 NativeRC:1 Rate:435.7/s Total:269 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #270 EPC:860015332900000000002F0D RSSI:-47 NativeRC:1 Rate:437.4/s Total:270 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #271 EPC:860015332900000000002EB1 RSSI:-43 NativeRC:1 Rate:439.0/s Total:271 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #272 EPC:860015332900000000002EC5 RSSI:-48 NativeRC:1 Rate:440.6/s Total:272 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #273 EPC:860015332900000000002F19 RSSI:-46 NativeRC:1 Rate:442.2/s Total:273 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.6s] ANT1 NEW #274 EPC:860015332900000000001D59 RSSI:-59 NativeRC:1 Rate:443.8/s Total:274 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #275 EPC:860015332900000000002E97 RSSI:-47 NativeRC:1 Rate:409.2/s Total:275 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #276 EPC:860015332900000000001D12 RSSI:-52 NativeRC:1 Rate:410.7/s Total:276 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #277 EPC:860015332900000000002ECE RSSI:-58 NativeRC:1 Rate:412.2/s Total:277 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #278 EPC:860015332900000000001D32 RSSI:-60 NativeRC:1 Rate:413.6/s Total:278 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #279 EPC:860015332900000000001D43 RSSI:-50 NativeRC:1 Rate:415.1/s Total:279 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #280 EPC:860015332900000000002F03 RSSI:-45 NativeRC:1 Rate:416.6/s Total:280 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #281 EPC:860015332900000000002EA8 RSSI:-47 NativeRC:1 Rate:418.1/s Total:281 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #282 EPC:860015332900000000002EB2 RSSI:-42 NativeRC:1 Rate:419.6/s Total:282 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #283 EPC:860015332900000000002ED5 RSSI:-51 NativeRC:1 Rate:421.1/s Total:283 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #284 EPC:860015332900000000002E9B RSSI:-46 NativeRC:1 Rate:422.6/s Total:284 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #285 EPC:860015332900000000001D1F RSSI:-53 NativeRC:1 Rate:424.1/s Total:285 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #286 EPC:860015332900000000002E5F RSSI:-58 NativeRC:1 Rate:425.5/s Total:286 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #287 EPC:860015332900000000002E40 RSSI:-46 NativeRC:1 Rate:427.0/s Total:287 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #288 EPC:860015332900000000002E9E RSSI:-42 NativeRC:1 Rate:428.5/s Total:288 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #289 EPC:860015332900000000002E6B RSSI:-56 NativeRC:1 Rate:430.0/s Total:289 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #290 EPC:860015332900000000002EAF RSSI:-52 NativeRC:1 Rate:431.5/s Total:290 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #291 EPC:860015332900000000002F16 RSSI:-48 NativeRC:1 Rate:433.0/s Total:291 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #292 EPC:860015332900000000001D09 RSSI:-60 NativeRC:1 Rate:401.5/s Total:292 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #293 EPC:860015332900000000002EAD RSSI:-49 NativeRC:1 Rate:402.9/s Total:293 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #294 EPC:860015332900000000002E53 RSSI:-49 NativeRC:1 Rate:404.3/s Total:294 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #295 EPC:860015332900000000002E65 RSSI:-62 NativeRC:1 Rate:405.7/s Total:295 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #296 EPC:860015332900000000002E5D RSSI:-57 NativeRC:1 Rate:407.0/s Total:296 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #297 EPC:860015332900000000002EB0 RSSI:-47 NativeRC:1 Rate:408.4/s Total:297 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #298 EPC:860015332900000000002E86 RSSI:-49 NativeRC:1 Rate:409.8/s Total:298 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #299 EPC:860015332900000000002EF5 RSSI:-54 NativeRC:1 Rate:411.2/s Total:299 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #300 EPC:860015332900000000002EBD RSSI:-47 NativeRC:1 Rate:412.5/s Total:300 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #301 EPC:860015332900000000001D35 RSSI:-53 NativeRC:1 Rate:413.9/s Total:301 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #302 EPC:860015332900000000002E3E RSSI:-54 NativeRC:1 Rate:415.3/s Total:302 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #303 EPC:860015332900000000001D4A RSSI:-63 NativeRC:1 Rate:416.7/s Total:303 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #304 EPC:860015332900000000002F0F RSSI:-58 NativeRC:1 Rate:418.0/s Total:304 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #305 EPC:860015332900000000002E46 RSSI:-48 NativeRC:1 Rate:419.4/s Total:305 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #306 EPC:860015332900000000002E2C RSSI:-59 NativeRC:1 Rate:420.8/s Total:306 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.7s] ANT1 NEW #307 EPC:860015332900000000001EA7 RSSI:-67 NativeRC:1 Rate:422.2/s Total:307 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT1 NEW #308 EPC:860015332900000000002E30 RSSI:-60 NativeRC:1 Rate:393.8/s Total:308 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #309 EPC:860015332900000000002E1E RSSI:-53 NativeRC:1 Rate:395.1/s Total:309 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #310 EPC:860015332900000000001D57 RSSI:-56 NativeRC:1 Rate:396.4/s Total:310 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #311 EPC:860015332900000000001D1A RSSI:-62 NativeRC:1 Rate:397.6/s Total:311 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #312 EPC:860015332900000000002E2A RSSI:-55 NativeRC:1 Rate:398.9/s Total:312 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #313 EPC:860015332900000000001D18 RSSI:-52 NativeRC:1 Rate:400.2/s Total:313 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #314 EPC:860015332900000000001D0B RSSI:-61 NativeRC:1 Rate:401.5/s Total:314 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #315 EPC:860015332900000000002E60 RSSI:-46 NativeRC:1 Rate:402.7/s Total:315 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #316 EPC:860015332900000000002E69 RSSI:-47 NativeRC:1 Rate:378.6/s Total:316 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #317 EPC:860015332900000000001D2B RSSI:-52 NativeRC:1 Rate:379.8/s Total:317 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #318 EPC:860015332900000000002EC4 RSSI:-44 NativeRC:1 Rate:381.0/s Total:319 Dup:1.0x
+2026-08-31 23:55:14 [INFO    ] [reader] [0.8s] ANT2 NEW #319 EPC:860015332900000000002E6F RSSI:-61 NativeRC:1 Rate:382.2/s Total:320 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #320 EPC:860015332900000000002E63 RSSI:-55 NativeRC:1 Rate:361.1/s Total:322 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #321 EPC:860015332900000000002EE7 RSSI:-48 NativeRC:1 Rate:362.2/s Total:323 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #322 EPC:860015332900000000001D08 RSSI:-54 NativeRC:1 Rate:363.3/s Total:324 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #323 EPC:860015332900000000002EA1 RSSI:-47 NativeRC:1 Rate:364.4/s Total:325 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #324 EPC:860015332900000000002EDB RSSI:-52 NativeRC:1 Rate:365.6/s Total:326 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #325 EPC:860015332900000000002EB9 RSSI:-46 NativeRC:1 Rate:366.7/s Total:327 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #326 EPC:860015332900000000002EC1 RSSI:-54 NativeRC:1 Rate:367.8/s Total:328 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #327 EPC:860015332900000000001CFD RSSI:-48 NativeRC:1 Rate:369.0/s Total:329 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #328 EPC:860015332900000000002EDF RSSI:-43 NativeRC:1 Rate:370.1/s Total:331 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #329 EPC:860015332900000000002E33 RSSI:-58 NativeRC:1 Rate:371.2/s Total:333 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #330 EPC:860015332900000000001D46 RSSI:-50 NativeRC:1 Rate:351.1/s Total:334 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #331 EPC:860015332900000000001D2E RSSI:-53 NativeRC:1 Rate:352.1/s Total:335 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #332 EPC:860015332900000000002E5A RSSI:-54 NativeRC:1 Rate:353.2/s Total:336 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #333 EPC:860015332900000000002E7E RSSI:-55 NativeRC:1 Rate:354.3/s Total:337 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #334 EPC:8600153329000000000003EB RSSI:-28 NativeRC:1 Rate:355.3/s Total:338 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #335 EPC:860015332900000000002EE3 RSSI:-46 NativeRC:1 Rate:356.4/s Total:339 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #336 EPC:860015332900000000002EA3 RSSI:-61 NativeRC:1 Rate:357.4/s Total:340 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #337 EPC:860015332900000000001D27 RSSI:-49 NativeRC:1 Rate:358.5/s Total:341 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #338 EPC:860015332900000000002E66 RSSI:-56 NativeRC:1 Rate:359.6/s Total:342 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #339 EPC:860015332900000000002E36 RSSI:-46 NativeRC:1 Rate:360.6/s Total:343 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [0.9s] ANT3 NEW #340 EPC:860015332900000000002E3C RSSI:-55 NativeRC:1 Rate:361.7/s Total:344 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #341 EPC:860015332900000000002E3D RSSI:-51 NativeRC:1 Rate:343.2/s Total:345 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #342 EPC:860015332900000000002E6E RSSI:-37 NativeRC:1 Rate:344.2/s Total:346 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #343 EPC:860015332900000000002E80 RSSI:-42 NativeRC:1 Rate:345.3/s Total:350 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #344 EPC:860015332900000000001E78 RSSI:-58 NativeRC:1 Rate:346.3/s Total:351 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #345 EPC:860015332900000000001D04 RSSI:-50 NativeRC:1 Rate:347.3/s Total:352 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #346 EPC:860015332900000000002E52 RSSI:-44 NativeRC:1 Rate:348.3/s Total:356 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #347 EPC:860015332900000000002F0B RSSI:-39 NativeRC:1 Rate:349.3/s Total:359 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #348 EPC:860015332900000000002EEA RSSI:-34 NativeRC:1 Rate:332.3/s Total:360 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #349 EPC:860015332900000000002E7C RSSI:-43 NativeRC:1 Rate:333.3/s Total:363 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #350 EPC:860015332900000000002EBF RSSI:-52 NativeRC:1 Rate:334.2/s Total:365 Dup:1.0x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.0s] ANT4 NEW #351 EPC:860015332900000000001D0F RSSI:-43 NativeRC:1 Rate:335.2/s Total:372 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.1s] ANT4 NEW #352 EPC:860015332900000000002F04 RSSI:-49 NativeRC:1 Rate:319.9/s Total:376 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.1s] ANT4 NEW #353 EPC:860015332900000000001D37 RSSI:-56 NativeRC:1 Rate:320.8/s Total:380 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.1s] ANT4 NEW #354 EPC:860015332900000000001D0A RSSI:-58 NativeRC:1 Rate:321.7/s Total:382 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.1s] ANT4 NEW #355 EPC:860015332900000000002E89 RSSI:-46 NativeRC:1 Rate:322.6/s Total:383 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.1s] ANT4 NEW #356 EPC:860015332900000000002E9A RSSI:-50 NativeRC:1 Rate:323.5/s Total:386 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.1s] ANT4 NEW #357 EPC:860015332900000000001E92 RSSI:-53 NativeRC:1 Rate:324.4/s Total:389 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.2s] ANT4 NEW #358 EPC:860015332900000000002ED7 RSSI:-50 NativeRC:1 Rate:310.2/s Total:396 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.2s] ANT4 NEW #359 EPC:860015332900000000001E8F RSSI:-51 NativeRC:1 Rate:311.1/s Total:397 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.2s] ANT4 NEW #360 EPC:860015332900000000002E83 RSSI:-56 NativeRC:1 Rate:311.9/s Total:398 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.2s] ANT4 NEW #361 EPC:860015332900000000001D10 RSSI:-56 NativeRC:1 Rate:312.8/s Total:399 Dup:1.1x
+2026-08-31 23:55:15 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:15 [INFO    ] [reader] [1.2s] ANT5 NEW #362 EPC:860015332900000000001EA4 RSSI:-61 NativeRC:1 Rate:300.0/s Total:403 Dup:1.1x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.2s] ANT5 NEW #363 EPC:860015332900000000002F1B RSSI:-30 NativeRC:1 Rate:300.8/s Total:406 Dup:1.1x
+2026-08-31 23:55:15 [DEBUG   ] [run] [LOCK] 2026-08-31 23:55:15 STATUS=Lock
+2026-08-31 23:55:15 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:55:15 STATUS=On
+2026-08-31 23:55:15 [INFO    ] [reader] [1.3s] ANT5 NEW #364 EPC:860015332900000000001E86 RSSI:-48 NativeRC:1 Rate:289.0/s Total:428 Dup:1.2x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.3s] ANT5 NEW #365 EPC:860015332900000000002EDA RSSI:-47 NativeRC:1 Rate:278.1/s Total:435 Dup:1.2x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.3s] ANT5 NEW #366 EPC:860015332900000000001D01 RSSI:-61 NativeRC:1 Rate:278.9/s Total:444 Dup:1.2x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.4s] ANT5 NEW #367 EPC:860015332900000000002F12 RSSI:-29 NativeRC:1 Rate:268.8/s Total:446 Dup:1.2x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.4s] ANT5 NEW #368 EPC:860015332900000000002F11 RSSI:-32 NativeRC:1 Rate:269.5/s Total:448 Dup:1.2x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.4s] ANT5 NEW #369 EPC:860015332900000000002EC9 RSSI:-39 NativeRC:1 Rate:260.2/s Total:468 Dup:1.3x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.4s] ANT5 NEW #370 EPC:860015332900000000002ED0 RSSI:-46 NativeRC:1 Rate:260.9/s Total:473 Dup:1.3x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.5s] ANT5 NEW #371 EPC:860015332900000000002E98 RSSI:-62 NativeRC:1 Rate:252.2/s Total:479 Dup:1.3x
+2026-08-31 23:55:15 [INFO    ] [reader] [1.5s] ANT5 NEW #372 EPC:860015332900000000002E8F RSSI:-56 NativeRC:1 Rate:252.9/s Total:491 Dup:1.3x
+2026-08-31 23:55:16 [INFO    ] [reader] [2.2s] ANT1 NEW #373 EPC:860015332900000000001ED8 RSSI:-60 NativeRC:1 Rate:169.2/s Total:677 Dup:1.8x
+2026-08-31 23:55:17 [INFO    ] [reader] [3.2s] ANT1 NEW #374 EPC:860015332900000000002EE2 RSSI:-52 NativeRC:1 Rate:117.1/s Total:921 Dup:2.5x
+2026-08-31 23:55:17 [INFO    ] [reader] [3.7s] ANT1 NEW #375 EPC:860015332900000000001E95 RSSI:-57 NativeRC:1 Rate:100.9/s Total:1068 Dup:2.8x
+2026-08-31 23:55:18 [INFO    ] [reader] [4.0s] ANT4 NEW #376 EPC:860015332900000000001E9E RSSI:-58 NativeRC:1 Rate:94.5/s Total:1117 Dup:3.0x
+2026-08-31 23:55:19 [INFO    ] [reader] [5.3s] ANT5 NEW #377 EPC:860015332900000000001E89 RSSI:-62 NativeRC:1 Rate:71.3/s Total:1434 Dup:3.8x
+2026-08-31 23:55:20 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:21 [INFO    ] [reader] [7.4s] ANT4 NEW #378 EPC:860015332900000000001EC8 RSSI:-68 NativeRC:1 Rate:51.0/s Total:2010 Dup:5.3x
+2026-08-31 23:55:25 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:25 [DEBUG   ] [run] [LOCK] 2026-08-31 23:55:25 STATUS=Lock
+2026-08-31 23:55:25 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:55:25 STATUS=On
+2026-08-31 23:55:26 [INFO    ] [reader] [SCAN] Max scan time 12s reached - stopping
+2026-08-31 23:55:26 [INFO    ] [reader] [SCAN] Async scan stopped
+2026-08-31 23:55:26 [INFO    ] [reader] [SCAN] Done unique=378 duration=12s aborted=False antenna_gate_open=True
+2026-08-31 23:55:26 [ERROR   ] [startstops] [SCAN] Debounce step failed, publishing raw result: module 'reader' has no attribute 'apply_remove_debounce'
+2026-08-31 23:55:26 [INFO    ] [utilitys] [RFID] EPC raw=378 | filtered=378 | filter=['8600']
+2026-08-31 23:55:26 [INFO    ] [utilitys] [RFID] Saved rfid2.json | count=378 | add=0 | remove=0
+2026-08-31 23:55:26 [INFO    ] [mqtts] [MQTT] JSON published to out
+2026-08-31 23:55:26 [INFO    ] [utilitys] [RFID] MQTT published
+2026-08-31 23:55:26 [INFO    ] [startstops] [SCAN] Scan completed & saved
+2026-08-31 23:55:26 [INFO    ] [startstops] [SCAN] Reader disabled
+2026-08-31 23:55:26 [INFO    ] [startstops] [SCAN] Mutex released
+2026-08-31 23:55:26 [INFO    ] [radar] [RADAR] Message cmd='': {'macaddress': 'MASCAB01A', 'hostname': 'MASCAB01A', 'IP_ETH0': '192.168.137.101', 'sessionId': '', 'time': '2026-08-31 23:55:26', 'duration': 12, 'count': 378, 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.5', 'Humidity': '89.9', 'inventory': ['860015332900000000001D0C', '860015332900000000001D51', '860015332900000000002EA8', '860015332900000000002ECD', '860015332900000000002ECE', '860015332900000000001D26', '860015332900000000002EC9', '860015332900000000002E9C', '860015332900000000001D2F', '860015332900000000002EE9', '860015332900000000001D3F', '860015332900000000002EF7', '860015332900000000002E67', '860015332900000000001D4B', '860015332900000000001D40', '860015332900000000002EB8', '860015332900000000002F07', '860015332900000000002EC4', '860015332900000000002E87', '860015332900000000002E3E', '860015332900000000002ED6', '860015332900000000002E88', '860015332900000000001D55', '860015332900000000002F08', '860015332900000000002EA2', '860015332900000000002EC6', '860015332900000000001ED8', '860015332900000000001D47', '860015332900000000002E93', '860015332900000000002EDF', '860015332900000000002EF3', '860015332900000000001D25', '860015332900000000001D0D', '860015332900000000001D5D', '860015332900000000001E9E', '860015332900000000001D32', '860015332900000000002E55', '860015332900000000001D54', '860015332900000000001D12', '860015332900000000002ED8', '860015332900000000002E8F', '860015332900000000002E8C', '860015332900000000001D46', '860015332900000000002E6C', '860015332900000000002E5F', '860015332900000000001D5B', '860015332900000000002EC8', '860015332900000000001E78', '860015332900000000001D3E', '860015332900000000002E48', '860015332900000000002EC3', '860015332900000000002E8E', '860015332900000000002ED5', '860015332900000000002E8D', '860015332900000000002E29', '860015332900000000002EC0', '860015332900000000001D3C', '860015332900000000001D05', '860015332900000000002F12', '860015332900000000002E2D', '860015332900000000002E65', '860015332900000000002E7E', '860015332900000000002EFC', '860015332900000000002F02', '860015332900000000001D34', '860015332900000000002E32', '860015332900000000001EA7', '860015332900000000001E95', '860015332900000000002E3C', '860015332900000000001EAE', '860015332900000000001D15', '860015332900000000002E76', '860015332900000000001D42', '860015332900000000001D27', '860015332900000000001D21', '860015332900000000001D01', '860015332900000000001D11', '860015332900000000002E6D', '860015332900000000002ED7', '860015332900000000002E61', '860015332900000000002EFF', '860015332900000000002EF5', '860015332900000000002E44', '860015332900000000002E30', '860015332900000000001CFF', '860015332900000000002E33', '860015332900000000002E35', '860015332900000000002EEC', '860015332900000000001CFB', '860015332900000000002EA9', '860015332900000000002E7A', '860015332900000000002EF4', '860015332900000000002E50', '860015332900000000001D52', '860015332900000000001D36', '860015332900000000002EDB', '860015332900000000002E63', '860015332900000000001D3A', '860015332900000000002EFA', '860015332900000000002EA4', '860015332900000000001E86', '860015332900000000002EBD', '860015332900000000001D06', '860015332900000000002EE6', '860015332900000000002E9D', '860015332900000000002E9F', '860015332900000000002ECF', '860015332900000000002E3D', '860015332900000000002E73', '860015332900000000002EBC', '860015332900000000002E95', '860015332900000000002F19', '860015332900000000001D19', '860015332900000000002ED3', '860015332900000000001D0B', '860015332900000000002EDD', '860015332900000000002E23', '860015332900000000002E70', '860015332900000000002E60', '860015332900000000002EA7', '860015332900000000001D13', '860015332900000000001D3B', '860015332900000000002EB1', '860015332900000000001CFE', '860015332900000000002EFE', '860015332900000000002E5B', '860015332900000000002E51', '860015332900000000002F13', '860015332900000000001E7A', '860015332900000000002E34', '860015332900000000002EA0', '860015332900000000001D41', '860015332900000000002E85', '860015332900000000002E2B', '860015332900000000001D4A', '860015332900000000001EA2', '860015332900000000001D1F', '860015332900000000002E54', '860015332900000000002EF8', '860015332900000000001E7F', '860015332900000000001D44', '860015332900000000001D1C', '860015332900000000002E6F', '860015332900000000001D3D', '860015332900000000002E83', '860015332900000000002E68', '860015332900000000002F09', '860015332900000000002E97', '860015332900000000002E94', '860015332900000000001EC8', '860015332900000000002E1F', '860015332900000000002ED2', '860015332900000000001D1D', '860015332900000000002E1E', '860015332900000000002F10', '860015332900000000002E71', '860015332900000000002EC1', '860015332900000000001D5E', '860015332900000000002E31', '860015332900000000002E43', '860015332900000000002E7D', '860015332900000000001D20', '860015332900000000001CFC', '860015332900000000002E27', '860015332900000000002F0D', '860015332900000000002E25', '860015332900000000001D53', '860015332900000000001D31', '860015332900000000002EAD', '860015332900000000001D2B', '860015332900000000002F0C', '860015332900000000002E6A', '860015332900000000002E21', '860015332900000000002E28', '860015332900000000002EAF', '860015332900000000001D14', '860015332900000000002ED4', '860015332900000000001E8F', '860015332900000000002EC2', '860015332900000000002E81', '860015332900000000002EF2', '860015332900000000002EE5', '860015332900000000002E53', '860015332900000000001D00', '860015332900000000001D5C', '860015332900000000002EB4', '860015332900000000002E75', '860015332900000000001D18', '860015332900000000001D02', '860015332900000000001D37', '860015332900000000001D2A', '860015332900000000002F14', '8600153329000000000003E8', '860015332900000000002EAA', '860015332900000000002F01', '860015332900000000002E91', '860015332900000000001D49', '860015332900000000001D24', '860015332900000000002E6E', '860015332900000000001CFA', '860015332900000000001D17', '860015332900000000002E90', '860015332900000000002E84', '860015332900000000002E9A', '860015332900000000002E4B', '860015332900000000002EDC', '860015332900000000001D56', '860015332900000000001EA4', '860015332900000000002E4F', '860015332900000000002EEA', '860015332900000000002EBF', '860015332900000000002E1D', '860015332900000000002EEB', '860015332900000000002EF9', '860015332900000000002EE7', '860015332900000000002E96', '860015332900000000002EED', '860015332900000000001D58', '860015332900000000002EFB', '860015332900000000002E92', '860015332900000000001D29', '860015332900000000001D45', '860015332900000000001E89', '860015332900000000002E89', '860015332900000000002E4A', '860015332900000000001D4C', '860015332900000000001D1E', '860015332900000000002E3A', '860015332900000000002E45', '860015332900000000002E7B', '860015332900000000002EB0', '860015332900000000002F16', '860015332900000000002EE0', '860015332900000000002E3B', '860015332900000000002E26', '860015332900000000002E39', '860015332900000000002E5D', '860015332900000000002F00', '860015332900000000002EC7', '860015332900000000001D09', '860015332900000000002EF0', '860015332900000000002E2F', '860015332900000000002E58', '860015332900000000002EB5', '860015332900000000001D43', '860015332900000000002E38', '860015332900000000002E46', '860015332900000000002EE1', '860015332900000000002EAC', '860015332900000000002F0F', '860015332900000000001D4E', '860015332900000000001D2D', '860015332900000000001EA6', '860015332900000000002ED1', '860015332900000000001D39', '860015332900000000002E57', '860015332900000000002E42', '860015332900000000002E5A', '860015332900000000002EAB', '860015332900000000001EAF', '860015332900000000001D0F', '860015332900000000002EAE', '860015332900000000001D08', '860015332900000000002EBE', '860015332900000000002E52', '860015332900000000002EA1', '860015332900000000002E40', '860015332900000000002E4E', '860015332900000000001D5A', '860015332900000000002E47', '860015332900000000002EE8', '860015332900000000002E6B', '860015332900000000002F0E', '860015332900000000002F17', '860015332900000000001D59', '860015332900000000002E24', '860015332900000000001D28', '860015332900000000002E7F', '860015332900000000002E59', '860015332900000000002F0A', '860015332900000000002E74', '860015332900000000001EB8', '860015332900000000002E9E', '860015332900000000002EBA', '860015332900000000001D33', '860015332900000000001D48', '860015332900000000001D4D', '860015332900000000002E2E', '860015332900000000002E9B', '860015332900000000002ED9', '860015332900000000002E78', '860015332900000000002E98', '860015332900000000001D38', '860015332900000000002E79', '860015332900000000002E2A', '860015332900000000002EA6', '860015332900000000002EB7', '860015332900000000002E69', '860015332900000000002ECC', '860015332900000000002E4C', '860015332900000000002E7C', '860015332900000000001E92', '860015332900000000002EFD', '860015332900000000002E4D', '860015332900000000001D4F', '860015332900000000002E62', '860015332900000000002F04', '860015332900000000001D04', '860015332900000000001D2E', '860015332900000000002E56', '860015332900000000002EDA', '860015332900000000002F05', '860015332900000000001D10', '860015332900000000002E64', '860015332900000000002E5C', '860015332900000000002E22', '8600153329000000000003EB', '860015332900000000001D30', '860015332900000000001EA9', '860015332900000000002E5E', '860015332900000000001D23', '860015332900000000002EEF', '860015332900000000002EDE', '860015332900000000001D2C', '860015332900000000001D16', '860015332900000000002E36', '860015332900000000002E80', '860015332900000000001D1B', '860015332900000000002EC5', '860015332900000000002EEE', '860015332900000000002EA3', '860015332900000000002ECA', '860015332900000000002EB6', '860015332900000000001E8D', '860015332900000000001D22', '860015332900000000002F03', '860015332900000000002E72', '860015332900000000002F15', '860015332900000000001D07', '860015332900000000002F1B', '860015332900000000002EE2', '860015332900000000001D0A', '860015332900000000001D57', '860015332900000000002E8A', '860015332900000000002F18', '860015332900000000002EB3', '860015332900000000002E8B', '860015332900000000002F11', '860015332900000000001D03', '860015332900000000002F0B', '860015332900000000002EE3', '860015332900000000001CFD', '860015332900000000002EB2', '860015332900000000001D0E', '860015332900000000001D1A', '860015332900000000002EE4', '860015332900000000002E37', '860015332900000000002EF1', '860015332900000000002ED0', '860015332900000000001D35', '860015332900000000002E2C', '860015332900000000002EBB', '860015332900000000002E49', '860015332900000000002EA5', '860015332900000000002EF6', '860015332900000000002E66', '860015332900000000002E1C', '860015332900000000002ECB', '860015332900000000002E20', '860015332900000000002E86', '860015332900000000002F06', '860015332900000000002E41', '860015332900000000002EB9', '860015332900000000002E82', '860015332900000000002E3F', '860015332900000000002F1A', '860015332900000000002E77', '860015332900000000002E99'], 'add': [], 'remove': [], 'mac': 'MASCAB01A'}
+2026-08-31 23:55:26 [INFO    ] [startstops] [SCAN] main(): hardware scan thread finished, returning
+2026-08-31 23:55:30 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:35 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:35 [DEBUG   ] [run] [LOCK] 2026-08-31 23:55:35 STATUS=Lock
+2026-08-31 23:55:35 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:55:35 STATUS=On
+2026-08-31 23:55:40 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:45 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:45 [DEBUG   ] [run] [LOCK] 2026-08-31 23:55:45 STATUS=Lock
+2026-08-31 23:55:45 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:55:45 STATUS=On
+2026-08-31 23:55:50 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:55 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:55:55 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=)
+2026-08-31 23:55:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:55:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.5', 'Humidity': '90.0', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:55:55 [DEBUG   ] [run] [LOCK] 2026-08-31 23:55:55 STATUS=Lock
+2026-08-31 23:55:55 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:55:55 STATUS=On
+2026-08-31 23:56:00 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:05 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:05 [DEBUG   ] [run] [LOCK] 2026-08-31 23:56:05 STATUS=Lock
+2026-08-31 23:56:05 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:56:05 STATUS=On
+2026-08-31 23:56:10 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:15 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:15 [DEBUG   ] [run] [LOCK] 2026-08-31 23:56:15 STATUS=Lock
+2026-08-31 23:56:15 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:56:15 STATUS=On
+2026-08-31 23:56:20 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:25 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:25 [DEBUG   ] [run] [LOCK] 2026-08-31 23:56:25 STATUS=Lock
+2026-08-31 23:56:25 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:56:25 STATUS=On
+2026-08-31 23:56:30 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:35 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:35 [DEBUG   ] [run] [LOCK] 2026-08-31 23:56:35 STATUS=Lock
+2026-08-31 23:56:35 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:56:35 STATUS=On
+2026-08-31 23:56:40 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:45 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:45 [DEBUG   ] [run] [LOCK] 2026-08-31 23:56:45 STATUS=Lock
+2026-08-31 23:56:45 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:56:45 STATUS=On
+2026-08-31 23:56:50 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:55 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:56:55 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=)
+2026-08-31 23:56:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:56:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.5', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:56:55 [DEBUG   ] [run] [LOCK] 2026-08-31 23:56:55 STATUS=Lock
+2026-08-31 23:56:55 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:56:55 STATUS=On
+2026-08-31 23:57:00 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:05 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:05 [DEBUG   ] [run] [LOCK] 2026-08-31 23:57:05 STATUS=Lock
+2026-08-31 23:57:05 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:57:05 STATUS=On
+^A2026-08-31 23:57:10 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:15 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:15 [DEBUG   ] [run] [LOCK] 2026-08-31 23:57:15 STATUS=Lock
+2026-08-31 23:57:15 [DEBUG   ] [run] [LOCK] 2026-08-31 23:57:15 STATUS=Lock
+2026-08-31 23:57:15 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:57:15 STATUS=On
+2026-08-31 23:57:20 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:25 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:25 [DEBUG   ] [run] [LOCK] 2026-08-31 23:57:25 STATUS=Lock
+2026-08-31 23:57:25 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:57:25 STATUS=On
+2026-08-31 23:57:30 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:35 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:35 [DEBUG   ] [run] [LOCK] 2026-08-31 23:57:35 STATUS=Lock
+2026-08-31 23:57:35 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:57:35 STATUS=On
+2026-08-31 23:57:40 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:45 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:45 [DEBUG   ] [run] [LOCK] 2026-08-31 23:57:45 STATUS=Lock
+2026-08-31 23:57:45 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:57:45 STATUS=On
+2026-08-31 23:57:50 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:55 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:57:55 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=)
+2026-08-31 23:57:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:57:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.4', 'Humidity': '90.0', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:57:55 [DEBUG   ] [run] [LOCK] 2026-08-31 23:57:55 STATUS=Lock
+2026-08-31 23:57:55 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:57:55 STATUS=On
+2026-08-31 23:58:00 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:05 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:05 [DEBUG   ] [run] [LOCK] 2026-08-31 23:58:05 STATUS=Lock
+2026-08-31 23:58:05 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:58:05 STATUS=On
+2026-08-31 23:58:10 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:15 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:15 [DEBUG   ] [run] [LOCK] 2026-08-31 23:58:15 STATUS=Lock
+2026-08-31 23:58:15 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:58:15 STATUS=On
+2026-08-31 23:58:20 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:25 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:25 [DEBUG   ] [run] [LOCK] 2026-08-31 23:58:25 STATUS=Lock
+2026-08-31 23:58:25 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:58:25 STATUS=On
+2026-08-31 23:58:30 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:35 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:35 [DEBUG   ] [run] [LOCK] 2026-08-31 23:58:35 STATUS=Lock
+2026-08-31 23:58:35 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:58:35 STATUS=On
+2026-08-31 23:58:40 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:45 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:45 [DEBUG   ] [run] [LOCK] 2026-08-31 23:58:45 STATUS=Lock
+2026-08-31 23:58:45 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:58:45 STATUS=On
+2026-08-31 23:58:50 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:55 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:58:55 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=)
+2026-08-31 23:58:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:58:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.5', 'Humidity': '90.0', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:58:55 [DEBUG   ] [run] [LOCK] 2026-08-31 23:58:55 STATUS=Lock
+2026-08-31 23:58:55 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:58:55 STATUS=On
+2026-08-31 23:59:00 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:05 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:05 [DEBUG   ] [run] [LOCK] 2026-08-31 23:59:05 STATUS=Lock
+2026-08-31 23:59:05 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:59:05 STATUS=On
+2026-08-31 23:59:10 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:15 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:15 [DEBUG   ] [run] [LOCK] 2026-08-31 23:59:15 STATUS=Lock
+2026-08-31 23:59:15 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:59:15 STATUS=On
+2026-08-31 23:59:20 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:25 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:25 [DEBUG   ] [run] [LOCK] 2026-08-31 23:59:25 STATUS=Lock
+2026-08-31 23:59:25 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:59:25 STATUS=On
+2026-08-31 23:59:30 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:35 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:35 [DEBUG   ] [run] [LOCK] 2026-08-31 23:59:35 STATUS=Lock
+2026-08-31 23:59:35 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:59:35 STATUS=On
+2026-08-31 23:59:40 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:45 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:45 [DEBUG   ] [run] [LOCK] 2026-08-31 23:59:45 STATUS=Lock
+2026-08-31 23:59:45 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:59:45 STATUS=On
+2026-08-31 23:59:50 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:55 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-08-31 23:59:55 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=)
+2026-08-31 23:59:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-08-31 23:59:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.4', 'Humidity': '89.9', 'IP_ETH0': '192.168.137.101'}
+2026-08-31 23:59:55 [DEBUG   ] [run] [LOCK] 2026-08-31 23:59:55 STATUS=Lock
+2026-08-31 23:59:55 [DEBUG   ] [run] [LIGHT] 2026-08-31 23:59:55 STATUS=On
+2026-09-01 00:00:00 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:05 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:05 [DEBUG   ] [run] [LOCK] 2026-09-01 00:00:05 STATUS=Lock
+2026-09-01 00:00:05 [DEBUG   ] [run] [LIGHT] 2026-09-01 00:00:05 STATUS=On
+[BROKER] ip_broker unchanged (192.168.137.1), skipping apply.
+[WINDOWS HOSTNAME via nbtscan] 95-0061-00
+[AUTO-SET] Done. queue=95-0061-00
+2026-09-01 00:00:10 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:15 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:15 [DEBUG   ] [run] [LOCK] 2026-09-01 00:00:15 STATUS=Lock
+2026-09-01 00:00:16 [DEBUG   ] [run] [LIGHT] 2026-09-01 00:00:15 STATUS=On
+2026-09-01 00:00:20 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:25 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:25 [DEBUG   ] [run] [LOCK] 2026-09-01 00:00:25 STATUS=Lock
+2026-09-01 00:00:26 [DEBUG   ] [run] [LIGHT] 2026-09-01 00:00:26 STATUS=On
+2026-09-01 00:00:30 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:35 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:35 [DEBUG   ] [run] [LOCK] 2026-09-01 00:00:35 STATUS=Lock
+2026-09-01 00:00:36 [DEBUG   ] [run] [LIGHT] 2026-09-01 00:00:36 STATUS=On
+2026-09-01 00:00:40 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:45 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:45 [DEBUG   ] [run] [LOCK] 2026-09-01 00:00:45 STATUS=Lock
+2026-09-01 00:00:46 [DEBUG   ] [run] [LIGHT] 2026-09-01 00:00:46 STATUS=On
+2026-09-01 00:00:50 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:55 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close
+2026-09-01 00:00:55 [INFO    ] [status] [STATUS] Published DEVICE (sessionId=)
+2026-09-01 00:00:55 [INFO    ] [radar] [RADAR] Message cmd='': {'mac': 'MASCAB01A', 'macAddress': '88:a2:9e:fd:8e:9c', 'hostname': 'MASCAB01A', 'sessionId': '', 'time': '2026-09-01 00:00:55', 'Door1': 'Close', 'Light': 'On', 'Lock1': 'Lock', 'Temperature': '21.5', 'Humidity': '90.0', 'IP_ETH0': '192.168.137.101'}
+2026-09-01 00:00:55 [DEBUG   ] [run] [LOCK] 2026-09-01 00:00:55 STATUS=Lock
+2026-09-01 00:00:56 [DEBUG   ] [run] [LIGHT] 2026-09-01 00:00:56 STATUS=On
+2026-09-01 00:01:00 [DEBUG   ] [run] [GPIO TEST] RAW=0 | API=Close

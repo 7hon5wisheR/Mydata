@@ -1,0 +1,3 @@
+sudo systemctl stop send.service
+sudo systemctl enable send.service
+sudo systemctl start send.service
