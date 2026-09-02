@@ -28,6 +28,7 @@ pitucode bandepinataku passwordku
 
 "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 20.81.43.213 -p 1883 -t "#" -v
 mosquitto_sub -h 192.168.137.1 -p 1883 -t "#" -v
+"C:\Program Files\mosquitto\mosquitto_sub.exe" -h 192.168.137.1 -p 1883 -t "#" -v
 
 
 mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"MASCAB01B\",\"light\":\"off\"}"
