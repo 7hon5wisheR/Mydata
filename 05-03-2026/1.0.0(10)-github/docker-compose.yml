@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  rabbit:
+    image: maspects/rabbit:latest
+    container_name: rabbit
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "8883:8883"
+      - "1883:1883"
+      - "15675:15675"
+    # entrypoint & cmd pakai default dari image (entrypoint.sh -> rabbitmq-server)
+
+  react:
+    image: maspects/react:latest
+    container_name: react
+    restart: unless-stopped
+    depends_on:
+      - rabbit
+    entrypoint: ["/bin/sh", "-c", "sleep 30 && exec npm run dev"]
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - HOST_IP=192.168.137.1
+      - NUMBER_OF_CABINETS=2
+    volumes:
+      - ./data:/app/data
+
+  policyweb:
+    image: maspects/policyweb:latest
+    container_name: policyweb
+    restart: unless-stopped
+    depends_on:
+      - react
+    entrypoint: ["/bin/sh", "-c", "sleep 30 && exec supervisord -c /etc/supervisor/conf.d/supervisord.conf"]
+    ports:
+      - "5100:5100"
+    volumes:
+      - ./module.json:/app/module.json
+      - ./data:/app/data

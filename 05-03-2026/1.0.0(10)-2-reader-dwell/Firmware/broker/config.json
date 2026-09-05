@@ -1,0 +1,29 @@
+{
+    "location": "MASCAB01",
+    "consstring": "",
+    "hostname": "MASCAB01A",
+    "inventory_mode": "AA48",
+    "auto_tune_passes": 3,
+    "auto_tune_quiet_cycles": 2.5,
+    "rssi_threshold": -95,
+    "rssi_threshold_strict": -95,
+    "min_reads_per_scan": 1,
+    "rfid_filter": [
+        "8600"
+    ],
+    "scan_timeout": 12,
+    "ip_broker": "192.168.137.1",
+    "PORT": "ttyAMA0",
+    "rf_mode": "2D",
+    "logger": "enable",
+    "version": "1.0.0(10)",
+    "power": 33,
+    "dim": 50,
+    "antenna": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+    ]
+}
