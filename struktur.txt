@@ -8,6 +8,7 @@ broker
  --mqtts.py
  --light.py
  --door.py
+ --sht20.py
  --temperature.py
  --humidity.py
  --startstop.py
