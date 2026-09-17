@@ -17,6 +17,10 @@ wsl --shutdown
 95-0061-00@ad
 1794616883
 
+screen -ls
+ screen -S 8295.myapp -X quit
+screen -S myapp
+
 ssh alice@192.168.137.101
 ssh alice@192.168.137.102
 ssh alice@192.168.137.103

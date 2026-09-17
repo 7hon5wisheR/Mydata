@@ -1,0 +1,19 @@
+Create Log
+=====================================================
+
+sudo nano /etc/systemd/journald.conf
+------------------------------------------------------
+Uncomment or add below
+
+
+[Journal]
+SystemMaxUse=100M
+SystemMaxFileSize=10M
+MaxRetentionSec=7day
+Compress=yes
+
+========================================================
+restart
+=======================================================
+sudo systemctl restart systemd-journald
+
