@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Configure Azure Service Bus</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 650px;
+            margin: 0 auto 30px auto;
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #0077b6;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input[type=text],
+        input[type=password],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #0077b6;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+        button:hover {
+            background: #005f8a;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table td {
+            padding: 5px;
+        }
+        table input {
+            width: 95%;
+        }
+        table button {
+            background: #d9534f;
+            padding: 6px;
+            font-size: 13px;
+            width: auto;
+        }
+        .add-btn {
+            background: #2a9d8f;
+            margin-top: 10px;
+        }
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 6px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .logs {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ======================
+     TOPIC CREATION/DELETION FORM
+====================== -->
+<div class="container">
+    <h2>Configure Azure Service Bus</h2>
+    <form method="POST">
+        <label>Action:</label>
+        <select name="action" required>
+            <option value="create_topic" selected>Create Topic</option>
+            <option value="delete_topic">Delete Topic</option>
+        </select>
+
+
+        <input type="hidden" name="mac_address" value="{{ eth0_mac }}" required>
+
+        <label>Subscription ID:</label>
+        <input type="text" name="subscription_id" required>
+
+        <label>Resource Group:</label>
+        <input type="text" name="resource_group" required>
+
+        <label>Namespace Name:</label>
+        <input type="text" name="namespace_name" required>
+
+        <label>Tenant ID:</label>
+        <input type="text" name="tenant_id" required>
+
+        <label>Client ID:</label>
+        <input type="text" name="client_id" required>
+
+        <label>Client Secret:</label>
+        <input type="password" name="client_secret" required>
+
+
+        <button type="submit">Execute Action</button>
+    </form>
+
+    {% if message_topic %}
+        <div class="message {% if '?' in message_topic %}success{% else %}error{% endif %}">
+            {{ message_topic }}
+        </div>
+    {% endif %}
+</div>
+
+<!-- ======================
+     PARAMETER SET FORM
+====================== -->
+
+<!-- ======================
+     LOG SECTION
+====================== -->
+{% if logs %}
+<div class="container">
+    <h2>Process Logs</h2>
+    <div class="logs">
+        {% for log in logs %}
+            <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- ======================
+     TOPIC LIST
+====================== -->
+{% if topics_list %}
+<div class="container">
+    <h2>Topics in Namespace</h2>
+    <ul>
+        {% for t in topics_list %}
+            <li>{{ t }}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="GET">
+        <button type="submit">?? Refresh Topics</button>
+    </form>
+</div>
+{% endif %}
+
+<script>
+    function addRow() {
+        const table = document.getElementById("extraTable");
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td><input type="text" name="extra_prefix[]" placeholder="Sub prefix"></td>
+            <td><input type="text" name="extra_suffix[]" placeholder="Filter suffix"></td>
+            <td><button type="button" onclick="removeRow(this)">X</button></td>
+        `;
+    }
+
+    function removeRow(btn) {
+        btn.closest("tr").remove();
+    }
+</script>
+
+</body>
+</html>

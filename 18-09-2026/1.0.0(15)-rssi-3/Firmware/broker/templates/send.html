@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Send to Rabbit</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        .msg { margin: 20px 0; color: green; font-weight: bold; }
+        form { margin-top: 20px; }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover { background: #45a049; }
+        .info {
+            margin-top: 30px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+        .control { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Configure Reader</h1>
+
+    {% if message %}
+        <div class="msg">{{ message|safe }}</div>
+    {% endif %}
+
+
+
+    <!-- Reader Controls -->
+    <div class="control">
+        <form method="POST">
+           
+            <button type="submit" name="action" value="run_start">Start Reader</button>
+            <button type="submit" name="action" value="run_stop">Stop Reader</button>
+           
+        </form>
+    </div>
+
+    <div class="info">
+        <p>Server running on: <b>{{ local_ip }}:8090</b></p>
+        <p>This machine MAC: <b>{{ mac_addr }}</b></p>
+        <p>Reader Status:
+            {% if run_status == "ON" %}
+                <span style="color:green; font-weight:bold;">ON</span>
+            {% else %}
+                <span style="color:red; font-weight:bold;">OFF</span>
+            {% endif %}
+        </p>
+    </div>
+</body>
+</html>
