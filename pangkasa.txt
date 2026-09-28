@@ -1,0 +1,53 @@
+ini kdoe reader.py: saya gak paham maksud Di run_async_scan(), setup sebelum start_time reset (ini yang di-log sebagai setup_elapsed, komentarnya sendiri bilang ~2.5s):
+REGION+GEN2+POWER+RSSI (4×0.15) + ANT(0.3) + DWELL(0.15) + RFMODE(0.5) + SESSION(0.3) + TARGET(0.15) + Q(0.15) + START_ASYNC(0.2) + sleep(0.3) ≈ 2.65s
+Setelah loop selesai (finally block):
+Di sini ada yang jelas bisa dipangkas tanpa mengurangi listening time sama sekali — lihat baris 2183-2193: finally:
+    try:
+        with serial.Serial(PORT, baudrate=baud, timeout=0.05) as ser:  # ← BUKA KONEKSI BARU
+            send_command(ser, stop_cmd)
+    except Exception:
+        pass Padahal koneksi serial yang sama (ser) baru saja dipakai persis di atasnya untuk loop scanning, lalu ditutup otomatis waktu with block di try selesai (loop break) — habis itu dibuka lagi dari nol cuma buat kirim stop command. Menutup+membuka ulang port serial di Raspberry Pi biasanya makan waktu jauh lebih lama dari sekadar time.sleep() (re-init device node, kadang 100-500ms+), padahal ini murni overhead protokol, bukan bagian dari "dengar tag".
+Perbaikan konkret — kirim stop_cmd pakai koneksi yang sama, sebelum with di try block ditutup: try:
+    with serial.Serial(PORT, baudrate=baud, timeout=0.05) as ser:
+        # ... setup commands ...
+        while True:
+            # ... loop scan ...
+        send_command(ser, stop_cmd)   # <-- kirim di sini, pakai ser yang sudah terbuka
+except Exception as e:
+    log.error("[SCAN] Async scan error: %s", e)
+finally:
+    GPIO.output(SHUTDOWN_GPIO, GPIO.HIGH)
+    log.info("[SCAN] Async scan stopped") Ini menghilangkan satu siklus close+reopen port secara gratis, tanpa menyentuh MAX_SCAN_TIME/reduction sama sekali.
+Kandidat lain (ada trade-off, perlu diuji):
+RFMODE (0.5s) + SESSION (0.3s) + TARGET (0.15s) + Q (0.15s) = 1.1s hanya dipakai di jalur AA48. Kalau pindah ke inventory_mode: "AA58", keempatnya di-skip otomatis (lihat komentar baris 2023-2032) — tapi ini ganti algoritma inventory-nya, bukan cuma pangkas delay, jadi perlu tes ulang stabilitas tag.
+Delay send_command_checked (0.15-0.3s per command, ada ~9 command) itu margin aman untuk tunggu respons serial di 921600 baud — secara teori respons ACK sependek itu harusnya jauh di bawah 150ms, jadi mungkin bisa dikecilkan (misal ke 0.08-0.1s), tapi ini beresiko kalau modul kadang lambat merespons → command jadi keliatan "NO RESPONSE" padahal cuma telat.
+time.sleep(1.0), time.sleep(0.5) di scan_worker(), dan time.sleep(1) di set_baudrate() — ini jeda settle hardware setelah power-up/ubah baud. Paling beresiko dipangkas karena bisa bikin modul belum siap → gagal konek.
+Coba fix bagian stop_cmd dulu (paling aman, murni buang overhead sia-sia), lalu ukur ulang pakai stopwatch permasalahan config.json:{
+    "location": "MASCAB01",
+    "consstring": "",
+    "hostname": "MASCAB01A",
+    "inventory_mode": "AA48",
+    "auto_tune_passes": 3,
+    "auto_tune_quiet_cycles": 2.5,
+    "rssi_threshold": -95,
+    "rssi_threshold_strict": -95,
+    "min_reads_per_scan": 1,
+    "rfid_filter": [
+        "8600"
+    ],
+    "scan_timeout": 14,
+    "ip_broker": "192.168.137.1",
+    "PORT": "ttyAMA0",
+    "rf_mode": "2D",
+    "logger": "enable",
+    "version": "1.0.0(14)",
+    "power": 33,
+    "dim": 50,
+    "antenna": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+    ]
+} coba cek dimana kelirunya,, saya test pake stopwatch, nah saat saya pake reduksi -8 nah pembacaan benar timenya 14 sesuai stopwatch masalahnya tag sepeeti gak stabil,, karena hanya sisa 6 secoond,, nah saat pake reduksi -7 atau -6, pembacaan timer gak sesuai 16 lamanya sedaangkan yang terkirim kan tetap 14,, tapi tag stabil.  bagaiamana caranya agat tag stabil dan time ynag terkirm sama denag stopwatvh time

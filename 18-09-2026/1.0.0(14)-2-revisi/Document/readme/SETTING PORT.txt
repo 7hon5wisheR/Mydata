@@ -1,0 +1,44 @@
+a.
+check: ls -l /dev/serial*
+if: ls access: chage port at config.json
+if: ls: cannot access '/dev/serial*': No such file or directory
+
+sudo raspi-config
+
+Interface Options
+ → Serial Port
+   → Login shell over serial?   NO
+   → Enable serial hardware?   YES
+
+Finish
+sudo reboot
+
+check again: ls -l /dev/serial*
+lrwxrwxrwx 1 root root 5 Feb 15 20:03 /dev/serial0 -> ttyS0
+
+b.
+===================================================
+edit config
+==================================================
+
+sudo nano /boot/firmware/config.txt :
+
+
+[all]
+enable_uart=1
+dtoverlay=disable-bt
+
+
+--------------------------------------------------
+
+control X, Save, Yes
+
+sudo reboot
+
+check again:
+ls -l /dev/serial*
+lrwxrwxrwx 1 root root ...... /dev/serial0 -> ttyAMA0
+or
+lrwxrwxrwx 1 root root 5 Feb 14 18:25 /dev/serial0 -> ttyS0
+
+Change port on config.json

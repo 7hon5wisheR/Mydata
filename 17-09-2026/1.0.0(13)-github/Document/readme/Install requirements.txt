@@ -1,0 +1,82 @@
+Install requirements.txt (for raspberry 3 or 4)
+   check 
+   python --version
+   pip install -r requirements.txt
+
+add install if use raspberry 5:
+
+
+
+# 1. Install dependency sistem
+sudo apt install -y swig liblgpio-dev
+
+# 2. delete all old GPIO library 
+pip uninstall -y RPi.GPIO rpi-lgpio lgpio
+
+# 3. Install rpi-lgpio 
+pip install rpi-lgpio
+
+# 4. Patch RPi/GPIO/__init__.py
+
+===========================================
+python3 - << 'EOF'
+import subprocess, sys
+path = subprocess.check_output([sys.executable, '-c', 'import RPi.GPIO; print(RPi.GPIO.__file__)'], text=True).strip()
+print("Patching:", path)
+with open(path, 'r') as f:
+    content = f.read()
+with open(path + '.bak', 'w') as f:
+    f.write(content)
+c = 0
+
+if '_claimed_pins' not in content:
+    content = content.replace('import lgpio\n', 'import lgpio\n\n_claimed_pins = set()\n', 1); c+=1
+
+
+B0 = '            if initial is None:\n                initial = _check(lgpio.gpio_read(_chip, gpio))\n'
+B1 = '            if initial is None:\n                try:\n                    initial = _check(lgpio.gpio_read(_chip, gpio))\n                except lgpio.error:\n                    initial = 0\n'
+if B0 in content: content = content.replace(B0, B1, 1); c+=1
+
+
+C0 = '            _check(lgpio.gpio_claim_input(_chip, gpio, {\n                PUD_OFF:  lgpio.SET_PULL_NONE,\n                PUD_DOWN: lgpio.SET_PULL_DOWN,\n                PUD_UP:   lgpio.SET_PULL_UP,\n            }[pull_up_down]))'
+C1 = '            try:\n                _check(lgpio.gpio_claim_input(_chip, gpio, {\n                    PUD_OFF:  lgpio.SET_PULL_NONE,\n                    PUD_DOWN: lgpio.SET_PULL_DOWN,\n                    PUD_UP:   lgpio.SET_PULL_UP,\n                }[pull_up_down]))\n            except lgpio.error:\n                pass\n            _claimed_pins.add(gpio)'
+if C0 in content: content = content.replace(C0, C1, 1); c+=1
+
+
+D0 = '            _check(lgpio.gpio_claim_output(\n                _chip, gpio, initial, lgpio.SET_PULL_NONE))'
+D1 = '            try:\n                _check(lgpio.gpio_claim_output(\n                    _chip, gpio, initial, lgpio.SET_PULL_NONE))\n            except lgpio.error:\n                pass\n            _claimed_pins.add(gpio)'
+if D0 in content: content = content.replace(D0, D1, 1); c+=1
+
+
+E0 = "_check_output(mode, 'The GPIO channel has not been set up as an OUTPUT')"
+E1 = "# [PATCH]\n    _ch = channel if isinstance(channel, int) else -1\n    if _ch not in _claimed_pins:\n        _check_output(mode, 'The GPIO channel has not been set up as an OUTPUT')"
+if E0 in content and '[PATCH]' not in content: content = content.replace(E0, E1, 1); c+=1
+
+
+F0 = '    if not _in_use(gpio):\n        raise RuntimeError(\'You must setup() the GPIO channel first\')'
+F1 = '''    if not _in_use(gpio):
+        if gpio in _claimed_pins:
+            try:
+                lgpio.gpio_claim_input(_chip, gpio, lgpio.SET_PULL_NONE)
+            except lgpio.error:
+                pass
+            try:
+                return lgpio.gpio_read(_chip, gpio)
+            except lgpio.error:
+                return 0
+        else:
+            raise RuntimeError('You must setup() the GPIO channel first')'''
+if F0 in content: content = content.replace(F0, F1, 1); c+=1
+with open(path, 'w') as f:
+    f.write(content)
+print(f"Done. {c} patches applied.")
+EOF
+
+======================================================================
+# 5. Test
+python3 -c "import RPi.GPIO as GPIO; GPIO.setmode(GPIO.BCM); GPIO.setup(23, GPIO.OUT); GPIO.output(23, GPIO.LOW); print('OK')"
+
+:
+or test
+
+python3 -c "import RPi.GPIO as GPIO; GPIO.setmode(GPIO.BCM); GPIO.setup(23, GPIO.OUT); print('OK')"
