@@ -1,0 +1,35 @@
+change ip 
+cd  /etc/NetworkManager/system-connections/
+if not exist, create:
+sudo nano eth-static.nmconnection
+
+
+write:
+================================================================
+[connection]
+id=eth-static
+type=ethernet
+interface-name=eth0
+
+[ethernet]
+
+[ipv4]
+address1=192.168.137.103/24,192.168.137.1
+dns=8.8.8.8;
+method=manual
+
+[ipv6]
+addr-gen-mode=default
+method=auto
+
+[proxy]
+
+==================================================================
+sudo chmod 600 eth-static.nmconnection
+sudo nmcli con reload
+sudo nmcli con up eth-static
+ip addr show eth0
+sudo reboot
+
+check again: nmcli con show --active
+ip addr show eth0

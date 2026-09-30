@@ -1,0 +1,77 @@
+1. Upload Broker file
+
+2. SETTING PORT
+
+3. CHANGE IP
+
+4. Install requirements.txt (for raspberry 3 or 4)
+
+
+
+Check if venv is already installed. If not:
+
+======================================
+sudo apt update
+sudo apt install -y python3-venv
+
+======================================
+
+Create and activate the virtual environment:
+
+cd ~/broker
+python3 -m venv venv
+source ~/broker/venv/bin/activate
+
+
+==================================
+Edit `.bashrc`:
+
+----------------
+nano ~/.bashrc
+------------------
+
+Add the following lines at the bottom:
+
+-----------------
+cd ~/broker
+
+if [ -f ~/broker/venv/bin/activate ]; then
+    source ~/broker/venv/bin/activate
+fi
+--------------------
+
+Save and exit:
+
+* Ctrl + O, Enter
+* Ctrl + X
+
+Apply the changes:
+
+------------------
+source ~/.bashrc
+-----------------
+
+Now install the requirements:(file 4. Install requirements.txt)
+
+
+
+
+
+
+
+5. Install mosquitto
+
+6. SETTING CRONJOB AND WATCHDOG FOR RASPBERRY SAFETY
+
+7. SETTING RUN READER (see Guide to Run Service MA updated.docx)
+
+8. SETTING broker (visit ip.raspberry:8082)
+
+9. BUILD DOCKER at Desktop/windows/MASTER (see Docker Build Guide.docx)
+
+10. Set logger
+
+
+11. SETTING other service (see service.txt)
+
+(Steps 5, 6, 7, 8, and 9 can be performed automatically by running setup_raspberry. Refer to setup_raspberry.txt for instructions on how to execute it.)
