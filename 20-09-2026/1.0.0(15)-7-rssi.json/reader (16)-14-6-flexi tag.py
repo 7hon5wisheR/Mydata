@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__version__ = "1.0.0(15) - per-tag RSSI/antenna diagnostic dump (rssi.json)"
+__version__ = "1.0.0(14) - listen target scales with scan_timeout above baseline"
 
 import os
 import serial
@@ -14,9 +14,9 @@ from mutex import FileMutex
 # =====================================================================================================================================
 #      READER
 #      Name                       : READER
-#      Version                    : 1.0.0(15) - per-tag RSSI/antenna diagnostic dump (rssi.json)
+#      Version                    : 1.0.0(14) - listen target scales with scan_timeout above baseline
 #      Date Created               : 08-05-2026
-#      Date Update                : 20-09-2026
+#      Date Update                : 19-09-2026
 #      Author                     : Saifuddin
 # ======================================================================================================================================
 
@@ -51,7 +51,7 @@ AUTO_TUNE_QUIET_CYCLES_DEFAULT = 2.5
 # =====================================================
 #  ASYNC LISTEN TIME
 # =====================================================
-ASYNC_LISTEN_SECONDS = 11
+ASYNC_LISTEN_SECONDS = 8
 ASYNC_LISTEN_BASELINE_SCAN_TIMEOUT = 14
 ASYNC_TEARDOWN_RESERVE_SECONDS = 0.3
 
@@ -667,7 +667,6 @@ def warn_if_firmware_predates_rssi_filter(firmware_date_raw, rssi_threshold_conf
 
 BASE_DIR    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
-RSSI_JSON_PATH = os.path.join(BASE_DIR, "rssi.json")
 
 
 def load_config():
@@ -1105,54 +1104,6 @@ def power_cycle_before_first_scan():
     power_cycle_reader(off_time=1.5, on_settle=1.0)
 
 
-# =====================================================
-#  RSSI/ANTENNA DIAGNOSTIC 
-# =====================================================
-def write_rssi_json(published_epc_seen, epc_antenna_rssi, epc_best_rssi,
-                     scan_meta, path=RSSI_JSON_PATH):
-    """
-    published_epc_seen : {epc: 1} - the final, post-ghost-filter result
-                          (same dict returned as result["epc_seen"]).
-    epc_antenna_rssi   : {epc: {ant: best_rssi_on_that_antenna}}
-    epc_best_rssi       : {epc: best_rssi_overall} - already tracked
-                          elsewhere in run_async_scan() for the RSSI
-                          ghost-reject step; reused here so there's only
-                          one source of truth for "best RSSI" per tag.
-    scan_meta           : dict of scan-level info (timestamp, duration,
-                          antennas configured, etc.) written alongside
-                          the per-tag data.
-    """
-    tags_out = {}
-    for epc in published_epc_seen:
-        ant_map = epc_antenna_rssi.get(epc, {})
-        tags_out[epc] = {
-            "rssi_best": epc_best_rssi.get(epc),
-            "antenna_count": len(ant_map),
-            "antennas": {str(ant): rssi for ant, rssi in sorted(ant_map.items())},
-        }
-
-    payload = {
-        "generated_at": scan_meta.get("timestamp"),
-        "scan_timeout_s": scan_meta.get("scan_timeout_s"),
-        "duration_s": scan_meta.get("duration_s"),
-        "antennas_configured": scan_meta.get("antennas_configured"),
-        "unique_tag_count": len(tags_out),
-        "tags": tags_out,
-    }
-
-    try:
-        tmp_path = path + ".tmp"
-        with open(tmp_path, "w") as f:
-            json.dump(payload, f, indent=2, sort_keys=True)
-        os.replace(tmp_path, path)  # atomic on POSIX - never leaves a half-written rssi.json
-        log.info(
-            "[RSSI-JSON] Wrote %s (%d tag(s), antennas_configured=%s)",
-            path, len(tags_out), scan_meta.get("antennas_configured")
-        )
-    except Exception as e:
-        log.warning("[RSSI-JSON] Failed to write %s: %s", path, e)
-
-
 def run_async_scan(baud, stop_event=None, cycle_start=None):
     """
     cycle_start: time.time() timestamp of when the OUTER caller's scan
@@ -1209,15 +1160,13 @@ def run_async_scan(baud, stop_event=None, cycle_start=None):
         q_cmd, q_mode_used, q_value_used = get_q_command(cfg)
 
     try:
-        ant_list_now      = parse_antenna_list(cfg)
-        antenna_count_now = len(ant_list_now)
+        antenna_count_now = len(parse_antenna_list(cfg))
     except InvalidAntennaError:
-        ant_list_now      = sorted(ALLOWED_ANTENNAS) or [1]
-        antenna_count_now = len(ant_list_now)
+        antenna_count_now = len(ALLOWED_ANTENNAS) or 1
         log.warning(
             "[CONFIG] Could not re-parse 'antenna' list this cycle - "
-            "falling back to the antenna list used at startup (%s) for "
-            "auto-tuning.", ant_list_now
+            "falling back to the antenna count used at startup (%d) for "
+            "auto-tuning.", antenna_count_now
         )
 
     if AUTO_TUNE:
@@ -1272,7 +1221,6 @@ def run_async_scan(baud, stop_event=None, cycle_start=None):
     epc_seen  = {}
     epc_native_max_count = {}
     epc_best_rssi = {}
-    epc_antenna_rssi = {}  # NEW in 1.0.0(15): {epc: {ant: best_rssi_on_that_antenna}} - see write_rssi_json()
     buffer    = bytearray()
 
     if os.path.exists("stop.flag"):
@@ -1367,7 +1315,7 @@ def run_async_scan(baud, stop_event=None, cycle_start=None):
                     "total duration is kept as close as possible to scan_timeout,"
                     "NOT forced through like the previous version (3.0s floor"
                     "has been removed). If this happens frequently, scan_timeout=%.1fs"
-                    "is too small for the actual hardware overhead — increase it "
+                    "is too small for the actual hardware overhead — increase it"
                     "scan_timeout at config.json.",
                     elapsed_real_since_cycle_start, SCAN_TIMEOUT_RAW,
                     ASYNC_TEARDOWN_RESERVE_SECONDS, SCAN_TIMEOUT_RAW
@@ -1386,7 +1334,6 @@ def run_async_scan(baud, stop_event=None, cycle_start=None):
                     ASYNC_TEARDOWN_RESERVE_SECONDS
                 )
             else:
-
                 MAX_SCAN_TIME = ASYNC_LISTEN_TARGET
 
             log.info(
@@ -1446,14 +1393,6 @@ def run_async_scan(baud, stop_event=None, cycle_start=None):
                         if best_rssi is None or tag["RSSI"] > best_rssi:
                             epc_best_rssi[epc] = tag["RSSI"]
 
-                        # NEW in 1.0.0(15): per-antenna best RSSI for the
-                        # rssi.json diagnostic dump - see write_rssi_json().
-                        if tag["ANT"] is not None:
-                            ant_map = epc_antenna_rssi.setdefault(epc, {})
-                            prev = ant_map.get(tag["ANT"])
-                            if prev is None or tag["RSSI"] > prev:
-                                ant_map[tag["ANT"]] = tag["RSSI"]
-
                     if epc not in epc_seen:
                         epc_seen[epc]     = 1
                         last_new_tag_time = now
@@ -1504,7 +1443,7 @@ def run_async_scan(baud, stop_event=None, cycle_start=None):
     duration_real = time.time() - cycle_start
 
     # =====================================================
-    #  DURATION CLAMP - NEW in 1.0.0(17)
+    #  DURATION CLAMP 
     # =====================================================
     if duration_real > SCAN_TIMEOUT_RAW:
         log.warning(
@@ -1577,17 +1516,6 @@ def run_async_scan(baud, stop_event=None, cycle_start=None):
             )
             for epc in weak_rssi_ghosts:
                 del published_epc_seen[epc]
-
-
-    write_rssi_json(
-        published_epc_seen, epc_antenna_rssi, epc_best_rssi,
-        scan_meta={
-            "timestamp": time.time(),
-            "scan_timeout_s": SCAN_TIMEOUT_RAW,
-            "duration_s": duration,
-            "antennas_configured": ant_list_now,
-        },
-    )
 
     return {
         "epc_seen": published_epc_seen, "duration": duration, "aborted": False,
