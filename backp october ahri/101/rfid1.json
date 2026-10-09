@@ -1,0 +1,17 @@
+{
+  "macaddress": "MASCAB01A",
+  "hostname": "MASCAB01A",
+  "IP_ETH0": "192.168.137.101",
+  "sessionId": "28219e993d6f4e9c8b51a02188bfe725",
+  "time": "2026-09-27 17:18:36",
+  "duration": 13,
+  "count": 0,
+  "Door1": "Close",
+  "Light": "On",
+  "Lock1": "Lock",
+  "Temperature": "26.76",
+  "Humidity": "51.4",
+  "inventory": [],
+  "add": [],
+  "remove": []
+}

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Broker Address</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e0f7fa;
+            color: #00796b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 60px;
+        }
+        h1 { color: #004d40; }
+        .hostname-box {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 2px solid #ffc107;
+            width: 400px;
+            text-align: center;
+            font-weight: bold;
+            box-sizing: border-box;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 400px;
+            box-sizing: border-box;
+        }
+        label, input, select, button {
+            width: 100%;
+            display: block;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        input, select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #00796b;
+        }
+        button {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background: #00796b;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover { background: #004d40; }
+        button:disabled { background: #9e9e9e; cursor: not-allowed; }
+        .auto-detect-btn { background: #ff6f00; }
+        .auto-detect-btn:hover { background: #e65100; }
+        p { font-weight: bold; }
+        .msg { margin-top: 20px; }
+        .spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dynamic-msg {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            width: 400px;
+            text-align: center;
+            display: none;
+            box-sizing: border-box;
+        }
+        .dynamic-msg.warning { background: #fff3cd; color: #856404; }
+        .dynamic-msg.error   { background: #f8d7da; color: #721c24; }
+
+        .broker-status-bar {
+            background: #fff;
+            border: 2px solid #00796b;
+            border-radius: 10px;
+            padding: 14px 20px;
+            margin: 10px;
+            width: 400px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .broker-status-bar .bs-label {
+            font-size: 13px;
+            color: #555;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .broker-status-bar .bs-ip {
+            font-size: 16px;
+            font-weight: bold;
+            color: #004d40;
+            flex: 1;
+            text-align: center;
+        }
+        .broker-status-bar .bs-badge {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .bs-badge.on  { background: #c8e6c9; color: #1b5e20; }
+        .bs-badge.off { background: #ffcdd2; color: #b71c1c; }
+
+        /* Nearly-invisible tap target, bottom-right corner of the
+           viewport, used to reveal the hidden Advanced RF Tuning
+           form. Kept subtle on purpose - not meant to draw attention. */
+        .secret-dot {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            cursor: pointer;
+            z-index: 9999;
+        }
+        .secret-dot:hover { background: rgba(255,255,255,0.6); }
+
+        #advanced-tuning-section { display: none; }
+
+        @keyframes flashGreen {
+            0%   { background: #a5d6a7; border-color: #2e7d32; }
+            100% { background: #fff;    border-color: #00796b; }
+        }
+        .broker-status-bar.updated {
+            animation: flashGreen 1.5s ease-out forwards;
+        }
+
+        .section-header {
+            width: 400px;
+            margin: 18px 10px 2px 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #00796b;
+            color: #004d40;
+            font-weight: bold;
+            font-size: 1em;
+        }
+        .policy-card {
+            background: #fff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 400px;
+            box-sizing: border-box;
+        }
+        .policy-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0f2f1;
+            font-size: 0.92em;
+        }
+        .policy-row:last-child { border-bottom: none; }
+        .policy-label {
+            color: #555;
+            font-weight: bold;
+            min-width: 130px;
+            flex-shrink: 0;
+        }
+        .policy-value {
+            color: #004d40;
+            text-align: right;
+            word-break: break-all;
+        }
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+        .tag-chip {
+            background: #b2dfdb;
+            color: #004d40;
+            border: 1px solid #00796b;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .no-filter {
+            color: #aaa;
+            font-style: italic;
+            font-size: 0.85em;
+        }
+        .policy-loading {
+            color: #aaa;
+            font-size: 0.9em;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .refresh-btn {
+            background: none;
+            border: 1px solid #00796b;
+            color: #00796b;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82em;
+            margin: 10px auto 0 auto;
+            display: block;
+            width: auto;
+        }
+        .refresh-btn:hover { background: #e0f7fa; }
+
+        /* RF Mode badge */
+        .rfmode-wrap { text-align: right; }
+        .rfmode-badge {
+            display: inline-block;
+            background: #b2dfdb;
+            color: #004d40;
+            border: 1px solid #00796b;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .rfmode-desc {
+            display: block;
+            font-size: 0.78em;
+            color: #00796b;
+            margin-top: 3px;
+        }
+
+        /* Power badge */
+        .power-badge {
+            display: inline-block;
+            background: #ffe0b2;
+            color: #e65100;
+            border: 1px solid #ff9800;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        /* Dim (brightness) badge */
+        .dim-badge {
+            display: inline-block;
+            background: #fff9c4;
+            color: #795500;
+            border: 1px solid #fbc02d;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        /* Antenna badges */
+        .antenna-wrap {
+            text-align: right;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+        .antenna-badge {
+            display: inline-block;
+            background: #b2dfdb;
+            color: #004d40;
+            border: 1px solid #00796b;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.82em;
+            font-weight: bold;
+        }
+
+        /* Version badge */
+        .version-badge {
+            display: inline-block;
+            background: #e1bee7;
+            color: #4a148c;
+            border: 1px solid #8e24aa;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .tuning-msg {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.88em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .tuning-msg.ok   { background: #d4edda; color: #155724; }
+        .tuning-msg.fail { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Broker Setting</h1>
+
+    <div class="hostname-box">
+        Current Hostname: <span id="hostname-value">{{ current_hostname }}</span>
+    </div>
+
+    <div class="broker-status-bar" id="brokerStatusBar">
+        <span class="bs-label">Broker Address:</span>
+        <span class="bs-ip" id="brokerIpDisplay">{{ current_mosq if current_mosq else "Not Set" }}</span>
+        <span class="bs-badge {{ 'on' if mosq_status == 'ON' else 'off' }}" id="brokerBadge">
+            {{ mosq_status }}
+        </span>
+    </div>
+
+    <form method="POST" id="config-form">
+        <button type="button" class="auto-detect-btn" id="auto-detect-btn" onclick="autoDetect()">
+            Auto-Detect Broker IP
+        </button>
+        <label for="mosquitto_tls_address">Input Broker Address:</label>
+        <input type="text" id="mosquitto_tls_address" name="mosquitto_tls_address"
+               placeholder="e.g. 192.168.3.89"
+               value="{{ current_mosq }}" required>
+        <label for="ttl">Message TTL (ms):</label>
+        <input type="number" id="ttl" name="ttl" value="{{ ttl_value }}" readonly
+               style="background-color:#f5f5f5;" required>
+        <button type="submit" id="submit-btn">Set</button>
+    </form>
+
+    {% if message %}
+        <p class="msg">{{ message }}</p>
+    {% endif %}
+
+    <div id="dynamic-message" class="dynamic-msg"></div>
+
+    <p><strong>Current TTL:</strong> {{ ttl_value }} ms</p>
+    <p><strong>Version:</strong> {{ current_version }}</p>
+
+    <div class="section-header">Policy Web</div>
+
+    <div class="policy-card" id="policy-card">
+        <div class="policy-loading" id="policy-loading">Loading config...</div>
+
+        <div id="policy-content" style="display:none;">
+            <div class="policy-row">
+                <span class="policy-label">Location</span>
+                <span class="policy-value" id="cfg-location">-</span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">Hostname</span>
+                <span class="policy-value" id="cfg-hostname">-</span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">Version</span>
+                <span class="policy-value" id="cfg-version">
+                    <span class="version-badge" id="cfg-version-badge">-</span>
+                </span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">IP Broker</span>
+                <span class="policy-value" id="cfg-ip-broker">-</span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">RFID Filter</span>
+                <span class="policy-value" id="cfg-rfid-filter">-</span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">Scan Timeout</span>
+                <span class="policy-value" id="cfg-scan-timeout">-</span>
+            </div>
+            <!-- Scan New Tag intentionally not shown here - scan_newtag
+                 is still writable via REST/MQTT but is no longer
+                 exposed by apps.py's GET /api/config, so there is
+                 nothing to display in this row. -->
+            <div class="policy-row">
+                <span class="policy-label">RF Mode</span>
+                <span class="policy-value rfmode-wrap" id="cfg-rf-mode">-</span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">TX Power</span>
+                <span class="policy-value" id="cfg-power">-</span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">Light Dim</span>
+                <span class="policy-value" id="cfg-dim">-</span>
+            </div>
+            <div class="policy-row">
+                <span class="policy-label">Antenna</span>
+                <span class="policy-value antenna-wrap" id="cfg-antenna">-</span>
+            </div>
+            <!-- Serial PORT intentionally not shown here - it's a
+                 physical wiring setting, hidden from this page on purpose. -->
+        </div>
+
+        <button class="refresh-btn" onclick="loadPolicyConfig()">&#x21bb; Refresh</button>
+    </div>
+
+    <div id="advanced-tuning-section">
+
+    <form method="POST" id="tuning-form">
+        <input type="hidden" name="form_name" value="advanced_tuning">
+
+        <label for="inventory_mode">Inventory Mode:</label>
+        <input type="text" id="inventory_mode" name="inventory_mode"
+               value="{{ current_inventory_mode }}" placeholder="e.g. AA48" required>
+
+        <label for="auto_tune_passes">Auto Tune Passes:</label>
+        <input type="number" id="auto_tune_passes" name="auto_tune_passes"
+               value="{{ current_auto_tune_passes }}" min="1" max="10" step="1" required>
+
+        <label for="auto_tune_quiet_cycles">Auto Tune Quiet Cycles:</label>
+        <input type="number" id="auto_tune_quiet_cycles" name="auto_tune_quiet_cycles"
+               value="{{ current_auto_tune_quiet_cycles }}" min="0.5" max="10" step="0.1" required>
+
+        <label for="rssi_threshold">RSSI Threshold (dBm):</label>
+        <input type="number" id="rssi_threshold" name="rssi_threshold"
+               value="{{ current_rssi_threshold }}" min="-95" max="-30" step="1" required>
+
+        <label for="rssi_threshold_strict">RSSI Threshold Strict (dBm):</label>
+        <input type="number" id="rssi_threshold_strict" name="rssi_threshold_strict"
+               value="{{ current_rssi_threshold_strict }}" min="-95" max="-30" step="1" required>
+
+        <label for="min_reads_per_scan">Min Reads per Scan:</label>
+        <input type="number" id="min_reads_per_scan" name="min_reads_per_scan"
+               value="{{ current_min_reads_per_scan }}" min="1" max="20" step="1" required>
+
+        <button type="submit" id="tuning-submit-btn">Save Tuning</button>
+    </form>
+
+    {% if tuning_message %}
+        <div class="tuning-msg {{ 'fail' if 'NOT saved' in tuning_message else 'ok' }}">
+            {{ tuning_message }}
+        </div>
+    {% endif %}
+
+    </div>
+
+    <div class="secret-dot" id="secretDot" onclick="toggleAdvancedTuning()"></div>
+
+    <script>
+        function toggleAdvancedTuning() {
+            var sec = document.getElementById('advanced-tuning-section');
+            sec.style.display = (sec.style.display === 'block') ? 'none' : 'block';
+        }
+
+        {% if tuning_message %}
+        // A tuning form submission just happened - reveal the section
+        // so the user can see the result instead of it staying hidden.
+        document.getElementById('advanced-tuning-section').style.display = 'block';
+        {% endif %}
+    </script>
+
+    <script>
+        var currentHostname = "{{ current_hostname }}";
+        var currentBrokerIp = "{{ current_mosq }}";
+
+        // Must match reader.py's RF_MODE_TABLE keys. Description-only,
+        // just for a friendlier read-only display here.
+        var RF_MODE_DESC = {
+            "CB": "1000+ tags/s : DSB, FM0, -78dBm (less sensitive)",
+            "6F": "800+  tags/s : PR,  FM0, -78dBm",
+            "DC": "700+  tags/s : DSB, M=2, -81dBm (more sensitive than CB)",
+            "65": "550+  tags/s : PR,  M=2, -81dBm",
+            "2D": "400+  tags/s : PR,  M=4, -84dBm",
+            "73": "400+  tags/s : PR,  M=4, -84dBm",
+            "70": "300+  tags/s : PR,  M=2, -84dBm",
+            "67": "250+  tags/s : PR,  M=2, -84dBm",
+            "69": "200+  tags/s : PR,  M=4, -87dBm",
+            "6B": "150+  tags/s : PR,  M=4, -88dBm",
+            "71": "50+   tags/s : PR,  M=8, -93dBm"
+        };
+
+        function updateBrokerBar(newIp, isOnline) {
+            var bar   = document.getElementById('brokerStatusBar');
+            var ipEl  = document.getElementById('brokerIpDisplay');
+            var badge = document.getElementById('brokerBadge');
+            var input = document.getElementById('mosquitto_tls_address');
+
+            ipEl.textContent = newIp || 'Not Set';
+            input.value      = newIp || '';
+            currentBrokerIp  = newIp;
+
+            if (isOnline === true) {
+                badge.textContent = 'ON';
+                badge.className   = 'bs-badge on';
+            } else if (isOnline === false) {
+                badge.textContent = 'OFF';
+                badge.className   = 'bs-badge off';
+            }
+
+            bar.classList.remove('updated');
+            void bar.offsetWidth;
+            bar.classList.add('updated');
+
+            var cfgIpEl = document.getElementById('cfg-ip-broker');
+            if (cfgIpEl) cfgIpEl.textContent = newIp || '-';
+        }
+
+        function updateRfModeDisplay(val) {
+            var el = document.getElementById('cfg-rf-mode');
+            if (!el) return;
+            if (!val) {
+                el.innerHTML = '-';
+                return;
+            }
+            var code = String(val).toUpperCase();
+            var desc = RF_MODE_DESC[code];
+            el.innerHTML = '<span class="rfmode-badge">' + code + '</span>' +
+                (desc ? '<span class="rfmode-desc">' + desc + '</span>' : '');
+        }
+
+        function updatePowerDisplay(val) {
+            var el = document.getElementById('cfg-power');
+            if (!el) return;
+            if (val === null || val === undefined || val === '') {
+                el.innerHTML = '-';
+                return;
+            }
+            el.innerHTML = '<span class="power-badge">' + val + ' dBm</span>';
+        }
+
+        function dimLabel(v) {
+            v = parseInt(v, 10);
+            if (v === 0)   return '0% (brightest)';
+            if (v === 100) return '100% (dimmest)';
+            return v + '%';
+        }
+
+        function updateDimDisplay(val) {
+            var el = document.getElementById('cfg-dim');
+            if (!el) return;
+            if (val === null || val === undefined || val === '') {
+                el.innerHTML = '-';
+                return;
+            }
+            el.innerHTML = '<span class="dim-badge">' + dimLabel(val) + '</span>';
+        }
+
+        function updateAntennaDisplay(val) {
+            var el = document.getElementById('cfg-antenna');
+            if (!el) return;
+            var ants = Array.isArray(val) ? val : [];
+            if (ants.length === 0) {
+                el.innerHTML = '-';
+                return;
+            }
+            el.innerHTML = ants.map(function(a) {
+                return '<span class="antenna-badge">ANT ' + a + '</span>';
+            }).join('');
+        }
+
+        function updateVersionDisplay(val) {
+            var badge = document.getElementById('cfg-version-badge');
+            if (!badge) return;
+            badge.textContent = val || '-';
+        }
+
+        function pollStatus() {
+            fetch('/api/status')
+                .then(function(r){ return r.json(); })
+                .then(function(data) {
+                    var newIp = data.broker_ip || '';
+                    if (newIp && newIp !== currentBrokerIp) {
+                        updateBrokerBar(newIp, data.broker_online);
+                        showMessage('Broker updated to ' + newIp + ' (set remotely)', 'success');
+                    }
+                    if (data.hostname_changed && data.hostname !== currentHostname) {
+                        showMessage('Hostname changed: ' + data.old_hostname + ' -> ' + data.hostname, 'warning');
+                        document.getElementById('hostname-value').textContent = data.hostname;
+                        currentHostname = data.hostname;
+                        setTimeout(function(){ window.location.reload(); }, 2000);
+                    }
+                })
+                .catch(function(err){ console.error('[POLL] status error:', err); });
+        }
+
+        function autoDetect() {
+            var btn  = document.getElementById('auto-detect-btn');
+            var orig = btn.innerHTML;
+            btn.disabled  = true;
+            btn.innerHTML = '<span class="spinner"></span> Detecting...';
+            fetch('/api/auto-detect', { method: 'POST' })
+                .then(function(r){ return r.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        updateBrokerBar(data.ip, true);
+                        showMessage(data.message, 'success');
+                    } else {
+                        showMessage(data.message, 'error');
+                    }
+                })
+                .catch(function(){ showMessage('Auto-detect failed. Please enter IP manually.', 'error'); })
+                .finally(function(){ btn.disabled = false; btn.innerHTML = orig; });
+        }
+
+        function showMessage(text, type) {
+            var d = document.getElementById('dynamic-message');
+            d.className = 'dynamic-msg ' + (type || 'success');
+            d.textContent = text;
+            d.style.display = 'block';
+            setTimeout(function(){ d.style.display = 'none'; }, 6000);
+        }
+
+        document.getElementById('config-form').addEventListener('submit', function() {
+            var btn = document.getElementById('submit-btn');
+            btn.disabled  = true;
+            btn.innerHTML = '<span class="spinner"></span> Saving...';
+        });
+
+        document.getElementById('tuning-form').addEventListener('submit', function() {
+            var btn = document.getElementById('tuning-submit-btn');
+            btn.disabled  = true;
+            btn.innerHTML = '<span class="spinner"></span> Saving...';
+        });
+
+        setInterval(pollStatus, 4000);
+        pollStatus();
+
+        function loadPolicyConfig() {
+            var loading = document.getElementById('policy-loading');
+            var content = document.getElementById('policy-content');
+            loading.style.display = 'block';
+            content.style.display = 'none';
+
+            fetch('/api/config')
+                .then(function(r){ return r.json(); })
+                .then(function(data) {
+                    document.getElementById('cfg-location').textContent  = data.location  || '-';
+                    document.getElementById('cfg-hostname').textContent  = data.hostname  || '-';
+                    document.getElementById('cfg-ip-broker').textContent = data.ip_broker || '-';
+                    updateVersionDisplay(data.version);
+
+                    var rfidEl = document.getElementById('cfg-rfid-filter');
+                    var tags   = Array.isArray(data.rfid_filter) ? data.rfid_filter : [];
+                    if (tags.length === 0) {
+                        rfidEl.innerHTML = '<span class="no-filter">No filter</span>';
+                    } else {
+                        rfidEl.innerHTML =
+                            '<div class="tag-list">' +
+                            tags.map(function(t){
+                                return '<span class="tag-chip">' + t + '</span>';
+                            }).join('') +
+                            '</div>';
+                    }
+
+                    document.getElementById('cfg-scan-timeout').textContent =
+                        (data.scan_timeout != null) ? data.scan_timeout + ' s' : '-';
+                    // Scan New Tag intentionally not populated - apps.py's
+                    // GET /api/config no longer returns "scan_newtag".
+                    // Serial PORT intentionally not populated - see markup note above.
+
+                    updateRfModeDisplay(data.rf_mode);
+                    updatePowerDisplay(data.power);
+                    updateDimDisplay(data.dim);
+                    updateAntennaDisplay(data.antenna);
+
+                    loading.style.display = 'none';
+                    content.style.display = 'block';
+
+                    if (data.ip_broker && data.ip_broker !== currentBrokerIp) {
+                        updateBrokerBar(data.ip_broker, null);
+                    }
+                })
+                .catch(function(err) {
+                    loading.textContent = 'Failed to load config.';
+                    console.error('Load policy config error:', err);
+                });
+        }
+
+        loadPolicyConfig();
+    </script>
+</body>
+</html>
