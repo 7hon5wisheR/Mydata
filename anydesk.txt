@@ -32,6 +32,8 @@ pitucode bandepinataku passwordku
 mosquitto_sub -h 192.168.137.1 -p 1883 -t "#" -v
 "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 192.168.137.1 -p 1883 -t "#" -v
 
+%APPDATA%\AnyDesk
+
 
 mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"MASCAB01B\",\"light\":\"off\"}"
 mosquitto_pub -h 192.168.137.1 -t "in" -m "{\"mac\":\"MASCAB01B\",\"light\":\"on\"}"

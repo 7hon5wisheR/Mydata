@@ -1,0 +1,19 @@
+# change before on san.conf, IP broker
+# Key
+openssl genrsa -out key.pem 2048
+
+# Cert
+openssl req -x509 -new -nodes -key key.pem -sha256 -days 365 \
+  -out cert.pem -config san.cnf
+
+openssl req -x509 -new -nodes -key key.pem -sha256 -days 365 -out cert.pem -config san.cnf
+
+
+#CA
+openssl genrsa -out ca.key 2048
+
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 365 \
+  -out cacert.pem -subj "/CN=20.81.43.213" -config san.cnf
+
+
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 365 -out cacert.pem -subj "/CN=20.81.43.213" -config san.cnf

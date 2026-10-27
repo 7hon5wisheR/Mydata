@@ -1,0 +1,33 @@
+#pip install -r requirements.txt
+#before install cd to bridge
+#cd ~/bridge
+#type
+#python3 -m venv venv --copies
+#activate with
+#type
+#source venv/bin/activate
+#then install requirements
+#if error
+#python -m pip install --upgrade pip setuptools wheel --break-system-packages
+#python -m pip install -r requirements.txt --break-system-packages
+#for node install
+#npm init -y
+#npm install mqtt --save
+#npm install
+
+
+
+
+
+flask
+pyserial
+RPi.GPIO
+watchdog
+waitress
+paho-mqtt
+azure-identity
+azure-servicebus
+azure-mgmt-servicebus
+azure-data-tables
+netifaces
+
