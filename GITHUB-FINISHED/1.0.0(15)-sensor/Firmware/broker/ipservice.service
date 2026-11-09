@@ -1,0 +1,16 @@
+[Unit]
+Description=IP Change Monitor - Auto Update Hostname & MQTT Bridge Config
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/alice/broker/ipservice.py
+Restart=always
+RestartSec=5
+User=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

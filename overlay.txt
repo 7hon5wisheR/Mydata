@@ -1,0 +1,93 @@
+1. log disable
+2. set pi over lay
+
+
+
+
+
+
+Ekstrak zip. Taruh folder hardening/ dan file harden_sd.sh di /home/alice/broker/. File lama tidak ada yang ditimpa.
+Jalankan:
+   cd /home/alice/broker
+   chmod +x harden_sd.sh
+   sudo ./harden_sd.sh
+   sudo reboot
+
+cd /home/alice/broker
+chmod +x harden_sd.sh
+sudo ./harden_sd.sh
+sudo reboot
+
+
+Cek setelah boot:
+findmnt /home/alice/broker/logs
+sudo systemctl show send -p Environment | grep PYTHONPATH
+systemctl status send
+
+Hasil yang benar:
+
+findmnt .../logs menampilkan tmpfs.
+PYTHONPATH menampilkan /home/alice/broker/hardening.
+systemctl status send menampilkan active (running).
+
+Satu hal sebelum menjalankan: pastikan harden_sd.sh yang Anda salin berasal dari zip terbaru (Hardening_Package.zip), bukan versi lama. Cek dengan:
+
+grep -n "ENABLE_ROOTFLAGS" harden_sd.sh
+
+
+cat /proc/cmdline | grep data=journal
+findmnt /home/alice/broker/logs (harus tmpfs)
+sudo systemctl show send -p Environment | grep PYTHONPATH
+Tes dengan mencabut listrik di berbagai momen (saat scan, ubah setting, reboot otomatis), lalu cek JSON-nya masih valid dan berisi update terakhir.
+Clone image seperti biasa.
+
+Yang diubah skrip ini di luar kode Anda: drop-in systemd untuk send.service dan ipservice.service, cmdline.txt, fstab, mosquitto.conf, dan pengaturan jurnal. Semuanya punya cadangan .bak, dan tidak ada file Python Anda yang disentuh.
+
+Hal yang perlu Anda ketahui:
+
+Belum diuji di Raspberry sungguhan, baru di lingkungan Python biasa.
+Kalau proses mati paksa tepat saat menulis, mungkin tertinggal file sementara tersembunyi .nama.tmp.PID. Skrip akan membersihkannya setiap send.service dan ipservice.service start.
+Skrip ini mengasumsikan send.service dan ipservice.service dari setup_raspberry.sh Anda. Kalau namanya berbeda, skrip memberi peringatan dan melewatinya.
+Kalau Raspberry sudah punya sitecustomize lain di sistem (jarang di Raspberry Pi OS), saya perlu menyesuaikannya.
+Perlindungan terkuat tetap SD industrial dan UPS kecil. Software hanya menurunkan risiko, tidak menghilangkannya.
+
+
+GAGAL:
+
+
+Langkah-langkah (di Raspberry master)
+Ganti kodenya.
+Ekstrak zip.
+Salin semua isinya ke /home/alice/broker/, timpa file lama. cloud/ Anda tidak tersentuh.
+Pastikan ada file baru library/persist.py dan harden_sd.sh.
+Jalankan skrip perlindungan SD:
+   cd /home/alice/broker
+   chmod +x harden_sd.sh
+   sudo ./harden_sd.sh
+
+Skrip ini melakukan hal berikut, dan aman dijalankan berulang:
+
+Menambahkan rootflags=data=journal,commit=1 di cmdline.txt supaya isi file masuk journal.
+Menambahkan noatime di fstab.
+Memindahkan folder logs/ aplikasi ke RAM (tmpfs).
+Memindahkan jurnal sistem ke RAM.
+Mematikan swap.
+Mematikan persistence dan log-file di mosquitto.
+Membuat cadangan cmdline.txt.bak, fstab.bak, dan mosquitto.conf.bak.
+Reboot: sudo reboot
+Cek setelah boot:
+cat /proc/cmdline harus mengandung data=journal.
+findmnt /home/alice/broker/logs harus menunjukkan tmpfs.
+systemctl status send harus aktif.
+Tes penyimpanan:
+Ubah config.json lewat web, atau kirim scan.
+Cabut listrik pada beberapa momen berbeda: saat scan, saat ubah setting, saat reboot otomatis.
+Setiap kali, pastikan setting terbaru masih ada dan python3 -m json.tool config.json tidak error. Lakukan hal yang sama untuk rfid1.json, rfid2.json, dan status.json.
+Clone image ke Raspberry lain. Karena perubahannya ada di cmdline.txt, fstab, dan kode, semua ikut ter-clone.
+Catatan
+Jangan aktifkan overlay. Dengan patch ini datanya permanen di folder broker biasa, dan overlay akan membuatnya hilang lagi.
+Isi logs/ hilang saat reboot. Kalau Anda perlu log untuk debugging, ubah size=32m di fstab, atau lepas baris tmpfs itu sementara.
+Belum diuji di Raspberry. Yang sudah saya cek hanya kompilasi dan modul penulisan atomik. Cabut listrik berkali-kali di langkah 5 adalah uji yang sebenarnya.
+uid/gid di baris tmpfs diambil otomatis dari user alice. Kalau user di Raspberry Anda berbeda, ubah HOME_BASE di bagian atas harden_sd.sh sebelum menjalankannya.
+Perlindungan terkuat tetap SD industrial/pSLC dan UPS kecil atau supercapacitor untuk shutdown bersih.
+

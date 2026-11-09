@@ -1,0 +1,36 @@
+Berikut langkah-langkahnya, dijalankan di terminal Raspberry (SSH atau langsung):
+
+1. Salin file ke Raspberry
+Ekstrak broker_led_update.zip, lalu salin ledstatus.py, ledstatus.service dan LED_README.md ke /home/alice/broker/. File lain tidak perlu ditimpa.
+
+2. Pasang LED
+Pasang tiap LED lewat resistor 330 Ω ke GND, sesuai tabel GPIO tadi (kaki panjang ke GPIO, kaki pendek ke resistor lalu GND).
+
+3. Tes wiring dulu, tanpa service
+
+cd /home/alice/broker
+sudo systemctl stop ledstatus 2>/dev/null
+venv/bin/python ledstatus.py --test
+
+8 LED harus menyala bergantian dari 1 sampai 8, lalu kembali dari 8 ke 1, lalu semuanya menyala bersamaan sebentar. Kalau ada yang tidak menyala, cek kabel dan polaritasnya. Kalau semuanya terbalik (menyala saat seharusnya mati), tambahkan "led_active_low": true di config.json.
+
+4. Coba jalan sebentar secara manual
+venv/bin/python ledstatus.py
+
+Buka dan tutup pintu, lalu lihat LED 1 dan 2 berganti. Tekan Ctrl+C untuk berhenti.
+
+5. Pasang sebagai service (otomatis jalan saat boot)
+
+sudo cp ledstatus.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now ledstatus
+
+Harus muncul active (running) dan log [LED] running. Kalau tertulis GPIO unavailable ... running in simulation, berarti RPi.GPIO tidak terbaca atau user tidak punya akses GPIO.
+
+Kalau gagal
+
+Permission denied GPIO: ganti User=alice jadi User=root di ledstatus.service, lalu ulangi langkah 5.
+No such file ... venv/bin/python: sesuaikan path ExecStart dengan Python yang dipakai send.service (cek dengan cat /etc/systemd/system/send.service).
+LED lock dan lampu benar tapi scanning tidak berubah: cek bahwa send.service sedang jalan (systemctl status send), karena status scanning datang dari broker MQTT.
+
+Kalau ada error di langkah mana pun, kirim hasil journalctl -u ledstatus -n 30, nanti saya bantu cek.

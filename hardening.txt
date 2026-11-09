@@ -1,0 +1,75 @@
+C. Jalankan hardening
+
+Lakukan ini hanya setelah langkah B berhasil (findmnt menunjukkan ext4).
+
+Dari broker_hardening_files.zip yang terbaru, taruh dua file ini di /home/alice/broker/:
+folder hardening/
+file harden_sd.sh
+Jalankan:
+
+
+   cd /home/alice/broker
+   chmod +x harden_sd.sh
+   sudo ./harden_sd.sh
+   sudo reboot
+
+-----------------------------
+
+Cek setelah menyala:
+-----------------------------
+   findmnt -no FSTYPE /                                    # ext4
+   cat /proc/cmdline | grep data=journal
+   findmnt /home/alice/broker/logs                         # tmpfs
+   sudo systemctl show send -p Environment | grep PYTHONPATH
+   systemctl status send
+
+Kalau hardening bermasalah
+
+Skrip membuat cadangan /boot/firmware/cmdline.txt.bak, /etc/fstab.bak, dan /etc/mosquitto/mosquitto.conf.bak. Kalau Raspberry tidak mau boot setelah hardening, cabut SD, pasang di PC, lalu kembalikan cmdline.txt.bak menjadi cmdline.txt. Untuk fstab.bak dan mosquitto.conf.bak, kembalikan dari Raspberry yang sudah menyala.
+
+
+
+
+OVERLAY
+
+Urutannya: aktifkan overlay untuk tes, matikan overlay, lalu jalankan hardening. Jangan jalankan hardening saat overlay aktif. harden_sd.sh memang menolak jalan di situ, karena perubahan fstab dan cmdline.txt akan hilang saat reboot.
+
+Perintah ini mengikuti raspi-config di Raspberry Pi OS terbaru. Saya belum bisa mencobanya di Raspberry Anda. Kalau ada pesan error, kirim ke saya.
+
+
+A. Aktifkan overlay (untuk tes):
+------------------------------------------------
+sudo raspi-config nonint do_overlayfs 0
+sudo reboot
+
+Setelah menyala, cek:
+findmnt -no FSTYPE /        # harus: overlay
+
+Tes bahwa data memang hilang saat reboot:
+echo test | sudo tee /root/overlay-test.txt
+cat /home/alice/broker/config.json     # catat isinya
+
+
+Lalu ubah satu setting lewat web, cek lagi, dan reboot. Setelah reboot, /root/overlay-test.txt hilang dan setting kembali ke versi lama. Itu bukti overlay bekerja, dan itu juga masalah yang Anda alami.
+
+
+
+B. Matikan atau hapus overlay
+---------------------------------------------
+sudo raspi-config nonint do_overlayfs 1
+sudo reboot
+--------------------------------------------
+
+Kalau muncul error soal partisi boot read-only, jalankan sudo mount -o remount,rw /boot/firmware, lalu ulangi perintah di atas.
+
+Kalau tidak bisa masuk SSH atau tidak mau boot:
+
+Cabut SD, pasang di PC. Partisi boot (bootfs) terbaca di Windows atau Mac.
+Buka cmdline.txt dengan teks editor biasa.
+Hapus bagian overlayroot=tmpfs (atau bagian overlay serupa) dari baris tunggalnya. Jangan buat baris baru.
+Simpan, pasang SD kembali ke Raspberry.
+
+
+
+
+

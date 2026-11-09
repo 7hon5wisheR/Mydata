@@ -55,6 +55,8 @@ sudo systemctl start send.service
 
 sudo systemctl disable send.service
 
+docker build --no-cache -t maspects/policyweb:latest .
+docker push maspects/policyweb:latest
 
 docker tag policyweb:latest maspects/policyweb:latest
 docker push maspects/policyweb:latest
