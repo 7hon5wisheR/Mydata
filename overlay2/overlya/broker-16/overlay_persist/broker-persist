@@ -1,0 +1,91 @@
+#!/bin/bash
+# broker-persist  (NEW FILE, installed in /usr/local/sbin, owned by root)
+# Copies important files from the overlay view to the real SD card (lower layer, /media/root-ro).
+# The real SD card is made writable for only a few milliseconds, then locked again.
+#
+# Allowed arguments:
+#   config.json          -> /home/alice/broker/config.json
+#   conf.d/bridge.conf   -> bridge.conf + /etc/hostname + /etc/netplan/*.yaml (IP profile written by dip.py)
+#   net                  -> /etc/hostname + /etc/netplan/*.yaml only (called by ipservice at start)
+#
+# Environment variables for testing: BROKER LOWER HOSTNAME_FILE NETPLAN_DIR BROKER_PERSIST_FORCE=1 BROKER_PERSIST_NOMOUNT=1
+set -u
+BROKER="${BROKER:-/home/alice/broker}"
+LOWER="${LOWER:-/media/root-ro}"
+HOSTNAME_FILE="${HOSTNAME_FILE:-/etc/hostname}"
+NETPLAN_DIR="${NETPLAN_DIR:-/etc/netplan}"
+REL="${1:-}"
+
+case "$REL" in
+  config.json|conf.d/bridge.conf|net) ;;
+  *) echo "argument not allowed: $REL" >&2; exit 2 ;;
+esac
+
+# Without the overlay there is nothing to do
+if [ "${BROKER_PERSIST_FORCE:-0}" != "1" ] && [ "$(findmnt -no FSTYPE / 2>/dev/null)" != "overlay" ]; then
+  exit 0
+fi
+[ -d "$LOWER$BROKER" ] || { logger -t broker-persist "ERROR: $LOWER$BROKER does not exist"; exit 3; }
+
+SRC=""; DST=""
+if [ "$REL" != "net" ]; then
+  SRC="$BROKER/$REL"
+  DST="$LOWER$BROKER/$REL"
+  # SECURITY: the helper runs as root; reject symlinks and paths outside the broker folder
+  [ -f "$SRC" ] && [ ! -L "$SRC" ] || { logger -t broker-persist "REFUSED: $SRC is not a regular file"; exit 4; }
+  RP="$(realpath "$SRC")"; BP="$(realpath -m "$BROKER")"
+  case "$RP" in "$BP"/*) ;; *) logger -t broker-persist "REFUSED: $RP is outside $BP"; exit 4 ;; esac
+fi
+
+exec 9>/run/broker-persist.lock
+flock 9
+
+NEED_FILE=0; NEED_HOST=0; NEED_NET=0
+[ -n "$SRC" ] && { cmp -s "$SRC" "$DST" || NEED_FILE=1; }
+if [ "$REL" = "conf.d/bridge.conf" ] || [ "$REL" = "net" ]; then
+  [ -f "$HOSTNAME_FILE" ] && { cmp -s "$HOSTNAME_FILE" "$LOWER/etc/hostname" || NEED_HOST=1; }
+  if [ -d "$NETPLAN_DIR" ] && ls "$NETPLAN_DIR"/*.yaml >/dev/null 2>&1; then
+    # never copy an empty yaml
+    EMPTY=0; for f in "$NETPLAN_DIR"/*.yaml; do [ -s "$f" ] || EMPTY=1; done
+    if [ "$EMPTY" = 1 ]; then logger -t broker-persist "SKIPPED: an empty netplan yaml exists"
+    else diff -rq "$NETPLAN_DIR" "$LOWER$NETPLAN_DIR" >/dev/null 2>&1 || NEED_NET=1; fi
+  fi
+fi
+[ "$NEED_FILE" = 0 ] && [ "$NEED_HOST" = 0 ] && [ "$NEED_NET" = 0 ] && exit 0
+
+remount_ro() { [ "${BROKER_PERSIST_NOMOUNT:-0}" = "1" ] || mount -o remount,ro "$LOWER"; }
+if [ "${BROKER_PERSIST_NOMOUNT:-0}" != "1" ]; then
+  mount -o remount,rw "$LOWER" || { logger -t broker-persist "ERROR: remount rw failed"; exit 6; }
+fi
+trap remount_ro EXIT
+
+put() {   # put <source> <destination>  -> atomic write on the real SD card
+  local s="$1" d="$2" t="$2.tmp.$$"
+  cp -P "$s" "$t" || return 1
+  # the copy must be a regular file (not a symlink) and JSON must be valid - checked on the COPY
+  if [ ! -f "$t" ] || [ -L "$t" ]; then rm -f "$t"; logger -t broker-persist "REFUSED: the copy is not a regular file"; return 1; fi
+  case "$d" in *.json) python3 -I -c 'import json,sys; json.load(open(sys.argv[1]))' "$t" || { rm -f "$t"; logger -t broker-persist "ERROR: not valid JSON"; return 1; } ;; esac
+  if [ -e "$d" ]; then chown --reference="$d" "$t"; chmod --reference="$d" "$t"
+  else case "$d" in *.yaml) chmod 600 "$t" ;; esac; fi
+  sync "$t"
+  mv -f "$t" "$d"
+  sync -f "$d"
+}
+
+RC=0
+[ "$NEED_FILE" = 1 ] && { put "$SRC" "$DST" || RC=7; }
+[ "$NEED_HOST" = 1 ] && { put "$HOSTNAME_FILE" "$LOWER/etc/hostname" || RC=8; }
+if [ "$NEED_NET" = 1 ]; then
+  mkdir -p "$LOWER$NETPLAN_DIR"
+  for f in "$NETPLAN_DIR"/*.yaml; do
+    [ -f "$f" ] && [ ! -L "$f" ] || continue
+    put "$f" "$LOWER$NETPLAN_DIR/$(basename "$f")" || RC=9
+  done
+  for g in "$LOWER$NETPLAN_DIR"/*.yaml; do        # files that were deleted in the overlay view
+    [ -e "$g" ] || continue
+    [ -e "$NETPLAN_DIR/$(basename "$g")" ] || rm -f "$g"
+  done
+  sync -f "$LOWER$NETPLAN_DIR"
+fi
+logger -t broker-persist "persisted $REL (file=$NEED_FILE hostname=$NEED_HOST netplan=$NEED_NET rc=$RC)"
+exit $RC

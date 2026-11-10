@@ -1,0 +1,160 @@
+#!/bin/bash
+# broker-persist  (dipasang di /usr/local/sbin, dimiliki root)  -- v2
+# Menyalin file penting dari tampilan overlay ke SD card asli (lapisan bawah, /media/root-ro).
+# SD asli dibuka untuk ditulis hanya beberapa milidetik, lalu dikunci lagi.
+#
+# Argumen yang diterima (hanya ini):
+#   config.json          -> salin config.json
+#   conf.d/bridge.conf   -> salin bridge.conf + /etc/hostname + profil jaringan eth0
+#   network              -> salin profil jaringan eth0 saja (/etc/netplan/*.yaml yang memuat eth0)
+#
+# Profil jaringan eth0 (v2): nmcli/NetworkManager menyimpan IP statis eth0 di /etc/netplan/90-NM-*.yaml.
+# Dengan overlay, file itu hanya di RAM. Skrip ini menyalinnya ke SD asli supaya Pi boot langsung
+# dengan IP dari saklar DIP (tidak pernah memakai IP image sementara). File YAML wifi (wlan0) TIDAK disentuh.
+#
+# Variabel env (untuk pengujian): BROKER, LOWER, HOSTNAME_FILE, NETPLAN_DIR,
+#                                 BROKER_PERSIST_FORCE=1, BROKER_PERSIST_NOMOUNT=1
+set -u
+BROKER="${BROKER:-/home/alice/broker}"
+LOWER="${LOWER:-/media/root-ro}"
+HOSTNAME_FILE="${HOSTNAME_FILE:-/etc/hostname}"
+NETPLAN_DIR="${NETPLAN_DIR:-/etc/netplan}"
+REL="${1:-}"
+
+case "$REL" in
+  config.json|conf.d/bridge.conf|network) ;;
+  *) echo "file tidak diizinkan: $REL" >&2; exit 2 ;;
+esac
+
+# Tanpa overlay: tidak ada yang perlu dilakukan
+if [ "${BROKER_PERSIST_FORCE:-0}" != "1" ] && [ "$(findmnt -no FSTYPE / 2>/dev/null)" != "overlay" ]; then
+  exit 0
+fi
+
+# ---------- pemeriksaan sumber (config.json / bridge.conf) ----------
+SRC=""; DST=""
+if [ "$REL" != "network" ]; then
+  [ -d "$LOWER$BROKER" ] || { logger -t broker-persist "ERROR: $LOWER$BROKER tidak ada"; exit 3; }
+  SRC="$BROKER/$REL"
+  DST="$LOWER$BROKER/$REL"
+  # KEAMANAN: helper berjalan sebagai root, jadi tolak symlink dan path di luar folder broker
+  [ -f "$SRC" ] && [ ! -L "$SRC" ] || { logger -t broker-persist "DITOLAK: $SRC bukan file biasa"; exit 4; }
+  RP="$(realpath "$SRC")"; BP="$(realpath -m "$BROKER")"
+  case "$RP" in "$BP"/*) ;; *) logger -t broker-persist "DITOLAK: $RP di luar $BP"; exit 4 ;; esac
+fi
+
+exec 9>/run/broker-persist.lock
+flock 9
+
+# ---------- pemeriksa YAML eth0 ----------
+# exit 0 = YAML valid dan mendefinisikan eth0 | 1 = bukan eth0 (mis. wifi) | 2 = YAML tidak valid / setengah tertulis
+eth0_check() {
+  python3 -I -c '
+import sys, re
+t = open(sys.argv[1]).read()
+try:
+    import yaml
+except ImportError:
+    ok = re.search(r"(?m)^\s*ethernets:", t) and re.search(r"\beth0\b", t)
+    sys.exit(0 if ok else 1)
+try:
+    d = yaml.safe_load(t)
+except Exception:
+    sys.exit(2)
+if not isinstance(d, dict):
+    sys.exit(2)
+eth = ((d.get("network") or {}).get("ethernets")) or {}
+for k, v in eth.items():
+    v = v or {}
+    m = (v.get("match") or {}).get("name")
+    nm = (v.get("networkmanager") or {}).get("name")
+    if k == "eth0" or m == "eth0" or nm == "netplan-eth0":
+        sys.exit(0)
+sys.exit(1)
+' "$1" 2>/dev/null
+}
+
+# ---------- rencana sinkron profil jaringan ----------
+DO_NET=0
+case "$REL" in network|conf.d/bridge.conf) DO_NET=1 ;; esac
+NET_COPY=(); NET_DEL=(); UPFILES=()
+if [ "$DO_NET" = 1 ]; then
+  if [ ! -d "$LOWER$NETPLAN_DIR" ] || [ ! -d "$NETPLAN_DIR" ]; then
+    logger -t broker-persist "ERROR: folder netplan tidak ditemukan ($NETPLAN_DIR)"
+    DO_NET=0
+    [ "$REL" = "network" ] && exit 3
+  fi
+fi
+if [ "$DO_NET" = 1 ]; then
+  shopt -s nullglob
+  BADYAML=0
+  for f in "$NETPLAN_DIR"/*.yaml; do
+    eth0_check "$f"; rc=$?
+    if [ $rc = 0 ]; then UPFILES+=("$f"); elif [ $rc = 2 ]; then BADYAML=1; fi
+  done
+  # Tidak ada eth0 yaml, atau ada yang setengah tertulis -> jangan sentuh apa pun (timer akan mencoba lagi)
+  if [ ${#UPFILES[@]} -eq 0 ] || [ $BADYAML = 1 ]; then DO_NET=0; fi
+fi
+if [ "$DO_NET" = 1 ]; then
+  for f in "${UPFILES[@]}"; do
+    b="$(basename "$f")"
+    cmp -s "$f" "$LOWER$NETPLAN_DIR/$b" || NET_COPY+=("$f")
+  done
+  # YAML eth0 di SD asli yang sudah tidak ada di tampilan overlay (diganti nama / dihapus oleh NetworkManager)
+  for f in "$LOWER$NETPLAN_DIR"/*.yaml; do
+    eth0_check "$f"; [ $? = 0 ] || continue
+    b="$(basename "$f")"
+    [ -f "$NETPLAN_DIR/$b" ] || NET_DEL+=("$f")
+  done
+fi
+
+# ---------- rencana sinkron file ----------
+NEED_FILE=0; NEED_HOST=0
+if [ "$REL" != "network" ]; then
+  cmp -s "$SRC" "$DST" || NEED_FILE=1
+  if [ "$REL" = "conf.d/bridge.conf" ] && [ -f "$HOSTNAME_FILE" ]; then
+    cmp -s "$HOSTNAME_FILE" "$LOWER/etc/hostname" || NEED_HOST=1
+  fi
+fi
+if [ "$NEED_FILE" = 0 ] && [ "$NEED_HOST" = 0 ] && [ ${#NET_COPY[@]} -eq 0 ] && [ ${#NET_DEL[@]} -eq 0 ]; then
+  exit 0
+fi
+
+remount_ro() { [ "${BROKER_PERSIST_NOMOUNT:-0}" = "1" ] || mount -o remount,ro "$LOWER"; }
+if [ "${BROKER_PERSIST_NOMOUNT:-0}" != "1" ]; then
+  mount -o remount,rw "$LOWER" || { logger -t broker-persist "ERROR: remount rw gagal"; exit 6; }
+fi
+trap remount_ro EXIT
+
+put() {   # put <sumber> <tujuan>  -> tulis atomik di SD asli
+  local s="$1" d="$2" t="$2.tmp.$$"
+  cp -P "$s" "$t" || return 1
+  # salinan harus file biasa (bukan symlink), dan isi harus valid - diperiksa pada SALINAN
+  if [ ! -f "$t" ] || [ -L "$t" ]; then rm -f "$t"; logger -t broker-persist "DITOLAK: salinan bukan file biasa"; return 1; fi
+  case "$d" in
+    *.json) python3 -I -c 'import json,sys; json.load(open(sys.argv[1]))' "$t" || { rm -f "$t"; logger -t broker-persist "ERROR: bukan JSON valid"; return 1; } ;;
+    *.yaml) eth0_check "$t" || { rm -f "$t"; logger -t broker-persist "ERROR: bukan YAML eth0 valid"; return 1; } ;;
+  esac
+  if [ -e "$d" ]; then
+    chown --reference="$d" "$t"; chmod --reference="$d" "$t"
+  else
+    case "$d" in *.yaml) chown root:root "$t"; chmod 600 "$t" ;; esac
+  fi
+  sync "$t"
+  mv -f "$t" "$d"
+  sync -f "$d"
+}
+
+RC=0
+[ "$NEED_FILE" = 1 ] && { put "$SRC" "$DST" || RC=7; }
+[ "$NEED_HOST" = 1 ] && { put "$HOSTNAME_FILE" "$LOWER/etc/hostname" || RC=8; }
+for f in "${NET_COPY[@]+"${NET_COPY[@]}"}"; do
+  put "$f" "$LOWER$NETPLAN_DIR/$(basename "$f")" || RC=9
+done
+if [ $RC -ne 9 ]; then   # hapus YAML lama hanya jika semua salinan baru berhasil
+  for f in "${NET_DEL[@]+"${NET_DEL[@]}"}"; do
+    rm -f "$f" && sync -f "$LOWER$NETPLAN_DIR" || RC=9
+  done
+fi
+logger -t broker-persist "persisted $REL (file=$NEED_FILE hostname=$NEED_HOST net_copy=${#NET_COPY[@]} net_del=${#NET_DEL[@]} rc=$RC)"
+exit $RC

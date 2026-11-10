@@ -1,0 +1,174 @@
+cd /home/alice/broker
+chmod +x *.sh overlay_persist/broker-persist
+sudo apt-get install -y rsync        # if missing
+sudo ./setup_overlay_persist.sh
+sudo reboot
+
+
+grep -H addresses /etc/netplan/*.yaml ; ls -l --time-style=full-iso /etc/netplan/
+
+grep -H addresses /etc/netplan/*.yaml ; ls -l --time-style=full-iso /etc/netplan/
+
+ sudo grep -H -E "addresses|interface-name|id:|gateway|dhcp" /etc/netplan/*.yaml ; sudo ls -l --time-style=full-iso /etc/netplan/
+/etc/netplan/90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml:      addresses:
+/etc/netplan/90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml:        addresses:
+/etc/netplan/90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml:      gateway4: 192.168.137.1
+/etc/netplan/90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml:        uuid: "75a1216a-9d1a-30cd-8aca-ace5526ec021"
+/etc/netplan/90-NM-8406943d-9d3f-3d36-ad13-8c0c8e8bec0b.yaml:      dhcp4: true
+/etc/netplan/90-NM-8406943d-9d3f-3d36-ad13-8c0c8e8bec0b.yaml:            uuid: "8406943d-9d3f-3d36-ad13-8c0c8e8bec0b"
+/etc/netplan/90-NM-8406943d-9d3f-3d36-ad13-8c0c8e8bec0b.yaml:        uuid: "8406943d-9d3f-3d36-ad13-8c0c8e8bec0b"
+total 8
+-rw------- 1 root root 489 2026-11-09 21:07:53.554314754 -0500 90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml
+-rw------- 1 root root 593 2026-11-09 21:07:54.728671957 -0500 90-NM-8406943d-9d3f-3d36-ad13-8c0c8e8bec0b.yaml
+
+sudo grep -A2 addresses /etc/netplan/90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml
+ip -4 -o addr show eth0
+      addresses:
+      - "192.168.137.102/24"
+      nameservers:
+        addresses:
+        - 192.168.137.1
+      gateway4: 192.168.137.1
+2: eth0    inet 192.168.137.102/24 brd 192.168.137.255 scope global noprefixroute eth0\       valid_lft forever preferred_lft forever
+
+
+cat > /tmp/nmtest.sh <<'EOF'
+#!/bin/bash
+LOG=/home/alice/nmtest.log
+CON="$(nmcli -g GENERAL.CONNECTION device show eth0)"
+Y="$(grep -l gateway4 /etc/netplan/90-NM-*.yaml | head -1)"
+OLD="$(ip -4 -o addr show eth0 | awk '{print $4}')"
+snap() { echo "--- $1  $(date +%T)"; stat -c "mtime: %y" "$Y"; grep -A1 "^      addresses:" "$Y" | head -2; ip -4 -o addr show eth0 | awk '{print "ip:", $4}'; }
+{
+echo "connection=$CON  yaml=$Y  old=$OLD"
+systemctl stop dip ipservice
+snap BEFORE
+nmcli connection modify "$CON" ipv4.addresses 192.168.137.150/24
+nmcli connection down "$CON"; nmcli connection up "$CON"; sleep 8
+snap AFTER_CHANGE
+nmcli connection modify "$CON" ipv4.addresses "$OLD"
+nmcli connection down "$CON"; nmcli connection up "$CON"; sleep 8
+snap AFTER_REVERT
+systemctl start dip ipservice
+echo DONE
+} > "$LOG" 2>&1
+EOF
+chmod +x /tmp/nmtest.sh
+sudo systemd-run --unit=nmtest /tmp/nmtest.sh
+Running as unit: nmtest.service; invocation ID: f1ced468ae554b59861f1ae9c6d62755
+
+cat /home/alice/nmtest.log
+connection=netplan-eth0  yaml=/etc/netplan/90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml  old=192.168.137.102/24
+--- BEFORE  21:15:12
+mtime: 2026-11-09 21:07:53.554314754 -0500
+      addresses:
+      - "192.168.137.102/24"
+ip: 192.168.137.102/24
+Connection 'netplan-eth0' successfully deactivated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/3)
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/4)
+--- AFTER_CHANGE  21:15:22
+mtime: 2026-11-09 21:15:12.834451532 -0500
+      addresses:
+      - "192.168.137.150/24"
+ip: 192.168.137.150/24
+Connection 'netplan-eth0' successfully deactivated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/4)
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/5)
+--- AFTER_REVERT  21:15:31
+mtime: 2026-11-09 21:15:22.416812964 -0500
+      addresses:
+      - "192.168.137.102/24"
+ip: 192.168.137.102/24
+(venv) alice@MASCAB01B:~/broker $ sudo raspi-config nonint do_overlayfs 0
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  cryptsetup cryptsetup-bin
+Suggested packages:
+  cryptsetup-initramfs keyutils haveged
+The following NEW packages will be installed:
+  cryptsetup cryptsetup-bin overlayroot
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Need to get 742 kB of archives.
+After this operation, 3,369 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian trixie/main arm64 cryptsetup-bin arm64 2:2.7.5-2 [497 kB]
+Get:2 http://deb.debian.org/debian trixie/main arm64 cryptsetup arm64 2:2.7.5-2 [230 kB]
+Get:3 http://deb.debian.org/debian trixie/main arm64 overlayroot all 0.18.debian14 [15.6 kB]
+Fetched 742 kB in 5s (141 kB/s)
+Preconfiguring packages ...
+Selecting previously unselected package cryptsetup-bin.
+(Reading database ... 67876 files and directories currently installed.)
+Preparing to unpack .../cryptsetup-bin_2%3a2.7.5-2_arm64.deb ...
+Unpacking cryptsetup-bin (2:2.7.5-2) ...
+Selecting previously unselected package cryptsetup.
+Preparing to unpack .../cryptsetup_2%3a2.7.5-2_arm64.deb ...
+Unpacking cryptsetup (2:2.7.5-2) ...
+Selecting previously unselected package overlayroot.
+Preparing to unpack .../overlayroot_0.18.debian14_all.deb ...
+Unpacking overlayroot (0.18.debian14) ...
+Setting up cryptsetup-bin (2:2.7.5-2) ...
+Setting up cryptsetup (2:2.7.5-2) ...
+Setting up overlayroot (0.18.debian14) ...
+Processing triggers for man-db (2.13.1-1) ...
+Processing triggers for initramfs-tools (0.148.4+rpt2) ...
+update-initramfs: Generating /boot/initrd.img-6.18.34+rpt-rpi-v8
+'/boot/initrd.img-6.18.34+rpt-rpi-v8' -> '/boot/firmware/initramfs8'
+update-initramfs: Generating /boot/initrd.img-6.18.34+rpt-rpi-2712
+'/boot/initrd.img-6.18.34+rpt-rpi-2712' -> '/boot/firmware/initramfs_2712'
+
+
+
+sudo reboot
+sudo ./check_overlay_persist.sh      # all lines should be [ OK ]
+
+sudo ./check_overlay_persist.sh
+[sudo] password for alice:
+== Overlay status ==
+  root filesystem: overlay
+  [ OK ]  SD card (lower layer) mounted at /media/root-ro (ro)
+== Package installation ==
+  [ OK ]  broker-persist helper installed
+  [ OK ]  sudo rule installed
+  [ OK ]  send: PYTHONPATH overlay_persist active
+  [ OK ]  ipservice: PYTHONPATH overlay_persist active
+  [ OK ]  ipservice: start delay + network persist active
+== Comparison with the SD card ==
+  [ OK ]  config.json: identical to the SD card copy
+  [ OK ]  bridge.conf: identical to the SD card copy
+  [ OK ]  /etc/hostname: identical to the SD card copy
+  [ OK ]  /etc/netplan: identical to the SD card copy
+== Network info ==
+  hostname : MASCAB01B
+  eth0 IP  : 192.168.137.102/24
+  netplan  :      addresses:
+  netplan  :        addresses:
+== Last helper log entries ==
+  -- No entries --
+
+
+
+
+
+
+(venv) alice@MASCAB01B:~/broker $ cat /home/alice/nmtest.log
+connection=netplan-eth0  yaml=/etc/netplan/90-NM-75a1216a-9d1a-30cd-8aca-ace5526ec021.yaml  old=192.168.137.102/24
+--- BEFORE  21:15:12
+mtime: 2026-11-09 21:07:53.554314754 -0500
+      addresses:
+      - "192.168.137.102/24"
+ip: 192.168.137.102/24
+Connection 'netplan-eth0' successfully deactivated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/3)
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/4)
+--- AFTER_CHANGE  21:15:22
+mtime: 2026-11-09 21:15:12.834451532 -0500
+      addresses:
+      - "192.168.137.150/24"
+ip: 192.168.137.150/24
+Connection 'netplan-eth0' successfully deactivated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/4)
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/5)
+--- AFTER_REVERT  21:15:31
+mtime: 2026-11-09 21:15:22.416812964 -0500
+      addresses:
+      - "192.168.137.102/24"
+ip: 192.168.137.102/24
+
