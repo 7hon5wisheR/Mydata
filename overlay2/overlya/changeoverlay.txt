@@ -1,0 +1,11 @@
+echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/apps
+sudo chmod 440 /etc/sudoers.d/apps
+
+
+echo "alice ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/apps
+sudo chmod 440 /etc/sudoers.d/apps
+sudo visudo -c
+sudo -u alice sudo -n true && echo NOPASSWD_OK
+
+
+findmnt -no FSTYPE /

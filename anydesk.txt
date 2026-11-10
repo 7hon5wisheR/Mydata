@@ -11,6 +11,7 @@ wsl --shutdown
 66233
 999
  
+ls /etc/systemd/system/*.service
 
 1239998676
 1684577025

@@ -659,14 +659,32 @@ def apply_logger_change(val, source="unknown"):
     threading.Thread(target=reboot_after_delay, args=(3,), daemon=True).start()
 
 # ======================================================
+# SUDO HELPER
+# -- Password SSH login does NOT carry over to this process (it runs
+#    without a TTY), so a plain "sudo" fails with "a terminal is
+#    required to read the password". Order of attempts:
+#      1. already root            -> run directly, no sudo
+#      2. env SUDO_PASSWORD set   -> sudo -S (password via stdin)
+#      3. otherwise               -> sudo -n (needs NOPASSWD in sudoers)
+# ======================================================
+def run_sudo(args, **kw):
+    if os.geteuid() == 0:
+        return subprocess.run(args, **kw)
+    pw = os.environ.get("SUDO_PASSWORD")
+    if pw:
+        kw.pop("input", None)
+        return subprocess.run(["sudo", "-S", "-p", ""] + args,
+                              input=pw + "\n", text=True, **{k: v for k, v in kw.items() if k != "text"})
+    return subprocess.run(["sudo", "-n"] + args, **kw)
+
+# ======================================================
 # OVERLAY FILESYSTEM (enable/disable) HELPER
 # -- Turns the Raspberry Pi OS read-only overlay on/off through
 #    raspi-config. It takes effect only after a reboot, so a real
 #    change always ends in a reboot (same reboot path as the other
 #    settings). Only reachable from the "Advanced Settings" form on
 #    THIS device's page at :8082 - NOT exposed via REST or MQTT.
-#    Requires passwordless sudo for raspi-config (apps.py already
-#    uses sudo for reboot / hostname / systemctl).
+#    Uses run_sudo() (root / SUDO_PASSWORD / NOPASSWD sudoers).
 # ======================================================
 VALID_OVERLAY = {"enable", "disable"}
 
@@ -710,8 +728,8 @@ def apply_overlay_change(val, source="unknown"):
     # raspi-config nonint convention: 0 = enable, 1 = disable
     arg = "0" if val == "enable" else "1"
     try:
-        r = subprocess.run(
-            ["sudo", "raspi-config", "nonint", "do_overlayfs", arg],
+        r = run_sudo(
+            ["raspi-config", "nonint", "do_overlayfs", arg],
             capture_output=True, text=True, timeout=180
         )
     except Exception as e:
@@ -720,6 +738,9 @@ def apply_overlay_change(val, source="unknown"):
 
     if r.returncode != 0:
         err = (r.stderr or r.stdout or "").strip()[:200]
+        if "password" in err.lower() or "terminal is required" in err.lower():
+            err += (" | Fix: run 'sudo visudo -f /etc/sudoers.d/apps' and add: "
+                    f"{os.environ.get('USER') or 'USER'} ALL=(ALL) NOPASSWD: ALL")
         print(f"[OVERLAY] raspi-config rc={r.returncode}: {err}")
         return False, f"Overlay NOT changed (raspi-config rc={r.returncode}) {err}"
 
@@ -762,8 +783,8 @@ def apply_system_hostname(new_hostname):
     if not new_hostname or new_hostname == socket.gethostname():
         return False
     try:
-        subprocess.run(
-            ["sudo", "bash", "-c",
+        run_sudo(
+            ["bash", "-c",
              f"echo '{new_hostname}' > /etc/hostname && "
              f"sed -i 's/^127\\.0\\.1\\.1.*/127.0.1.1\t{new_hostname}/' /etc/hosts && "
              f"hostname '{new_hostname}'"],
@@ -804,7 +825,7 @@ def reboot_after_delay(delay=3):
     print("[REBOOT] Waiting 5s for mqtts.py to handle reboot...")
     time.sleep(5)
     print("[REBOOT] Safety fallback: executing sudo reboot -f ...")
-    subprocess.run(["sudo", "reboot", "-f"])
+    run_sudo(["reboot", "-f"])
 
 
 # ======================================================
@@ -820,7 +841,7 @@ def is_broker_online(ip, port=1883):
         return False
 
 def restart_mosquitto_service():
-    subprocess.run(["sudo", "systemctl", "restart", "mosquitto"])
+    run_sudo(["systemctl", "restart", "mosquitto"])
 
 def update_bridge_conf(mosquitto_address, port="1883"):
     mac_clean = DEVICE_MAC.replace(":", "")

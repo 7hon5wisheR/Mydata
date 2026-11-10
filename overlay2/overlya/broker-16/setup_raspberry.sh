@@ -10,10 +10,16 @@
 #    3. Install nbtscan (for cabinet hostname detection)
 #    4. Setup passwordless sudo for send.service control (sudoers)
 #    5. Setup systemd service for dip.py (DIP Switch IP Manager)
+#    6. Setup systemd service for ipservice.py
+#    7. Overlay + Persist (2 stages, reboot in between):
+#         stage 1: chmod, install rsync, run setup_overlay_persist.sh -> reboot
+#         stage 2: raspi-config nonint do_overlayfs 0 -> reboot
 #
 #  Usage:
 #    chmod +x setup_raspberry.sh
-#    sudo ./setup_raspberry.sh
+#    sudo ./setup_raspberry.sh          # full setup + overlay stage 1, then reboots
+#    sudo ./setup_raspberry.sh          # run AGAIN after the reboot = overlay stage 2
+#    sudo ./setup_raspberry.sh --full   # force the full setup again (ignore stage)
 # ================================================================
 set -e
 
@@ -26,7 +32,7 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 # ================================================================
-#  CONFIGURATION — Adjust before running!
+#  CONFIGURATION â€” Adjust before running!
 # ================================================================
 HOME_BASE="alice"
 BROKER_DIR="/home/${HOME_BASE}/broker"
@@ -44,6 +50,17 @@ DIP_SERVICE_FILE="/etc/systemd/system/dip.service"
 PYTHON3_BIN="/usr/bin/python3"
 IPSERVICE_SCRIPT="${BROKER_DIR}/ipservice.py"
 IPSERVICE_SERVICE_FILE="/etc/systemd/system/ipservice.service"
+
+# --- Overlay + Persist ---
+OVERLAY_ENABLE="yes"                       # "no" = skip PART 10 completely
+OVERLAY_SETUP_SCRIPT="${BROKER_DIR}/setup_overlay_persist.sh"
+OVERLAY_CHECK_SCRIPT="${BROKER_DIR}/check_overlay_persist.sh"
+OVERLAY_HELPER="${BROKER_DIR}/overlay_persist/broker-persist"
+OVERLAY_STATE_DIR="/var/lib/setup_raspberry"
+OVERLAY_STAGE_FILE="${OVERLAY_STATE_DIR}/overlay_stage"   # persist_installed | overlay_enabled
+OVERLAY_AUTO_REBOOT="yes"                  # "no" = only print the reboot instruction
+OVERLAY_REBOOT_DELAY=10                    # seconds, Ctrl+C to cancel
+OVERLAY_SKIP_CONFIRM="${OVERLAY_SKIP_CONFIRM:-no}"        # "yes" = skip the DIP/netplan question
 
 # ================================================================
 header() {
@@ -64,7 +81,101 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-header "Mobile Aspects — Auto Setup Raspberry Pi v1.0"
+# ================================================================
+#  OVERLAY HELPERS + STAGE DISPATCHER
+# ================================================================
+is_overlay_active() { [ "$(findmnt -no FSTYPE / 2>/dev/null)" = "overlay" ]; }
+
+do_reboot() {
+  if [ "${OVERLAY_AUTO_REBOOT}" = "yes" ]; then
+    info "Rebooting in ${OVERLAY_REBOOT_DELAY}s (Ctrl+C to cancel)..."
+    sleep "${OVERLAY_REBOOT_DELAY}"
+    systemctl reboot
+    exit 0
+  else
+    info "Reboot manually now: sudo reboot"
+  fi
+}
+
+# Stage 2: runs when the script is started again after the stage-1 reboot.
+overlay_stage2() {
+  header "PART 10: Overlay + Persist (stage 2 of 2 - enable overlay)"
+
+  step "50" "Verifying persist helper is installed..."
+  if [ ! -f "${OVERLAY_SETUP_SCRIPT}" ] || [ ! -f "${OVERLAY_HELPER}" ]; then
+    err "overlay_persist files missing in ${BROKER_DIR}. Stage 2 aborted (overlay NOT enabled)."
+    exit 1
+  fi
+  ok "overlay_persist files found"
+
+  step "51" "Checking current root filesystem..."
+  if is_overlay_active; then
+    ok "Overlay is already ACTIVE - nothing to do."
+    exit 0
+  fi
+  info "Root filesystem: $(findmnt -no FSTYPE / 2>/dev/null) (overlay still OFF)"
+
+  step "52" "Checking netplan files (needed for DIP IP persistence)..."
+  if ls /etc/netplan/*.yaml >/dev/null 2>&1; then
+    ok "netplan yaml found: $(ls /etc/netplan/*.yaml | tr '\n' ' ')"
+  else
+    err "No /etc/netplan/*.yaml found - the package cannot keep the DIP IP. Overlay NOT enabled."
+    exit 1
+  fi
+
+  step "53" "Status report of the persist package (informational)..."
+  if [ -x "${OVERLAY_CHECK_SCRIPT}" ]; then
+    info "Lines about the overlay itself are expected to be not-OK until overlay is on."
+    "${OVERLAY_CHECK_SCRIPT}" || true
+  fi
+
+  if [ "${OVERLAY_SKIP_CONFIRM}" != "yes" ]; then
+    echo ""
+    info "Guide section 4 - CRITICAL check before enabling overlay:"
+    info "  change the DIP to another value, wait for the reboot, and confirm"
+    info "  'grep -H addresses /etc/netplan/*.yaml' shows the NEW address and a new mtime."
+    info "  Then return the DIP to the master value."
+    if [ -t 0 ]; then
+      read -r -p "  Has this DIP -> netplan check been done and passed? [y/N] " ANS
+      case "${ANS}" in
+        y|Y|yes|YES) ;;
+        *) err "Overlay NOT enabled. Do the check, then run this script again."; exit 1 ;;
+      esac
+    else
+      err "No terminal for confirmation. Re-run with OVERLAY_SKIP_CONFIRM=yes to skip the question."
+      exit 1
+    fi
+  fi
+
+  step "54" "Enabling overlay (raspi-config nonint do_overlayfs 0)..."
+  if raspi-config nonint do_overlayfs 0; then
+    echo "overlay_enabled" > "${OVERLAY_STAGE_FILE}"
+    ok "Overlay enabled - it becomes active after the reboot"
+    info "After reboot verify: cd ${BROKER_DIR} && sudo ./check_overlay_persist.sh  (all [ OK ])"
+    info "Then run tests T1-T7 from the guide before cloning the SD card."
+    do_reboot
+  else
+    err "raspi-config do_overlayfs 0 failed. Overlay NOT enabled."
+    exit 1
+  fi
+  exit 0
+}
+
+# Dispatcher (skipped with --full)
+if [ "${1:-}" != "--full" ] && [ "${OVERLAY_ENABLE}" = "yes" ]; then
+  if is_overlay_active; then
+    header "Overlay is ACTIVE"
+    info "Root filesystem is an overlay: changes made now would be lost at reboot."
+    info "To run the full setup again: sudo raspi-config nonint do_overlayfs 1 && sudo reboot"
+    info "(then use --full). Check status: sudo ${OVERLAY_CHECK_SCRIPT}"
+    exit 0
+  fi
+  if [ -f "${OVERLAY_STAGE_FILE}" ] && [ "$(cat "${OVERLAY_STAGE_FILE}")" = "persist_installed" ]; then
+    overlay_stage2
+  fi
+fi
+
+header "Mobile Aspects â€” Auto Setup Raspberry Pi v1.0"
 info "HOME_BASE  = /home/${HOME_BASE}"
 info "BROKER_DIR = ${BROKER_DIR}"
 
@@ -182,7 +293,7 @@ if [ -f "${BROKER_DIR}/send.py" ] && [ -f "${VENV_PYTHON}" ]; then
     err "send.service failed to start. Check: journalctl -u send.service -n 30"
   fi
 else
-  info "send.py or venv not available — service registered but not started"
+  info "send.py or venv not available â€” service registered but not started"
   info "Start manually later: sudo systemctl start send.service"
 fi
 
@@ -270,14 +381,14 @@ step "13" "Restarting Mosquitto with new config..."
 systemctl restart mosquitto
 sleep 2
 if systemctl is-active --quiet mosquitto; then
-  ok "Mosquitto ACTIVE — port 1883 (MQTT) and 9001 (WebSocket)"
+  ok "Mosquitto ACTIVE â€” port 1883 (MQTT) and 9001 (WebSocket)"
 else
   err "Mosquitto failed to start! Check: journalctl -xe | grep mosquitto"
   exit 1
 fi
 
 # ================================================================
-# PART 3: CRONJOB — SSH Auto-Recovery
+# PART 3: CRONJOB â€” SSH Auto-Recovery
 # ================================================================
 header "PART 3: Setup Cronjob SSH Auto-Recovery"
 
@@ -305,7 +416,7 @@ info "Current root crontab:"
 crontab -l
 
 # ================================================================
-# PART 4: WATCHDOG — Auto-Recovery Raspberry Pi
+# PART 4: WATCHDOG â€” Auto-Recovery Raspberry Pi
 # ================================================================
 header "PART 4: Setup Watchdog Auto-Recovery"
 
@@ -354,11 +465,11 @@ max-load-5         = 18
 max-load-15        = 12
 
 # Temperature sensor (Raspberry Pi BCM2835)
-# Reboot if temperature exceeds 85°C
+# Reboot if temperature exceeds 85Â°C
 max-temperature    = 85
 temperature-sensor = /sys/devices/virtual/thermal/thermal_zone0/hwmon0/temp1_input
 
-# Ping check DISABLED — prevents reboot on internet loss
+# Ping check DISABLED â€” prevents reboot on internet loss
 # ping = 8.8.8.8
 # ping = 1.1.1.1
 
@@ -452,7 +563,7 @@ header "PART 7: Setup Passwordless Sudo (${HOME_BASE})"
 step "28" "Re-confirming send.service is enabled and started..."
 systemctl daemon-reload
 systemctl enable send.service
-systemctl start send.service || info "send.service start skipped/failed — check manually if needed"
+systemctl start send.service || info "send.service start skipped/failed â€” check manually if needed"
 ok "send.service daemon-reload / enable / start re-applied"
 
 step "29" "Locating systemctl binary..."
@@ -495,7 +606,7 @@ step "32" "Validating sudoers syntax..."
 if visudo -c -f "${SUDOERS_FILE}"; then
   ok "Sudoers file syntax is valid"
 else
-  err "Sudoers file has a SYNTAX ERROR — removing it to avoid locking out sudo!"
+  err "Sudoers file has a SYNTAX ERROR â€” removing it to avoid locking out sudo!"
   rm -f "${SUDOERS_FILE}"
   exit 1
 fi
@@ -518,7 +629,7 @@ step "34" "Verifying ${DIP_SCRIPT} exists..."
 if [ -f "${DIP_SCRIPT}" ]; then
   ls -l "${DIP_SCRIPT}"
   ok "dip.py found at ${DIP_SCRIPT}"
-  info "Owned by root is fine — service runs as root and is launched via python3, no execute bit needed"
+  info "Owned by root is fine â€” service runs as root and is launched via python3, no execute bit needed"
 else
   err "dip.py not found at ${DIP_SCRIPT}"
   info "Copy dip.py to ${BROKER_DIR} first, then re-run this part manually"
@@ -566,7 +677,7 @@ if [ -f "${DIP_SCRIPT}" ]; then
     err "dip.service failed to start. Check: journalctl -u dip.service -n 50"
   fi
 else
-  info "dip.py not available — service registered but not started"
+  info "dip.py not available â€” service registered but not started"
   info "Start manually later: sudo systemctl start dip.service"
 fi
 
@@ -635,7 +746,7 @@ if [ -f "${IPSERVICE_SCRIPT}" ]; then
     err "ipservice.service failed to start. Check: journalctl -u ipservice.service -n 50"
   fi
 else
-  info "ipservice.py not available — service registered but not started"
+  info "ipservice.py not available â€” service registered but not started"
   info "Start manually later: sudo systemctl start ipservice.service"
 fi
 
@@ -643,6 +754,47 @@ info "Watch live output any time with: journalctl -u ipservice.service -f"
 info "ipservice.service reboots the Pi automatically after hostname & bridge.conf"
 info "are updated, so all other services (send.service, mosquitto) pick up the"
 info "new hostname cleanly on the next boot."
+
+# ================================================================
+# PART 10: OVERLAY + PERSIST  (stage 1 of 2 - install persist helper)
+#   chmod +x *.sh overlay_persist/broker-persist
+#   apt-get install -y rsync
+#   ./setup_overlay_persist.sh
+#   reboot  -> run this script again = stage 2 (enable overlay)
+# ================================================================
+OVERLAY_REBOOT_PENDING=0
+if [ "${OVERLAY_ENABLE}" = "yes" ]; then
+  header "PART 10: Overlay + Persist (stage 1 of 2 - install helper)"
+
+  step "46" "Checking overlay_persist files in ${BROKER_DIR}..."
+  if [ -f "${OVERLAY_SETUP_SCRIPT}" ] && [ -f "${OVERLAY_HELPER}" ]; then
+    ok "setup_overlay_persist.sh and overlay_persist/broker-persist found"
+
+    step "47" "Setting executable permissions..."
+    chmod +x "${BROKER_DIR}"/*.sh "${OVERLAY_HELPER}"
+    ok "chmod +x *.sh overlay_persist/broker-persist"
+
+    step "48" "Installing rsync (if missing)..."
+    apt-get install -y rsync
+    ok "rsync installed"
+
+    step "49" "Running setup_overlay_persist.sh..."
+    if (cd "${BROKER_DIR}" && ./setup_overlay_persist.sh); then
+      mkdir -p "${OVERLAY_STATE_DIR}"
+      echo "persist_installed" > "${OVERLAY_STAGE_FILE}"
+      ok "Persist helper installed (overlay is NOT enabled yet)"
+      OVERLAY_REBOOT_PENDING=1
+    else
+      err "setup_overlay_persist.sh failed. Overlay stage NOT advanced; no reboot."
+    fi
+  else
+    err "overlay_persist files not found in ${BROKER_DIR}"
+    info "Copy overlay_persist/ and the *.sh files there, then run: sudo ./setup_raspberry.sh --full"
+    info "Or set OVERLAY_ENABLE=\"no\" to skip this part."
+  fi
+else
+  info "OVERLAY_ENABLE=no - skipping PART 10"
+fi
 
 # ================================================================
 # FINAL SUMMARY
@@ -674,7 +826,7 @@ echo ""
 echo "  [4] WATCHDOG"
 echo "      Device         : /dev/watchdog"
 echo "      Ping           : DISABLED"
-echo "      Max Temp       : 85°C"
+echo "      Max Temp       : 85Â°C"
 echo "      Temp Sensor    : /sys/devices/virtual/thermal/thermal_zone0/hwmon0/temp1_input"
 echo "      Max Load       : 24 (1m) / 18 (5m) / 12 (15m)"
 echo "      Retry Timeout  : 120 seconds"
@@ -690,7 +842,7 @@ echo "  [7] PASSWORDLESS SUDO"
 echo "      File   : ${SUDOERS_FILE}"
 echo "      User   : ${HOME_BASE}"
 echo "      Allows : start/stop/restart/enable/disable/status send.service,"
-echo "               reboot (with/without -f), restart mosquitto — no password"
+echo "               reboot (with/without -f), restart mosquitto â€” no password"
 echo ""
 echo "  [8] DIP.SERVICE"
 echo "      File       : /etc/systemd/system/dip.service"
@@ -705,6 +857,11 @@ echo "      User       : root"
 echo "      Auto-start : Yes | Restart=always | RestartSec=5"
 echo "      Behavior   : detects IP change -> updates hostname & bridge.conf -> reboots Pi"
 echo "      Passwordless sudo: start/stop/restart/enable/disable/status + journalctl -u ipservice.service"
+echo ""
+echo "  [10] OVERLAY + PERSIST"
+echo "      Stage file : ${OVERLAY_STAGE_FILE}"
+echo "      Stage 1    : persist helper installed (done above)"
+echo "      Stage 2    : run 'sudo ./setup_raspberry.sh' again after reboot -> enables overlay"
 echo -e "${NC}"
 
 echo -e "${CYAN}  NEXT STEPS (manual):${NC}"
@@ -737,3 +894,11 @@ echo "  crontab -l                           # view active cronjobs"
 echo "  sudo -l -U ${HOME_BASE}              # verify passwordless sudo rules"
 echo ""
 echo -e "${BLUE}================================================================${NC}"
+
+# ---- Overlay stage 1 -> reboot (after the summary was printed)
+if [ "${OVERLAY_REBOOT_PENDING}" = "1" ]; then
+  echo ""
+  info "Overlay stage 1 complete. After the reboot run again:  sudo ./setup_raspberry.sh"
+  info "(stage 2 enables the overlay, then reboots once more)."
+  do_reboot
+fi
