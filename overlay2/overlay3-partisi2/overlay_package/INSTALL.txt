@@ -1,0 +1,16 @@
+PAKET OVERLAY (versi baru)
+==========================
+Isi : setup_overlay.sh, setup_overlay_persist.sh, check_overlay_persist.sh,
+      remove_overlay_persist.sh, update_broker.sh,
+      overlay_persist/broker-persist, overlay_persist/sitecustomize.py
+
+Pasang (overlay harus MATI: findmnt -no FSTYPE /  ->  ext4):
+  unzip -o overlay_package.zip -d /home/alice/broker
+  sudo bash /home/alice/broker/setup_overlay.sh
+
+Setelah itu otomatis: reboot -> overlay aktif -> reboot.
+Cek status : sudo bash /home/alice/broker/setup_overlay.sh --status
+Cek paket  : cd /home/alice/broker && sudo ./check_overlay_persist.sh
+
+Pi yang SUDAH punya overlay versi lama: matikan overlay dulu
+(tombol disable :8082), reboot, lalu jalankan dua perintah Pasang di atas.
