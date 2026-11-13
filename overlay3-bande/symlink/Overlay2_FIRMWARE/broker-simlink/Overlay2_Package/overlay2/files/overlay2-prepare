@@ -1,0 +1,143 @@
+#!/bin/bash
+__version__="1.0.0.(18) - overlay"
+# =====================================================================================================================================
+#      OVERLAY2
+#      Name                       : OVERLAY2
+#      Version                    : 1.0.0.(18) 
+#      Date Created               : 11-13-2026
+#      Updated                    : 11-13-2026
+#      Author                     : Saifuddin
+#      Notes                      : overlay2-prepare - runs at every boot (overlay2-prepare.service), as root, BEFORE NetworkManager,
+#                                   mosquitto, dip, ipservice and send. It:
+#                                     1. waits for the persistent drive (/mnt/persist) and checks it is writable
+#                                     2. validates config.json / bridge.conf there (restores from .bak or master defaults if bad/missing)
+#                                     3. links /home/alice/broker/config.json and conf.d/bridge.conf to the persistent copies
+#                                     4. restores identity: hostname + eth0 IP derived from the "connection NAME" in bridge.conf
+#                                   Layout on the drive: <PERSIST>/broker/config.json and <PERSIST>/broker/conf.d/bridge.conf
+#                                   (mosquitto include_dir points to <PERSIST>/broker/conf.d).
+#                                   If the drive is missing: DEGRADED mode (RAM copies from master defaults, ipservice masked so it
+#                                   cannot reboot-loop). Always exits 0 so the boot never blocks. State: /run/overlay2.state
+# ======================================================================================================================================
+CONF="${PERSIST_CONF:-/etc/overlay2.conf}"
+[ -f "$CONF" ] && . "$CONF"
+BROKER_DIR="${BROKER_DIR:-/home/alice/broker}"
+PERSIST_DIR="${PERSIST_DIR:-/mnt/persist}"
+STORE="${STORE:-$PERSIST_DIR/broker}"
+DEFAULTS="${DEFAULTS:-$BROKER_DIR/.defaults}"
+WAIT="${WAIT:-30}"
+BASE_NAME="${BASE_NAME:-MASCAB01}"
+IP_BASE_OCTET="${IP_BASE_OCTET:-100}"
+IDENTITY="${IDENTITY:-1}"
+NETPLAN_GLOB="${NETPLAN_GLOB:-/etc/netplan/90-NM-*.yaml}"
+OWNER="${OWNER:-alice}"
+STATE="${STATE_FILE:-/run/overlay2.state}"
+DRY_RUN="${DRY_RUN:-0}"          # 1 = do not call hostnamectl / netplan / systemctl (sandbox tests)
+REQUIRE_MOUNT="${REQUIRE_MOUNT:-1}"  # 0 = skip mountpoint check (sandbox tests)
+LINK_config_json="$BROKER_DIR/config.json"
+LINK_bridge_conf="$BROKER_DIR/conf.d/bridge.conf"
+
+log()  { logger -t overlay2-prepare "$*" 2>/dev/null; echo "overlay2-prepare: $*"; }
+state(){ echo "$*" > "$STATE" 2>/dev/null; }
+
+valid() {  # valid <file> <name>
+  [ -s "$1" ] || return 1
+  case "$2" in
+    config.json) python3 -c 'import json,sys; json.load(open(sys.argv[1]))' "$1" 2>/dev/null ;;
+    bridge.conf) grep -qE '^[[:space:]]*connection[[:space:]]+[A-Za-z0-9_.-]+' "$1" ;;
+  esac
+}
+
+ensure_good() {  # ensure_good <full path of the file> : make it a valid file (self .bak, then master default)
+  local f="$1" n; n="$(basename "$1")"
+  mkdir -p "$(dirname "$f")"
+  valid "$f" "$n" && return 0
+  if valid "$f.bak" "$n"; then
+    log "$n invalid/missing -> restoring from $n.bak"; cp -f "$f.bak" "$f.new" && mv -f "$f.new" "$f"; return 0
+  fi
+  if valid "$DEFAULTS/$n" "$n"; then
+    log "$n invalid/missing -> seeding from master defaults"; cp -f "$DEFAULTS/$n" "$f.new" && mv -f "$f.new" "$f"; return 0
+  fi
+  log "WARNING: no valid source for $n"; return 1
+}
+
+ensure_link() {  # ensure_link <link> <target>
+  local link="$1" tgt="$2"
+  mkdir -p "$(dirname "$link")"
+  if [ -L "$link" ] && [ "$(readlink "$link")" = "$tgt" ]; then return 0; fi
+  rm -f "$link"; ln -s "$tgt" "$link"
+}
+
+# ---- 1. wait for the persistent drive ----
+ok=0; i=0
+while [ "$i" -le "$WAIT" ]; do
+  if { [ "$REQUIRE_MOUNT" = "0" ] || mountpoint -q "$PERSIST_DIR"; } && mkdir -p "$STORE/conf.d" 2>/dev/null \
+     && touch "$STORE/.w.$$" 2>/dev/null; then rm -f "$STORE/.w.$$"; ok=1; break; fi
+  sleep 1; i=$((i+1))
+done
+
+# Files: config.json -> $STORE/config.json ; bridge.conf -> $STORE/conf.d/bridge.conf (mosquitto include_dir points here)
+if [ "$ok" = "1" ]; then
+  mode="NORMAL"
+else
+  # Degraded: no persistent drive. Same layout, but on the (volatile) SD so mosquitto's include_dir still exists.
+  mode="DEGRADED"; log "persistent drive NOT available -> DEGRADED mode (RAM copies from master defaults, ipservice masked)"
+  [ "$DRY_RUN" = "1" ] || systemctl mask --runtime ipservice.service 2>/dev/null
+fi
+ensure_good "$STORE/config.json"        || true
+ensure_good "$STORE/conf.d/bridge.conf" || true
+ensure_link "$LINK_config_json" "$STORE/config.json"
+ensure_link "$LINK_bridge_conf" "$STORE/conf.d/bridge.conf"
+[ "$(id -u)" = "0" ] && chown -R "$OWNER":"$OWNER" "$STORE" 2>/dev/null
+chmod 755 "$STORE" "$STORE/conf.d" 2>/dev/null
+
+# ---- 4. identity (hostname + IP) from bridge.conf ----
+ident="skipped"
+if [ "$IDENTITY" = "1" ] && [ "$mode" = "NORMAL" ]; then
+  name="$(grep -m1 -E '^[[:space:]]*connection[[:space:]]+' "$STORE/conf.d/bridge.conf" 2>/dev/null | awk '{print $2}')"
+  if [[ "$name" =~ ^${BASE_NAME}([A-Z])$ ]]; then
+    letter="${BASH_REMATCH[1]}"
+    idx=$(( $(printf '%d' "'$letter") - 64 ))
+    octet=$(( IP_BASE_OCTET + idx ))
+    cur="$(hostname 2>/dev/null)"
+    if [ "$cur" != "$name" ]; then
+      [ "$DRY_RUN" = "1" ] || hostnamectl set-hostname "$name" 2>/dev/null
+      log "hostname $cur -> $name"
+    fi
+    yaml="$(ls $NETPLAN_GLOB 2>/dev/null | head -n1)"
+    if [ -n "$yaml" ]; then
+      res="$(python3 - "$yaml" "$octet" <<'PY'
+import sys, re, shutil
+import yaml
+f, octet = sys.argv[1], sys.argv[2]
+d = yaml.safe_load(open(f))
+eth = d["network"]["ethernets"]["eth0"]
+addrs = eth.get("addresses") or []
+if not addrs:
+    print("noaddr"); sys.exit(0)
+ip, _, pre = addrs[0].partition("/")
+parts = ip.split(".")
+if parts[3] == octet:
+    print("same"); sys.exit(0)
+parts[3] = octet
+eth["addresses"][0] = ".".join(parts) + "/" + (pre or "24")
+shutil.copy2(f, f + ".prev")
+yaml.safe_dump(d, open(f, "w"), default_flow_style=False)
+print("changed " + ".".join(parts))
+PY
+)"
+      case "$res" in
+        changed*)
+          if [ "$DRY_RUN" = "1" ] || netplan generate 2>/dev/null; then log "eth0 IP -> ${res#changed }"; ident="ip=${res#changed }"
+          else cp -f "$yaml.prev" "$yaml"; log "netplan generate FAILED -> YAML rolled back"; ident="ip-rollback"; fi ;;
+        same)  ident="ok(.$octet)" ;;
+        *)     ident="yaml:$res" ;;
+      esac
+    else ident="no-netplan-yaml"; fi
+  else
+    ident="name-unrecognised($name)"; log "bridge.conf connection name '$name' does not match ${BASE_NAME}[A-Z]; identity untouched"
+  fi
+fi
+
+state "mode=$mode identity=$ident store=$STORE time=$(date +%FT%T)"
+log "done: $(cat "$STATE")"
+exit 0

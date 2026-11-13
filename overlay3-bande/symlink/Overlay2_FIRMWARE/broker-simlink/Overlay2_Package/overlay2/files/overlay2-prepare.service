@@ -1,0 +1,16 @@
+# Version 1.0.0.(18) - overlay2 | Author: Saifuddin | Created 11-13-2026
+[Unit]
+Description=Overlay2 persistent store: mount check, config/bridge.conf links, hostname + IP restore
+DefaultDependencies=no
+After=local-fs.target mnt-persist.mount boot-firmware.mount cloud-init-local.service
+Wants=mnt-persist.mount
+Before=NetworkManager.service network-pre.target mosquitto.service dip.service ipservice.service send.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=60
+ExecStart=/usr/local/sbin/overlay2-prepare
+
+[Install]
+WantedBy=multi-user.target

@@ -18,6 +18,15 @@ ls /etc/systemd/system/*.service
 95-0061-00@ad
 1794616883
 
+# setelah edit config.json
+sudo /usr/local/sbin/broker-persist config.json
+
+# setelah edit bridge.conf
+sudo /usr/local/sbin/broker-persist conf.d/bridge.conf
+
+# setelah ganti hostname manual (hostnamectl set-hostname ...)
+sudo /usr/local/sbin/broker-persist net
+
 ssh alice@192.168.137.101
 ssh alice@192.168.137.102
 ssh alice@192.168.137.103

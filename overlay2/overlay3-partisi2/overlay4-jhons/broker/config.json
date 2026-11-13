@@ -1,0 +1,24 @@
+{
+    "location": "MASCAB01",
+    "consstring": "",
+    "hostname": "MASCAB01B",
+    "logger": "disable",
+    "rssi_threshold_strict": -95,
+    "rfid_filter": [
+        "8600",
+        "6453"
+    ],
+    "scan_timeout": 12,
+    "ip_broker": "192.168.137.1",
+    "PORT": "ttyAMA0",
+    "rf_mode": "2D",
+    "version": "1.0.0(16)",
+    "power": 30,
+    "dim": 50,
+    "antenna": [
+        "1",
+        "2",
+        "3",
+        "4"
+    ]
+}

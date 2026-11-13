@@ -1,0 +1,882 @@
+{
+  "antennas_configured": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "duration_s": 12,
+  "generated_at": "2026-09-05 20:05:23",
+  "scan_timeout_s": 12.0,
+  "tags": {
+    "645349000000002B27BEDBF5": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BEDBF6": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -50
+      },
+      "rssi_best": -50
+    },
+    "645349000000002B27BEDBF7": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -39
+      },
+      "rssi_best": -39
+    },
+    "645349000000002B27BEDBF8": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -29
+      },
+      "rssi_best": -29
+    },
+    "645349000000002B27BEDBF9": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -29
+      },
+      "rssi_best": -29
+    },
+    "645349000000002B27BEDBFA": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -52
+      },
+      "rssi_best": -52
+    },
+    "645349000000002B27BEDBFB": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -50
+      },
+      "rssi_best": -50
+    },
+    "645349000000002B27BEDBFC": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BEDBFD": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -40
+      },
+      "rssi_best": -40
+    },
+    "645349000000002B27BEDBFE": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -42
+      },
+      "rssi_best": -42
+    },
+    "645349000000002B27BEDBFF": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -39
+      },
+      "rssi_best": -39
+    },
+    "645349000000002B27BEE040": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BEE041": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -42
+      },
+      "rssi_best": -42
+    },
+    "645349000000002B27BEE042": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BEE043": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BEE044": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -40
+      },
+      "rssi_best": -40
+    },
+    "645349000000002B27BEE045": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -48
+      },
+      "rssi_best": -48
+    },
+    "645349000000002B27BEE046": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -40
+      },
+      "rssi_best": -40
+    },
+    "645349000000002B27BEE048": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "645349000000002B27BEE04F": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -44
+      },
+      "rssi_best": -44
+    },
+    "645349000000002B27BEE3F0": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BEE3F1": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -29
+      },
+      "rssi_best": -29
+    },
+    "645349000000002B27BEE840": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "645349000000002B27BEE841": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -50
+      },
+      "rssi_best": -50
+    },
+    "645349000000002B27BEE842": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "645349000000002B27BEE94F": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -39
+      },
+      "rssi_best": -39
+    },
+    "645349000000002B27BEF140": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -46
+      },
+      "rssi_best": -46
+    },
+    "645349000000002B27BEF141": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -51
+      },
+      "rssi_best": -51
+    },
+    "645349000000002B27BEF142": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BEF143": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -53
+      },
+      "rssi_best": -53
+    },
+    "645349000000002B27BEF144": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BEF145": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -44
+      },
+      "rssi_best": -44
+    },
+    "645349000000002B27BEF146": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -40
+      },
+      "rssi_best": -40
+    },
+    "645349000000002B27BEF148": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BEF149": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -53
+      },
+      "rssi_best": -53
+    },
+    "645349000000002B27BEF14A": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -46
+      },
+      "rssi_best": -46
+    },
+    "645349000000002B27BEF14B": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -35
+      },
+      "rssi_best": -35
+    },
+    "645349000000002B27BEF14C": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -41
+      },
+      "rssi_best": -41
+    },
+    "645349000000002B27BEF14D": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -42
+      },
+      "rssi_best": -42
+    },
+    "645349000000002B27BEF14E": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -39
+      },
+      "rssi_best": -39
+    },
+    "645349000000002B27BEF14F": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -44
+      },
+      "rssi_best": -44
+    },
+    "645349000000002B27BEF2F0": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -30
+      },
+      "rssi_best": -30
+    },
+    "645349000000002B27BEF2F1": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -39
+      },
+      "rssi_best": -39
+    },
+    "645349000000002B27BEF2F2": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BEF2F3": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BEF2F4": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BEF2F5": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BEF2F6": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BEF2F7": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -32
+      },
+      "rssi_best": -32
+    },
+    "645349000000002B27BEF2F8": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BEF2F9": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BEF2FA": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -32
+      },
+      "rssi_best": -32
+    },
+    "645349000000002B27BEF2FB": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -30
+      },
+      "rssi_best": -30
+    },
+    "645349000000002B27BEF2FD": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "645349000000002B27BEF2FE": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BEF2FF": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "645349000000002B27BEFAF6": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -46
+      },
+      "rssi_best": -46
+    },
+    "645349000000002B27BF0030": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -42
+      },
+      "rssi_best": -42
+    },
+    "645349000000002B27BF0039": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -42
+      },
+      "rssi_best": -42
+    },
+    "645349000000002B27BF003A": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "645349000000002B27BF003B": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "645349000000002B27BF003C": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "645349000000002B27BF003D": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -32
+      },
+      "rssi_best": -32
+    },
+    "645349000000002B27BF0040": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -29
+      },
+      "rssi_best": -29
+    },
+    "645349000000002B27BF0041": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BF0042": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BF0043": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -40
+      },
+      "rssi_best": -40
+    },
+    "645349000000002B27BF0044": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "645349000000002B27BF0047": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF0048": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BF0049": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -39
+      },
+      "rssi_best": -39
+    },
+    "645349000000002B27BF004A": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BF004B": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "645349000000002B27BF004C": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -40
+      },
+      "rssi_best": -40
+    },
+    "645349000000002B27BF004D": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -32
+      },
+      "rssi_best": -32
+    },
+    "645349000000002B27BF03F0": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BF03F1": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -46
+      },
+      "rssi_best": -46
+    },
+    "645349000000002B27BF03F2": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BF03F3": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BF03F4": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -52
+      },
+      "rssi_best": -52
+    },
+    "645349000000002B27BF03F5": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -41
+      },
+      "rssi_best": -41
+    },
+    "645349000000002B27BF03F6": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF03F7": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "645349000000002B27BF03F8": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -44
+      },
+      "rssi_best": -44
+    },
+    "645349000000002B27BF03F9": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BF03FA": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF03FB": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -35
+      },
+      "rssi_best": -35
+    },
+    "645349000000002B27BF03FC": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "645349000000002B27BF03FD": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -47
+      },
+      "rssi_best": -47
+    },
+    "645349000000002B27BF03FE": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -44
+      },
+      "rssi_best": -44
+    },
+    "645349000000002B27BF03FF": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BF0942": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF0943": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BF0944": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -35
+      },
+      "rssi_best": -35
+    },
+    "645349000000002B27BF0945": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -40
+      },
+      "rssi_best": -40
+    },
+    "645349000000002B27BF0946": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BF0947": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF0949": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "645349000000002B27BF094B": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF094C": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BF094F": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -36
+      },
+      "rssi_best": -36
+    },
+    "645349000000002B27BF0BF0": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF12FB": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -29
+      },
+      "rssi_best": -29
+    },
+    "645349000000002B27BF12FC": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -44
+      },
+      "rssi_best": -44
+    },
+    "645349000000002B27BF12FD": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -41
+      },
+      "rssi_best": -41
+    },
+    "645349000000002B27BF12FE": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -25
+      },
+      "rssi_best": -25
+    },
+    "645349000000002B27BF12FF": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BF1AF3": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -47
+      },
+      "rssi_best": -47
+    },
+    "645349000000002B27BF1AF5": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF1AF6": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "645349000000002B27BF1AF7": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "645349000000002B27BF1AF8": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -43
+      },
+      "rssi_best": -43
+    },
+    "645349000000002B27BF1AF9": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -32
+      },
+      "rssi_best": -32
+    },
+    "645349000000002B27BF1AFA": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -34
+      },
+      "rssi_best": -34
+    },
+    "645349000000002B27BF1AFB": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -33
+      },
+      "rssi_best": -33
+    },
+    "645349000000002B27BF1AFC": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -32
+      },
+      "rssi_best": -32
+    },
+    "645349000000002B27BF1AFD": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -48
+      },
+      "rssi_best": -48
+    },
+    "8600153329000000000004D1": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -39
+      },
+      "rssi_best": -39
+    },
+    "8600153329000000000004D2": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -38
+      },
+      "rssi_best": -38
+    },
+    "8600153329000000000004D3": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -35
+      },
+      "rssi_best": -35
+    },
+    "8600153329000000000004D4": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -31
+      },
+      "rssi_best": -31
+    },
+    "8600153329000000000004D5": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -42
+      },
+      "rssi_best": -42
+    },
+    "8600153329000000000004D6": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -37
+      },
+      "rssi_best": -37
+    },
+    "8600153329000000000004D7": {
+      "antenna_count": 1,
+      "antennas": {
+        "1": -26
+      },
+      "rssi_best": -26
+    }
+  },
+  "unique_tag_count": 124
+}

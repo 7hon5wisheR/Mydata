@@ -1,0 +1,27 @@
+OVERLAY 2 - root + home VOLATILE, data persisten terpisah  (menggantikan Overlay 1)
+================================================================================
+Isi:  setup_overlay2.sh (SATU FILE, mengerjakan semuanya dari nol), update_broker.sh,
+      B2_Panduan_Overlay2_ID.pdf (panduan lengkap)
+
+Persisten : config.json dan conf.d/bridge.conf -> /boot/firmware/broker-data (atau USB)
+            (di folder broker menjadi symlink; kode broker TIDAK diubah)
+Volatile  : OS, home, kode, log, status.json, rfid*.json
+Hostname + IP dihitung ulang tiap boot dari saklar DIP.
+
+PASANG (overlay harus MATI:  findmnt -no FSTYPE /  ->  ext4)
+  unzip -o overlay2_package.zip -d /home/alice/broker
+  sudo bash /home/alice/broker/setup_overlay2.sh
+  Otomatis: pindah file, ubah mosquitto.conf, drop-in systemd, sudo apps (8082 tanpa
+  password), aktifkan overlay, reboot sekali.
+
+PASTIKAN file ada DI LUAR folder broker (setelah reboot)
+  sudo bash /home/alice/broker/setup_overlay2.sh --status
+  -> [OK] KEDUA file berada DI LUAR folder broker   dan   [OK] tes tulis ... BERHASIL
+  Atau lihat kartu Overlay di halaman 8082 (baris "Data location").
+
+LAIN-LAIN
+  --undo  : kembalikan file ke folder broker (overlay harus mati)
+  USB     : sudo PERSIST_DIR=/mnt/usb/broker-data bash setup_overlay2.sh
+  Pi yang masih memakai OVERLAY 1: matikan overlay dulu (tombol Disable 8082), reboot, lalu PASANG.
+  File Overlay 1 (setup_overlay_persist.sh, check/remove_overlay_persist.sh, broker-persist)
+  tidak dipakai lagi.
